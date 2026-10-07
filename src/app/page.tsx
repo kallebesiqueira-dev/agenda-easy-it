@@ -557,12 +557,12 @@ export default async function LandingPage() {
           <p className="mt-6 border-t border-[#f6f1e7]/10 pt-5 text-center text-xs">
             © {new Date().getFullYear()} Agenda Easy · {t.footer.by}{" "}
             <a
-              href="https://digitalpauloafonso.com.br"
+              href="https://github.com/kallebesiqueira-dev"
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-[#f6f1e7] hover:underline"
             >
-              Digital Paulo Afonso
+              Kallebe Gallo
             </a>
           </p>
         </div>
