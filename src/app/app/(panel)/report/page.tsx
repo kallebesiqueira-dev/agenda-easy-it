@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { todayInTz, zonedTimeToUtc } from "@/lib/dates";
+import { intlLocale, type Lang } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n/server";
 import { formatEUR } from "@/lib/money";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -8,9 +10,64 @@ interface Props {
   searchParams: Promise<{ m?: string }>;
 }
 
+const COPY: Record<
+  Lang,
+  {
+    heading: string;
+    prevMonth: string;
+    currentMonth: string;
+    nextMonth: string;
+    revenue: string;
+    deposits: string;
+    completed: string;
+    confirmed: string;
+    awaiting: string;
+    cancelled: string;
+    noShows: string;
+    totalBookings: string;
+    topServices: string;
+    noBookings: string;
+  }
+> = {
+  it: {
+    heading: "Report",
+    prevMonth: "Mese precedente",
+    currentMonth: "Mese corrente",
+    nextMonth: "Mese successivo",
+    revenue: "Ricavi previsti (confermate + completate)",
+    deposits: "Acconti ricevuti",
+    completed: "Completate",
+    confirmed: "Confermate",
+    awaiting: "In attesa di acconto",
+    cancelled: "Annullate",
+    noShows: "Non presentati",
+    totalBookings: "Totale prenotazioni",
+    topServices: "Servizi più prenotati",
+    noBookings: "Nessuna prenotazione in questo mese.",
+  },
+  en: {
+    heading: "Report",
+    prevMonth: "Previous month",
+    currentMonth: "Current month",
+    nextMonth: "Next month",
+    revenue: "Expected revenue (confirmed + completed)",
+    deposits: "Deposits received",
+    completed: "Completed",
+    confirmed: "Confirmed",
+    awaiting: "Awaiting deposit",
+    cancelled: "Cancelled",
+    noShows: "No-shows",
+    totalBookings: "Total bookings",
+    topServices: "Most booked services",
+    noBookings: "No bookings this month.",
+  },
+};
+
 export default async function ReportsPage({ searchParams }: Props) {
   const ctx = (await getCurrentBusiness())!;
   const { business } = ctx;
+  const lang = await getLang();
+  const t = COPY[lang];
   const sp = await searchParams;
 
   const todayISO = todayInTz(business.timezone);
@@ -78,32 +135,32 @@ export default async function ReportsPage({ searchParams }: Props) {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
 
-  const monthLabel = new Intl.DateTimeFormat("it-IT", {
+  const monthLabel = new Intl.DateTimeFormat(intlLocale(lang), {
     month: "long",
     year: "numeric",
     timeZone: "UTC",
   }).format(new Date(Date.UTC(yy, mm - 1, 1, 12)));
 
   const stats = [
-    { label: "Ricavi previsti (confermate + completate)", value: formatEUR(receita) },
-    { label: "Acconti ricevuti", value: formatEUR(sinais) },
-    { label: "Completate", value: String(byStatus("completed").length) },
-    { label: "Confermate", value: String(byStatus("confirmed").length) },
-    { label: "In attesa di acconto", value: String(byStatus("awaiting_deposit").length) },
-    { label: "Annullate", value: String(byStatus("cancelled").length) },
-    { label: "Non presentati", value: String(byStatus("no_show").length) },
-    { label: "Totale prenotazioni", value: String(rows.length) },
+    { label: t.revenue, value: formatEUR(receita) },
+    { label: t.deposits, value: formatEUR(sinais) },
+    { label: t.completed, value: String(byStatus("completed").length) },
+    { label: t.confirmed, value: String(byStatus("confirmed").length) },
+    { label: t.awaiting, value: String(byStatus("awaiting_deposit").length) },
+    { label: t.cancelled, value: String(byStatus("cancelled").length) },
+    { label: t.noShows, value: String(byStatus("no_show").length) },
+    { label: t.totalBookings, value: String(rows.length) },
   ];
 
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold capitalize">Report · {monthLabel}</h2>
+        <h2 className="font-semibold capitalize">{t.heading} · {monthLabel}</h2>
         <div className="flex items-center gap-1 text-sm">
           <Link
             href={`/app/report?m=${prevM}`}
             className="rounded-lg px-2 py-1 hover:bg-zinc-200"
-            aria-label="Mese precedente"
+            aria-label={t.prevMonth}
           >
             ←
           </Link>
@@ -112,13 +169,13 @@ export default async function ReportsPage({ searchParams }: Props) {
               href="/app/report"
               className="rounded-lg px-2 py-1 font-medium hover:bg-zinc-200"
             >
-              Mese corrente
+              {t.currentMonth}
             </Link>
           )}
           <Link
             href={`/app/report?m=${nextM}`}
             className="rounded-lg px-2 py-1 hover:bg-zinc-200"
-            aria-label="Mese successivo"
+            aria-label={t.nextMonth}
           >
             →
           </Link>
@@ -135,9 +192,9 @@ export default async function ReportsPage({ searchParams }: Props) {
       </div>
 
       <section className="mt-5 rounded-2xl bg-white p-4 shadow-sm">
-        <h3 className="mb-3 font-semibold">Servizi più prenotati</h3>
+        <h3 className="mb-3 font-semibold">{t.topServices}</h3>
         {topServices.length === 0 ? (
-          <p className="text-sm text-zinc-500">Nessuna prenotazione in questo mese.</p>
+          <p className="text-sm text-zinc-500">{t.noBookings}</p>
         ) : (
           <ul className="space-y-2 text-sm">
             {topServices.map(([name, count]) => (

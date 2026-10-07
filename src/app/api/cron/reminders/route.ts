@@ -29,7 +29,7 @@ export async function GET(request: Request) {
   const { data: appointments, error } = await supabase
     .from("appointments")
     .select(
-      `id, starts_at, cancel_token, customer_email,
+      `id, starts_at, cancel_token, customer_email, lang,
        customer:customers(name),
        service:services(name),
        business:businesses(name, timezone, address, whatsapp)`
@@ -51,6 +51,7 @@ export async function GET(request: Request) {
       starts_at: string;
       cancel_token: string;
       customer_email: string | null;
+      lang: "it" | "en" | null;
       customer: { name: string } | null;
       service: { name: string } | null;
       business: {
@@ -61,6 +62,7 @@ export async function GET(request: Request) {
       } | null;
     };
     if (!rec.customer_email || !rec.business) continue;
+    const lang = rec.lang === "en" ? "en" : "it";
 
     // Marca PRIMA di inviare: se il processo cade a metà, non rimanda spam
     // alla prossima esecuzione (perdere 1 promemoria è meglio che duplicarlo).
@@ -69,18 +71,43 @@ export async function GET(request: Request) {
       .update({ reminded_at: new Date().toISOString() })
       .eq("id", rec.id);
 
-    const when = formatDateTimeInTz(rec.starts_at, rec.business.timezone);
+    const when = formatDateTimeInTz(rec.starts_at, rec.business.timezone, lang);
+    const waUrl = rec.business.whatsapp
+      ? `https://wa.me/39${rec.business.whatsapp.replace(/\D/g, "")}`
+      : null;
+    const cancelUrl = `${SITE_URL}/annulla/${encodeURIComponent(rec.id)}?t=${encodeURIComponent(rec.cancel_token)}`;
+
+    const subject =
+      lang === "en"
+        ? `Reminder: ${rec.service?.name ?? "your appointment"} — ${rec.business.name}`
+        : `Promemoria: ${rec.service?.name ?? "il tuo appuntamento"} — ${rec.business.name}`;
+    const title =
+      lang === "en"
+        ? `Hi, ${rec.customer?.name ?? ""}! Your appointment is coming up`
+        : `Ciao, ${rec.customer?.name ?? ""}! Il tuo appuntamento si avvicina`;
+    const lines =
+      lang === "en"
+        ? [
+            { raw: `Your <strong>${escapeHtml(rec.service?.name ?? "")}</strong> appointment at <strong>${escapeHtml(rec.business.name)}</strong> is <strong>${when}</strong>.` },
+            rec.business.address ? `Address: ${rec.business.address}` : "",
+            waUrl
+              ? { raw: `Questions? <a href="${waUrl}">Message us on WhatsApp</a>.` }
+              : "",
+            { raw: `Change of plans? <a href="${cancelUrl}">Cancel here</a> (up to 2h before).` },
+          ]
+        : [
+            { raw: `Il tuo appuntamento di <strong>${escapeHtml(rec.service?.name ?? "")}</strong> presso <strong>${escapeHtml(rec.business.name)}</strong> è <strong>${when}</strong>.` },
+            rec.business.address ? `Indirizzo: ${rec.business.address}` : "",
+            waUrl
+              ? { raw: `Domande? <a href="${waUrl}">Scrivici su WhatsApp</a>.` }
+              : "",
+            { raw: `Imprevisto? <a href="${cancelUrl}">Annulla da qui</a> (fino a 2h prima).` },
+          ];
+
     await sendEmail({
       to: rec.customer_email,
-      subject: `Promemoria: ${rec.service?.name ?? "il tuo appuntamento"} — ${rec.business.name}`,
-      html: emailLayout(`Ciao, ${rec.customer?.name ?? ""}! Il tuo appuntamento si avvicina`, [
-        { raw: `Il tuo appuntamento di <strong>${escapeHtml(rec.service?.name ?? "")}</strong> presso <strong>${escapeHtml(rec.business.name)}</strong> è <strong>${when}</strong>.` },
-        rec.business.address ? `Indirizzo: ${rec.business.address}` : "",
-        rec.business.whatsapp
-          ? { raw: `Domande? <a href="https://wa.me/39${rec.business.whatsapp.replace(/\D/g, "")}">Scrivici su WhatsApp</a>.` }
-          : "",
-        { raw: `Imprevisto? <a href="${SITE_URL}/annulla/${encodeURIComponent(rec.id)}?t=${encodeURIComponent(rec.cancel_token)}">Annulla da qui</a> (fino a 2h prima).` },
-      ].filter((l) => l !== "")),
+      subject,
+      html: emailLayout(title, lines.filter((l) => l !== ""), lang),
     });
     sent++;
   }

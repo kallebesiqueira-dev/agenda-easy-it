@@ -3,9 +3,84 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { Service } from "@/types/database";
+import type { Lang } from "@/lib/i18n";
 import { formatEUR, parseEURToMinor } from "@/lib/money";
 import { mediaUrl, uploadMedia } from "@/lib/storage";
 import { saveService } from "./actions";
+
+const COPY: Record<
+  Lang,
+  {
+    heading: string;
+    newService: string;
+    empty: string;
+    inactive: string;
+    edit: string;
+    priceError: string;
+    uploadError: string;
+    editService: string;
+    name: string;
+    namePh: string;
+    description: string;
+    descriptionPh: string;
+    price: string;
+    duration: string;
+    photo: string;
+    preview: string;
+    removePhoto: string;
+    visible: string;
+    saving: string;
+    save: string;
+    cancel: string;
+  }
+> = {
+  it: {
+    heading: "Servizi",
+    newService: "Nuovo servizio",
+    empty: "Inserisci il tuo primo servizio per comparire nella pagina di prenotazione.",
+    inactive: "non attivo",
+    edit: "Modifica",
+    priceError: "Prezzo non valido. Es.: 45,00",
+    uploadError: "Caricamento della foto non riuscito. Riprova.",
+    editService: "Modifica servizio",
+    name: "Nome",
+    namePh: "Taglio uomo",
+    description: "Descrizione (opzionale)",
+    descriptionPh: "Forbici e macchinetta",
+    price: "Prezzo (€)",
+    duration: "Durata",
+    photo: "Foto (opzionale)",
+    preview: "Anteprima",
+    removePhoto: "Rimuovi foto",
+    visible: "Visibile nella pagina di prenotazione",
+    saving: "Salvataggio…",
+    save: "Salva",
+    cancel: "Annulla",
+  },
+  en: {
+    heading: "Services",
+    newService: "New service",
+    empty: "Add your first service to appear on the booking page.",
+    inactive: "inactive",
+    edit: "Edit",
+    priceError: "Invalid price. E.g.: 45,00",
+    uploadError: "Couldn't upload the photo. Please try again.",
+    editService: "Edit service",
+    name: "Name",
+    namePh: "Men's haircut",
+    description: "Description (optional)",
+    descriptionPh: "Scissors and clippers",
+    price: "Price (€)",
+    duration: "Duration",
+    photo: "Photo (optional)",
+    preview: "Preview",
+    removePhoto: "Remove photo",
+    visible: "Visible on the booking page",
+    saving: "Saving…",
+    save: "Save",
+    cancel: "Cancel",
+  },
+};
 
 type ServiceRow = Pick<
   Service,
@@ -23,10 +98,13 @@ const DURATIONS = Array.from({ length: 96 }, (_, i) => (i + 1) * 5); // 5..480
 export function ServicesManager({
   businessId,
   services,
+  lang,
 }: {
   businessId: string;
   services: ServiceRow[];
+  lang: Lang;
 }) {
+  const t = COPY[lang];
   const router = useRouter();
   /** null = chiuso; "new" = creazione; altrimenti id del servizio in modifica */
   const [editing, setEditing] = useState<string | null>(null);
@@ -36,13 +114,13 @@ export function ServicesManager({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold">Servizi</h2>
+        <h2 className="font-semibold">{t.heading}</h2>
         <button
           type="button"
           onClick={() => setEditing("new")}
           className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white"
         >
-          Nuovo servizio
+          {t.newService}
         </button>
       </div>
 
@@ -50,6 +128,7 @@ export function ServicesManager({
         <ServiceForm
           key={editing}
           businessId={businessId}
+          t={t}
           service={current}
           onDone={() => {
             setEditing(null);
@@ -61,7 +140,7 @@ export function ServicesManager({
 
       {services.length === 0 && !editing ? (
         <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm">
-          Inserisci il tuo primo servizio per comparire nella pagina di prenotazione.
+          {t.empty}
         </p>
       ) : (
         <ul className="space-y-2">
@@ -87,7 +166,7 @@ export function ServicesManager({
                   {s.name}
                   {!s.active && (
                     <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
-                      non attivo
+                      {t.inactive}
                     </span>
                   )}
                 </p>
@@ -100,7 +179,7 @@ export function ServicesManager({
                 onClick={() => setEditing(s.id)}
                 className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm"
               >
-                Modifica
+                {t.edit}
               </button>
             </li>
           ))}
@@ -112,11 +191,13 @@ export function ServicesManager({
 
 function ServiceForm({
   businessId,
+  t,
   service,
   onDone,
   onCancel,
 }: {
   businessId: string;
+  t: (typeof COPY)[Lang];
   service: ServiceRow | null;
   onDone: () => void;
   onCancel: () => void;
@@ -138,7 +219,7 @@ function ServiceForm({
     setError(null);
     const priceMinor = parseEURToMinor(price);
     if (priceMinor === null) {
-      setError("Prezzo non valido. Es.: 45,00");
+      setError(t.priceError);
       return;
     }
     startTransition(async () => {
@@ -147,7 +228,7 @@ function ServiceForm({
         try {
           finalImagePath = await uploadMedia(businessId, "services", imageFile);
         } catch {
-          setError("Caricamento della foto non riuscito. Riprova.");
+          setError(t.uploadError);
           return;
         }
       }
@@ -174,33 +255,33 @@ function ServiceForm({
       onSubmit={onSubmit}
       className="mb-4 space-y-3 rounded-2xl bg-white p-4 shadow-sm"
     >
-      <p className="font-semibold">{service ? "Modifica servizio" : "Nuovo servizio"}</p>
+      <p className="font-semibold">{service ? t.editService : t.newService}</p>
       <label className="block">
-        <span className="mb-1 block text-sm font-medium">Nome</span>
+        <span className="mb-1 block text-sm font-medium">{t.name}</span>
         <input
           required
           maxLength={80}
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-          placeholder="Taglio uomo"
+          placeholder={t.namePh}
         />
       </label>
       <label className="block">
         <span className="mb-1 block text-sm font-medium">
-          Descrizione (opzionale)
+          {t.description}
         </span>
         <input
           maxLength={500}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-          placeholder="Forbici e macchinetta"
+          placeholder={t.descriptionPh}
         />
       </label>
       <div className="flex gap-3">
         <label className="block flex-1">
-          <span className="mb-1 block text-sm font-medium">Prezzo (€)</span>
+          <span className="mb-1 block text-sm font-medium">{t.price}</span>
           <input
             required
             inputMode="decimal"
@@ -211,7 +292,7 @@ function ServiceForm({
           />
         </label>
         <label className="block flex-1">
-          <span className="mb-1 block text-sm font-medium">Durata</span>
+          <span className="mb-1 block text-sm font-medium">{t.duration}</span>
           <select
             value={duration}
             onChange={(e) => setDuration(Number(e.target.value))}
@@ -226,13 +307,13 @@ function ServiceForm({
         </label>
       </div>
       <div>
-        <span className="mb-1 block text-sm font-medium">Foto (opzionale)</span>
+        <span className="mb-1 block text-sm font-medium">{t.photo}</span>
         <div className="flex items-center gap-3">
           {previewUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={previewUrl}
-              alt="Anteprima"
+              alt={t.preview}
               className="size-16 rounded-xl object-cover"
             />
           ) : (
@@ -256,7 +337,7 @@ function ServiceForm({
                 }}
                 className="text-xs text-zinc-500 underline"
               >
-                Rimuovi foto
+                {t.removePhoto}
               </button>
             )}
           </div>
@@ -269,7 +350,7 @@ function ServiceForm({
           checked={active}
           onChange={(e) => setActive(e.target.checked)}
         />
-        Visibile nella pagina di prenotazione
+        {t.visible}
       </label>
 
       {error && (
@@ -282,14 +363,14 @@ function ServiceForm({
           disabled={pending}
           className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
         >
-          {pending ? "Salvataggio…" : "Salva"}
+          {pending ? t.saving : t.save}
         </button>
         <button
           type="button"
           onClick={onCancel}
           className="rounded-lg border border-zinc-300 px-4 py-2 text-sm"
         >
-          Annulla
+          {t.cancel}
         </button>
       </div>
     </form>

@@ -1,10 +1,12 @@
 import type { Break, BusinessHour } from "@/types/database";
+import { getLang } from "@/lib/i18n/server";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { HoursManager } from "./hours-manager";
 
 export default async function HoursPage() {
   const ctx = (await getCurrentBusiness())!;
+  const lang = await getLang();
   const supabase = await createSupabaseServerClient();
 
   const [hoursRes, breaksRes, prosRes] = await Promise.all([
@@ -28,6 +30,7 @@ export default async function HoursPage() {
 
   return (
     <HoursManager
+      lang={lang}
       hours={
         (hoursRes.data ?? []) as Pick<
           BusinessHour,

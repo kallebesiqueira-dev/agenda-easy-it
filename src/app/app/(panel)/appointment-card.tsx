@@ -7,6 +7,7 @@
  */
 
 import { useState, useTransition } from "react";
+import type { Lang } from "@/lib/i18n";
 import type { AppointmentStatus } from "@/types/database";
 import { confirmDeposit, setAppointmentStatus } from "./actions";
 
@@ -25,24 +26,81 @@ export interface AppointmentCardData {
   holdExpiresLabel: string | null;
 }
 
-const STATUS_BADGES: Record<
-  AppointmentStatus,
-  { label: string; className: string }
-> = {
-  awaiting_deposit: { label: "In attesa di acconto", className: "bg-amber-100 text-amber-800" },
-  confirmed: { label: "Confermata", className: "bg-emerald-100 text-emerald-800" },
-  cancelled: { label: "Annullata", className: "bg-zinc-100 text-zinc-500" },
-  completed: { label: "Completata", className: "bg-blue-100 text-blue-800" },
-  no_show: { label: "Non presentato", className: "bg-red-100 text-red-700" },
+const STATUS_CLASSES: Record<AppointmentStatus, string> = {
+  awaiting_deposit: "bg-amber-100 text-amber-800",
+  confirmed: "bg-emerald-100 text-emerald-800",
+  cancelled: "bg-zinc-100 text-zinc-500",
+  completed: "bg-blue-100 text-blue-800",
+  no_show: "bg-red-100 text-red-700",
 };
 
-export function AppointmentCard({ data }: { data: AppointmentCardData }) {
+const COPY: Record<
+  Lang,
+  {
+    status: Record<AppointmentStatus, string>;
+    holdExpired: string;
+    total: string;
+    deposit: string;
+    by: (time: string) => string;
+    paid: string;
+    depositReceived: string;
+    cancel: string;
+    complete: string;
+    noShow: string;
+  }
+> = {
+  it: {
+    status: {
+      awaiting_deposit: "In attesa di acconto",
+      confirmed: "Confermata",
+      cancelled: "Annullata",
+      completed: "Completata",
+      no_show: "Non presentato",
+    },
+    holdExpired: "Acconto scaduto",
+    total: "Totale",
+    deposit: "Acconto",
+    by: (time) => ` (entro le ${time})`,
+    paid: " ✓ pagato",
+    depositReceived: "Acconto ricevuto",
+    cancel: "Annulla",
+    complete: "Completa",
+    noShow: "Non presentato",
+  },
+  en: {
+    status: {
+      awaiting_deposit: "Awaiting deposit",
+      confirmed: "Confirmed",
+      cancelled: "Cancelled",
+      completed: "Completed",
+      no_show: "No-show",
+    },
+    holdExpired: "Deposit expired",
+    total: "Total",
+    deposit: "Deposit",
+    by: (time) => ` (by ${time})`,
+    paid: " ✓ paid",
+    depositReceived: "Deposit received",
+    cancel: "Cancel",
+    complete: "Complete",
+    noShow: "No-show",
+  },
+};
+
+export function AppointmentCard({
+  data,
+  lang,
+}: {
+  data: AppointmentCardData;
+  lang: Lang;
+}) {
+  const t = COPY[lang];
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   const badge = data.holdExpired
-    ? { label: "Acconto scaduto", className: "bg-zinc-100 text-zinc-500" }
-    : STATUS_BADGES[data.status];
+    ? { label: t.holdExpired, className: "bg-zinc-100 text-zinc-500" }
+    : { label: t.status[data.status], className: STATUS_CLASSES[data.status] };
 
   function run(action: () => Promise<{ error?: string }>) {
     setError(null);
@@ -89,12 +147,12 @@ export function AppointmentCard({ data }: { data: AppointmentCardData }) {
       </div>
 
       <p className="mt-2 text-sm text-zinc-600">
-        Totale {data.priceLabel} · Acconto {data.depositDueLabel}
+        {t.total} {data.priceLabel} · {t.deposit} {data.depositDueLabel}
         {data.status === "awaiting_deposit" &&
           !data.holdExpired &&
           data.holdExpiresLabel &&
-          ` (entro le ${data.holdExpiresLabel})`}
-        {data.depositPaid && " ✓ pagato"}
+          t.by(data.holdExpiresLabel)}
+        {data.depositPaid && t.paid}
       </p>
 
       {error && (
@@ -110,13 +168,13 @@ export function AppointmentCard({ data }: { data: AppointmentCardData }) {
             disabled={pending}
             onClick={() => run(() => confirmDeposit(data.id, "pix"))}
           >
-            Acconto ricevuto
+            {t.depositReceived}
           </ActionButton>
           <ActionButton
             disabled={pending}
             onClick={() => run(() => setAppointmentStatus(data.id, "cancelled"))}
           >
-            Annulla
+            {t.cancel}
           </ActionButton>
         </div>
       )}
@@ -128,19 +186,19 @@ export function AppointmentCard({ data }: { data: AppointmentCardData }) {
             disabled={pending}
             onClick={() => run(() => setAppointmentStatus(data.id, "completed"))}
           >
-            Completa
+            {t.complete}
           </ActionButton>
           <ActionButton
             disabled={pending}
             onClick={() => run(() => setAppointmentStatus(data.id, "no_show"))}
           >
-            Non presentato
+            {t.noShow}
           </ActionButton>
           <ActionButton
             disabled={pending}
             onClick={() => run(() => setAppointmentStatus(data.id, "cancelled"))}
           >
-            Annulla
+            {t.cancel}
           </ActionButton>
         </div>
       )}

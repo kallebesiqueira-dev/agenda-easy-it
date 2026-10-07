@@ -7,6 +7,8 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { actionMessages } from "@/lib/i18n/messages";
+import { getLang } from "@/lib/i18n/server";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
@@ -20,13 +22,14 @@ const weekSchema = z.array(businessHourInputSchema).length(7);
 export async function saveBusinessHours(
   hours: unknown
 ): Promise<{ error?: string }> {
+  const t = actionMessages(await getLang());
   const parsed = weekSchema.safeParse(hours);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dati non validi." };
+    return { error: parsed.error.issues[0]?.message ?? t.invalidData };
   }
 
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessione scaduta." };
+  if (!ctx) return { error: t.sessionExpired };
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("business_hours").upsert(
@@ -35,7 +38,7 @@ export async function saveBusinessHours(
   );
   if (error) {
     console.error("saveBusinessHours error", error);
-    return { error: "Salvataggio non riuscito. Riprova." };
+    return { error: t.saveFailed };
   }
 
   revalidatePath("/app/hours");
@@ -49,17 +52,18 @@ export async function addBreak(input: {
   /** null/assente = pausa generale (tutto il team) */
   professional_id?: string | null;
 }): Promise<{ error?: string }> {
+  const t = actionMessages(await getLang());
   const parsed = shiftInputSchema.safeParse(input);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dati non validi." };
+    return { error: parsed.error.issues[0]?.message ?? t.invalidData };
   }
   const professionalId = input.professional_id ?? null;
   if (professionalId !== null && !uuidSchema.safeParse(professionalId).success) {
-    return { error: "Dati non validi." };
+    return { error: t.invalidData };
   }
 
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessione scaduta." };
+  if (!ctx) return { error: t.sessionExpired };
 
   const supabase = await createSupabaseServerClient();
   if (professionalId !== null) {
@@ -69,7 +73,7 @@ export async function addBreak(input: {
       .eq("id", professionalId)
       .eq("business_id", ctx.business.id)
       .maybeSingle();
-    if (!pro) return { error: "Professionista non valido." };
+    if (!pro) return { error: t.professionalInvalid };
   }
   const { error } = await supabase.from("breaks").insert({
     ...parsed.data,
@@ -78,7 +82,7 @@ export async function addBreak(input: {
   });
   if (error) {
     console.error("addBreak error", error);
-    return { error: "Aggiunta della pausa non riuscita." };
+    return { error: t.addBreakFailed };
   }
 
   revalidatePath("/app/hours");
@@ -88,11 +92,12 @@ export async function addBreak(input: {
 export async function deleteBreak(
   breakId: string
 ): Promise<{ error?: string }> {
+  const t = actionMessages(await getLang());
   const parsed = uuidSchema.safeParse(breakId);
-  if (!parsed.success) return { error: "Dati non validi." };
+  if (!parsed.success) return { error: t.invalidData };
 
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessione scaduta." };
+  if (!ctx) return { error: t.sessionExpired };
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
@@ -102,7 +107,7 @@ export async function deleteBreak(
     .eq("business_id", ctx.business.id);
   if (error) {
     console.error("deleteBreak error", error);
-    return { error: "Rimozione della pausa non riuscita." };
+    return { error: t.removeBreakFailed };
   }
 
   revalidatePath("/app/hours");

@@ -7,6 +7,8 @@
  */
 
 import { revalidatePath } from "next/cache";
+import { actionMessages } from "@/lib/i18n/messages";
+import { getLang } from "@/lib/i18n/server";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
@@ -21,21 +23,22 @@ export async function saveProfessional(input: {
   active: boolean;
   image_path?: string | null;
 }): Promise<{ error?: string }> {
+  const t = actionMessages(await getLang());
   const parsed = professionalInputSchema
     .extend({ id: uuidSchema.optional() })
     .safeParse(input);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dati non validi." };
+    return { error: parsed.error.issues[0]?.message ?? t.invalidData };
   }
 
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessione scaduta." };
+  if (!ctx) return { error: t.sessionExpired };
 
   if (
     parsed.data.image_path &&
     !parsed.data.image_path.startsWith(`${ctx.business.id}/`)
   ) {
-    return { error: "Immagine non valida." };
+    return { error: t.imageInvalid };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -49,7 +52,7 @@ export async function saveProfessional(input: {
       .eq("business_id", ctx.business.id);
     if (error) {
       console.error("saveProfessional error", error);
-      return { error: "Salvataggio non riuscito. Riprova." };
+      return { error: t.saveFailed };
     }
   } else {
     const { data: created, error } = await supabase
@@ -59,7 +62,7 @@ export async function saveProfessional(input: {
       .single();
     if (error || !created) {
       console.error("saveProfessional error", error);
-      return { error: "Salvataggio non riuscito. Riprova." };
+      return { error: t.saveFailed };
     }
 
     // Turni iniziali che rispecchiano l'orario di apertura (o il default
@@ -103,16 +106,17 @@ export async function addShift(input: {
   starts_at: string;
   ends_at: string;
 }): Promise<{ error?: string }> {
+  const t = actionMessages(await getLang());
   const parsedId = uuidSchema.safeParse(input.professional_id);
   const parsedShift = shiftInputSchema.safeParse(input);
   if (!parsedId.success || !parsedShift.success) {
     return {
-      error: parsedShift.error?.issues[0]?.message ?? "Dati non validi.",
+      error: parsedShift.error?.issues[0]?.message ?? t.invalidData,
     };
   }
 
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessione scaduta." };
+  if (!ctx) return { error: t.sessionExpired };
 
   const supabase = await createSupabaseServerClient();
 
@@ -123,7 +127,7 @@ export async function addShift(input: {
     .eq("id", parsedId.data)
     .eq("business_id", ctx.business.id)
     .maybeSingle();
-  if (!professional) return { error: "Professionista non trovato." };
+  if (!professional) return { error: t.professionalNotFound };
 
   const { error } = await supabase.from("professional_shifts").insert({
     ...parsedShift.data,
@@ -132,7 +136,7 @@ export async function addShift(input: {
   });
   if (error) {
     console.error("addShift error", error);
-    return { error: "Aggiunta del turno non riuscita." };
+    return { error: t.addShiftFailed };
   }
 
   revalidatePath("/app/professionals");
@@ -142,11 +146,12 @@ export async function addShift(input: {
 export async function deleteShift(
   shiftId: string
 ): Promise<{ error?: string }> {
+  const t = actionMessages(await getLang());
   const parsed = uuidSchema.safeParse(shiftId);
-  if (!parsed.success) return { error: "Dati non validi." };
+  if (!parsed.success) return { error: t.invalidData };
 
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessione scaduta." };
+  if (!ctx) return { error: t.sessionExpired };
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
@@ -156,7 +161,7 @@ export async function deleteShift(
     .eq("business_id", ctx.business.id);
   if (error) {
     console.error("deleteShift error", error);
-    return { error: "Rimozione del turno non riuscita." };
+    return { error: t.removeShiftFailed };
   }
 
   revalidatePath("/app/professionals");

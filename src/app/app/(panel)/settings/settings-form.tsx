@@ -4,19 +4,132 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { BusinessSettingsInput } from "@/lib/validation";
 import type { BusinessType } from "@/types/database";
-import { BUSINESS_TYPE_OPTIONS } from "@/lib/labels";
+import type { Lang } from "@/lib/i18n";
+import { businessTypeOptions } from "@/lib/labels";
 import { mediaUrl, uploadMedia } from "@/lib/storage";
 import { saveSettings } from "./actions";
 
+const COPY: Record<
+  Lang,
+  {
+    uploadError: string;
+    business: string;
+    logo: string;
+    removePhoto: string;
+    cover: string;
+    coverAlt: string;
+    noCover: string;
+    removeCover: string;
+    coverHint: string;
+    framing: string;
+    name: string;
+    type: string;
+    brandColor: string;
+    teamLabel: string;
+    teamLabelPh: string;
+    address: string;
+    addressPh: string;
+    phone: string;
+    phonePh: string;
+    whatsapp: string;
+    whatsappPh: string;
+    depositPayment: string;
+    payCoords: string;
+    payCoordsPh: string;
+    payCoordsHint: string;
+    published: string;
+    publishedHint: (slug: string) => [string, string];
+    saving: string;
+    save: string;
+    saved: string;
+  }
+> = {
+  it: {
+    uploadError: "Caricamento dell'immagine non riuscito. Riprova.",
+    business: "Attività",
+    logo: "Foto profilo / logo",
+    removePhoto: "Rimuovi foto",
+    cover: "Copertina della pagina (stile Facebook)",
+    coverAlt: "Copertina",
+    noCover: "Senza copertina — la pagina usa il colore del brand",
+    removeCover: "Rimuovi copertina",
+    coverHint: "Usa una foto del tuo spazio o del tuo lavoro (ideale: 1600×500px).",
+    framing: "Regola l'inquadratura (↑ alto · ↓ basso)",
+    name: "Nome",
+    type: "Tipo di attività",
+    brandColor: "Colore del brand",
+    teamLabel: "Come chiamare il team (opzionale)",
+    teamLabelPh: 'Es.: "Barbiere", "Onicotecnica"',
+    address: "Indirizzo (opzionale)",
+    addressPh: "Via, numero civico, quartiere",
+    phone: "Telefono (opzionale)",
+    phonePh: "06 1234 5678",
+    whatsapp: "WhatsApp (opzionale)",
+    whatsappPh: "333 123 4567",
+    depositPayment: "Pagamento dell'acconto",
+    payCoords: "Coordinate di pagamento (opzionale)",
+    payCoordsPh: "IBAN, PayPal o altro riferimento per il bonifico",
+    payCoordsHint:
+      "Mostrate al cliente alla conferma della prenotazione per pagare l'acconto del 50%. Senza coordinate, l'acconto viene concordato di persona.",
+    published: "Pagina pubblicata",
+    publishedHint: () => [
+      "Quando attiva, la tua pagina è online su ",
+      " e accetta prenotazioni. Inserisci prima servizi, team e orari.",
+    ],
+    saving: "Salvataggio…",
+    save: "Salva impostazioni",
+    saved: "Salvato ✓",
+  },
+  en: {
+    uploadError: "Couldn't upload the image. Please try again.",
+    business: "Business",
+    logo: "Profile photo / logo",
+    removePhoto: "Remove photo",
+    cover: "Page cover (Facebook style)",
+    coverAlt: "Cover",
+    noCover: "No cover — the page uses the brand colour",
+    removeCover: "Remove cover",
+    coverHint: "Use a photo of your space or your work (ideal: 1600×500px).",
+    framing: "Adjust framing (↑ top · ↓ bottom)",
+    name: "Name",
+    type: "Business type",
+    brandColor: "Brand colour",
+    teamLabel: "What to call the team (optional)",
+    teamLabelPh: 'E.g. "Barber", "Nail artist"',
+    address: "Address (optional)",
+    addressPh: "Street, number, district",
+    phone: "Phone (optional)",
+    phonePh: "06 1234 5678",
+    whatsapp: "WhatsApp (optional)",
+    whatsappPh: "333 123 4567",
+    depositPayment: "Deposit payment",
+    payCoords: "Payment details (optional)",
+    payCoordsPh: "IBAN, PayPal or another transfer reference",
+    payCoordsHint:
+      "Shown to the client at booking confirmation to pay the 50% deposit. Without details, the deposit is arranged in person.",
+    published: "Page published",
+    publishedHint: () => [
+      "When active, your page is live at ",
+      " and accepts bookings. Add services, team and hours first.",
+    ],
+    saving: "Saving…",
+    save: "Save settings",
+    saved: "Saved ✓",
+  },
+};
+
 export function SettingsForm({
   businessId,
+  lang,
   initial,
   slug,
 }: {
   businessId: string;
+  lang: Lang;
   initial: BusinessSettingsInput;
   slug: string;
 }) {
+  const t = COPY[lang];
   const router = useRouter();
   const [form, setForm] = useState(initial);
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -47,7 +160,7 @@ export function SettingsForm({
         if (coverFile)
           coverPath = await uploadMedia(businessId, "cover", coverFile);
       } catch {
-        setError("Caricamento dell'immagine non riuscito. Riprova.");
+        setError(t.uploadError);
         return;
       }
       const result = await saveSettings({
@@ -74,12 +187,10 @@ export function SettingsForm({
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <section className="space-y-3 rounded-2xl bg-white p-4 shadow-sm">
-        <h2 className="font-semibold">Attività</h2>
+        <h2 className="font-semibold">{t.business}</h2>
 
         <div>
-          <span className="mb-1 block text-sm font-medium">
-            Foto profilo / logo
-          </span>
+          <span className="mb-1 block text-sm font-medium">{t.logo}</span>
           <div className="flex flex-wrap items-center gap-3">
             {logoFile || form.logo_path ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -113,7 +224,7 @@ export function SettingsForm({
                   }}
                   className="text-xs text-zinc-500 underline"
                 >
-                  Rimuovi foto
+                  {t.removePhoto}
                 </button>
               )}
             </div>
@@ -122,7 +233,7 @@ export function SettingsForm({
 
         <div>
           <span className="mb-1 block text-sm font-medium">
-            Copertina della pagina (stile Facebook)
+            {t.cover}
           </span>
           {coverFile || form.cover_path ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -132,13 +243,13 @@ export function SettingsForm({
                   ? URL.createObjectURL(coverFile)
                   : mediaUrl(form.cover_path)!
               }
-              alt="Copertina"
+              alt={t.coverAlt}
               className="h-28 w-full rounded-xl object-cover"
               style={{ objectPosition: `50% ${form.cover_position}%` }}
             />
           ) : (
             <div className="flex h-28 w-full items-center justify-center rounded-xl bg-zinc-100 text-sm text-zinc-400">
-              Senza copertina — la pagina usa il colore del brand
+              {t.noCover}
             </div>
           )}
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
@@ -157,17 +268,17 @@ export function SettingsForm({
                 }}
                 className="whitespace-nowrap text-xs text-zinc-500 underline"
               >
-                Rimuovi copertina
+                {t.removeCover}
               </button>
             )}
           </div>
           <span className="mt-1 block text-xs text-zinc-400">
-            Usa una foto del tuo spazio o del tuo lavoro (ideale: 1600×500px).
+            {t.coverHint}
           </span>
           {(coverFile || form.cover_path) && (
             <label className="mt-2 block">
               <span className="mb-1 flex justify-between text-xs text-zinc-500">
-                <span>Regola l&apos;inquadratura (↑ alto · ↓ basso)</span>
+                <span>{t.framing}</span>
                 <span>{form.cover_position}%</span>
               </span>
               <input
@@ -185,7 +296,7 @@ export function SettingsForm({
         </div>
 
         <label className="block">
-          <span className="mb-1 block text-sm font-medium">Nome</span>
+          <span className="mb-1 block text-sm font-medium">{t.name}</span>
           <input
             required
             maxLength={80}
@@ -197,7 +308,7 @@ export function SettingsForm({
 
         <div className="flex gap-3">
           <label className="block flex-1">
-            <span className="mb-1 block text-sm font-medium">Tipo di attività</span>
+            <span className="mb-1 block text-sm font-medium">{t.type}</span>
             <select
               value={form.business_type}
               onChange={(e) =>
@@ -205,15 +316,15 @@ export function SettingsForm({
               }
               className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 outline-none focus:border-zinc-900"
             >
-              {BUSINESS_TYPE_OPTIONS.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
+              {businessTypeOptions(lang).map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
                 </option>
               ))}
             </select>
           </label>
           <label className="block flex-1">
-            <span className="mb-1 block text-sm font-medium">Colore del brand</span>
+            <span className="mb-1 block text-sm font-medium">{t.brandColor}</span>
             <input
               type="color"
               value={form.brand_primary}
@@ -225,75 +336,71 @@ export function SettingsForm({
 
         <label className="block">
           <span className="mb-1 block text-sm font-medium">
-            Come chiamare il team (opzionale)
+            {t.teamLabel}
           </span>
           <input
             maxLength={30}
             value={form.custom_professional_label ?? ""}
             onChange={(e) => set("custom_professional_label", e.target.value)}
             className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-            placeholder='Es.: "Barbiere", "Onicotecnica"'
+            placeholder={t.teamLabelPh}
           />
         </label>
 
         <label className="block">
           <span className="mb-1 block text-sm font-medium">
-            Indirizzo (opzionale)
+            {t.address}
           </span>
           <input
             maxLength={200}
             value={form.address ?? ""}
             onChange={(e) => set("address", e.target.value)}
             className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-            placeholder="Via, numero civico, quartiere"
+            placeholder={t.addressPh}
           />
         </label>
 
         <div className="flex gap-3">
           <label className="block flex-1">
             <span className="mb-1 block text-sm font-medium">
-              Telefono (opzionale)
+              {t.phone}
             </span>
             <input
               type="tel"
               value={form.phone ?? ""}
               onChange={(e) => set("phone", e.target.value)}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-              placeholder="06 1234 5678"
+              placeholder={t.phonePh}
             />
           </label>
           <label className="block flex-1">
             <span className="mb-1 block text-sm font-medium">
-              WhatsApp (opzionale)
+              {t.whatsapp}
             </span>
             <input
               type="tel"
               value={form.whatsapp ?? ""}
               onChange={(e) => set("whatsapp", e.target.value)}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-              placeholder="333 123 4567"
+              placeholder={t.whatsappPh}
             />
           </label>
         </div>
       </section>
 
       <section className="space-y-3 rounded-2xl bg-white p-4 shadow-sm">
-        <h2 className="font-semibold">Pagamento dell&apos;acconto</h2>
+        <h2 className="font-semibold">{t.depositPayment}</h2>
         <label className="block">
-          <span className="mb-1 block text-sm font-medium">
-            Coordinate di pagamento (opzionale)
-          </span>
+          <span className="mb-1 block text-sm font-medium">{t.payCoords}</span>
           <input
             maxLength={140}
             value={form.pix_key ?? ""}
             onChange={(e) => set("pix_key", e.target.value)}
             className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-            placeholder="IBAN, PayPal o altro riferimento per il bonifico"
+            placeholder={t.payCoordsPh}
           />
           <span className="mt-1 block text-xs text-zinc-400">
-            Mostrate al cliente alla conferma della prenotazione per pagare
-            l&apos;acconto del 50%. Senza coordinate, l&apos;acconto viene
-            concordato di persona.
+            {t.payCoordsHint}
           </span>
         </label>
       </section>
@@ -307,10 +414,11 @@ export function SettingsForm({
             className="mt-1"
           />
           <span>
-            <span className="block font-medium">Pagina pubblicata</span>
+            <span className="block font-medium">{t.published}</span>
             <span className="block text-sm text-zinc-500">
-              Quando attiva, la tua pagina è online su <code>/{slug}</code> e
-              accetta prenotazioni. Inserisci prima servizi, team e orari.
+              {t.publishedHint(slug)[0]}
+              <code>/{slug}</code>
+              {t.publishedHint(slug)[1]}
             </span>
           </span>
         </label>
@@ -328,9 +436,9 @@ export function SettingsForm({
           disabled={pending}
           className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
         >
-          {pending ? "Salvataggio…" : "Salva impostazioni"}
+          {pending ? t.saving : t.save}
         </button>
-        {saved && <span className="text-sm text-emerald-600">Salvato ✓</span>}
+        {saved && <span className="text-sm text-emerald-600">{t.saved}</span>}
       </div>
     </form>
   );

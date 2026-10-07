@@ -6,6 +6,8 @@ import {
   todayInTz,
   zonedTimeToUtc,
 } from "@/lib/dates";
+import { intlLocale, type Lang } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n/server";
 import { formatEUR } from "@/lib/money";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -15,9 +17,53 @@ interface Props {
   searchParams: Promise<{ date?: string }>;
 }
 
+const COPY: Record<
+  Lang,
+  {
+    weekdays: string[];
+    prevMonth: string;
+    nextMonth: string;
+    confirmed: string;
+    awaiting: string;
+    freeDay: string;
+    prevDay: string;
+    nextDay: string;
+    today: string;
+    empty: string;
+  }
+> = {
+  it: {
+    weekdays: ["dom", "lun", "mar", "mer", "gio", "ven", "sab"],
+    prevMonth: "Mese precedente",
+    nextMonth: "Mese successivo",
+    confirmed: "confermate",
+    awaiting: "in attesa di acconto",
+    freeDay: "giorno libero",
+    prevDay: "Giorno precedente",
+    nextDay: "Giorno successivo",
+    today: "Oggi",
+    empty: "Nessuna prenotazione in questo giorno.",
+  },
+  en: {
+    weekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    prevMonth: "Previous month",
+    nextMonth: "Next month",
+    confirmed: "confirmed",
+    awaiting: "awaiting deposit",
+    freeDay: "free day",
+    prevDay: "Previous day",
+    nextDay: "Next day",
+    today: "Today",
+    empty: "No bookings on this day.",
+  },
+};
+
 export default async function AgendaPage({ searchParams }: Props) {
-  const ctx = (await getCurrentBusiness())!; // layout garante
+  const ctx = (await getCurrentBusiness())!; // il layout garantisce
   const { business } = ctx;
+  const lang = await getLang();
+  const t = COPY[lang];
+  const locale = intlLocale(lang);
 
   const sp = await searchParams;
   const todayISO = todayInTz(business.timezone);
@@ -73,7 +119,7 @@ export default async function AgendaPage({ searchParams }: Props) {
     dayCounts.set(key, c);
   }
 
-  const monthLabel = new Intl.DateTimeFormat("it-IT", {
+  const monthLabel = new Intl.DateTimeFormat(locale, {
     month: "long",
     year: "numeric",
     timeZone: "UTC",
@@ -129,7 +175,7 @@ export default async function AgendaPage({ searchParams }: Props) {
     };
   });
 
-  const dateLabel = new Intl.DateTimeFormat("it-IT", {
+  const dateLabel = new Intl.DateTimeFormat(locale, {
     weekday: "long",
     day: "2-digit",
     month: "long",
@@ -146,14 +192,14 @@ export default async function AgendaPage({ searchParams }: Props) {
             <Link
               href={`/app?date=${prevMonthISO}`}
               className="rounded-lg px-2 py-1 hover:bg-zinc-100"
-              aria-label="Mese precedente"
+              aria-label={t.prevMonth}
             >
               ←
             </Link>
             <Link
               href={`/app?date=${nextMonthISO}`}
               className="rounded-lg px-2 py-1 hover:bg-zinc-100"
-              aria-label="Mese successivo"
+              aria-label={t.nextMonth}
             >
               →
             </Link>
@@ -161,7 +207,7 @@ export default async function AgendaPage({ searchParams }: Props) {
         </div>
 
         <div className="grid grid-cols-7 gap-1 text-center text-xs text-zinc-400">
-          {["dom", "lun", "mar", "mer", "gio", "ven", "sab"].map((d) => (
+          {t.weekdays.map((d) => (
             <span key={d} className="py-1">
               {d}
             </span>
@@ -223,14 +269,13 @@ export default async function AgendaPage({ searchParams }: Props) {
         </div>
         <p className="mt-3 flex gap-4 text-xs text-zinc-500">
           <span className="flex items-center gap-1">
-            <span className="size-2 rounded-full bg-emerald-500" /> confermate
+            <span className="size-2 rounded-full bg-emerald-500" /> {t.confirmed}
           </span>
           <span className="flex items-center gap-1">
-            <span className="size-2 rounded-full bg-amber-500" /> in attesa di
-            acconto
+            <span className="size-2 rounded-full bg-amber-500" /> {t.awaiting}
           </span>
           <span className="flex items-center gap-1">
-            <span className="size-2 rounded-full bg-zinc-300" /> giorno libero
+            <span className="size-2 rounded-full bg-zinc-300" /> {t.freeDay}
           </span>
         </p>
       </section>
@@ -241,7 +286,7 @@ export default async function AgendaPage({ searchParams }: Props) {
           <Link
             href={`/app?date=${shiftDateISO(dateISO, -1)}`}
             className="rounded-lg px-2 py-1 hover:bg-zinc-200"
-            aria-label="Giorno precedente"
+            aria-label={t.prevDay}
           >
             ←
           </Link>
@@ -250,13 +295,13 @@ export default async function AgendaPage({ searchParams }: Props) {
               href="/app"
               className="rounded-lg px-2 py-1 font-medium hover:bg-zinc-200"
             >
-              Oggi
+              {t.today}
             </Link>
           )}
           <Link
             href={`/app?date=${shiftDateISO(dateISO, 1)}`}
             className="rounded-lg px-2 py-1 hover:bg-zinc-200"
-            aria-label="Giorno successivo"
+            aria-label={t.nextDay}
           >
             →
           </Link>
@@ -265,13 +310,13 @@ export default async function AgendaPage({ searchParams }: Props) {
 
       {cards.length === 0 ? (
         <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm">
-          Nessuna prenotazione in questo giorno.
+          {t.empty}
         </p>
       ) : (
         <ul className="space-y-3">
           {cards.map((card) => (
             <li key={card.id}>
-              <AppointmentCard data={card} />
+              <AppointmentCard data={card} lang={lang} />
             </li>
           ))}
         </ul>

@@ -16,6 +16,8 @@
 
 import { getStripe } from "@/lib/stripe/client";
 import { GRACE_DAYS, PLAN, TRIAL_DAYS } from "@/lib/billing";
+import { actionMessages } from "@/lib/i18n/messages";
+import { getLang } from "@/lib/i18n/server";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -43,14 +45,16 @@ function randomSuffix(): string {
 }
 
 export async function startStripeCheckout(): Promise<CheckoutResult> {
+  const lang = await getLang();
+  const t = actionMessages(lang);
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessione scaduta. Accedi di nuovo." };
+  if (!ctx) return { error: t.sessionExpired };
 
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user?.email) return { error: "Sessione scaduta. Accedi di nuovo." };
+  if (!user?.email) return { error: t.sessionExpired };
 
   const admin = createSupabaseAdminClient();
   const { data: existingData } = await admin
@@ -61,14 +65,14 @@ export async function startStripeCheckout(): Promise<CheckoutResult> {
   const existing = existingData as Subscription | null;
 
   if (existing?.status === "active") {
-    return { error: "Il tuo abbonamento è già attivo." };
+    return { error: t.alreadyActive };
   }
 
   let stripe;
   try {
     stripe = getStripe();
   } catch {
-    return { error: "Pagamenti non ancora configurati (STRIPE_SECRET_KEY)." };
+    return { error: t.paymentsNotConfigured };
   }
 
   try {
@@ -133,7 +137,7 @@ export async function startStripeCheckout(): Promise<CheckoutResult> {
       tax_id_collection: { enabled: true },
       customer_update: { name: "auto", address: "auto" },
       billing_address_collection: "required",
-      locale: "it",
+      locale: lang === "en" ? "en" : "it",
       success_url: `${SITE_URL}/app/billing?esito=ok`,
       cancel_url: `${SITE_URL}/app/billing`,
       metadata: { business_id: ctx.business.id },
@@ -141,7 +145,7 @@ export async function startStripeCheckout(): Promise<CheckoutResult> {
     });
 
     if (!session.url) {
-      return { error: "Creazione del checkout non riuscita. Riprova." };
+      return { error: t.checkoutFailed };
     }
 
     // 4. Persiste (prova estesa per coprire l'arrivo del 1º pagamento)
@@ -159,7 +163,7 @@ export async function startStripeCheckout(): Promise<CheckoutResult> {
     });
     if (upsertError) {
       console.error("subscriptions upsert error", upsertError);
-      return { error: "Errore nel salvataggio dell'abbonamento. Riprova." };
+      return { error: t.subSaveError };
     }
 
     return { url: session.url };
@@ -169,7 +173,7 @@ export async function startStripeCheckout(): Promise<CheckoutResult> {
       "stripe checkout error",
       err instanceof Error ? err.message : err
     );
-    return { error: "Comunicazione con Stripe non riuscita. Riprova." };
+    return { error: t.stripeComms };
   }
 }
 
@@ -178,8 +182,9 @@ export async function startStripeCheckout(): Promise<CheckoutResult> {
  * Disponibile solo dopo che esiste un Customer (primo checkout avviato).
  */
 export async function openBillingPortal(): Promise<CheckoutResult> {
+  const t = actionMessages(await getLang());
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessione scaduta. Accedi di nuovo." };
+  if (!ctx) return { error: t.sessionExpired };
 
   const admin = createSupabaseAdminClient();
   const { data } = await admin
@@ -189,7 +194,7 @@ export async function openBillingPortal(): Promise<CheckoutResult> {
     .maybeSingle();
   const customerId = data?.stripe_customer_id as string | null;
   if (!customerId) {
-    return { error: "Nessun abbonamento da gestire. Abbonati prima." };
+    return { error: t.noSubscription };
   }
 
   try {
@@ -204,6 +209,6 @@ export async function openBillingPortal(): Promise<CheckoutResult> {
       "stripe portal error",
       err instanceof Error ? err.message : err
     );
-    return { error: "Apertura del portale non riuscita. Riprova." };
+    return { error: t.portalFailed };
   }
 }

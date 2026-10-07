@@ -129,6 +129,7 @@ export interface Appointment {
   deposit_paid_at: string | null;
   hold_expires_at: string | null; // prazo da retenção awaiting_deposit
   notes: string | null;
+  lang: "it" | "en"; // lingua scelta dal cliente alla prenotazione
   created_at: string;
 }
 

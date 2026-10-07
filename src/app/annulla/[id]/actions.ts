@@ -7,6 +7,8 @@
 
 import { z } from "zod";
 import { formatDateTimeInTz } from "@/lib/dates";
+import { actionMessages } from "@/lib/i18n/messages";
+import { getLang } from "@/lib/i18n/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
   emailLayout,
@@ -24,8 +26,9 @@ export async function cancelBookingPublic(
   id: string,
   token: string
 ): Promise<{ error?: string }> {
+  const t = actionMessages(await getLang());
   const parsed = inputSchema.safeParse({ id, token });
-  if (!parsed.success) return { error: "Link non valido." };
+  if (!parsed.success) return { error: t.linkInvalid };
 
   const supabase = createSupabaseAdminClient();
   const cutoff = new Date(
@@ -46,12 +49,10 @@ export async function cancelBookingPublic(
 
   if (error) {
     console.error("cancelBookingPublic error", error);
-    return { error: "Annullamento non riuscito. Riprova." };
+    return { error: t.cancelFailed };
   }
   if (!cancelled) {
-    return {
-      error: `Annullamento non riuscito — il limite è fino a ${MIN_CANCEL_HOURS}h prima dell'orario (oppure la prenotazione è già stata chiusa).`,
-    };
+    return { error: t.cancelDeadline(MIN_CANCEL_HOURS) };
   }
 
   // Avvisa il titolare (best-effort)

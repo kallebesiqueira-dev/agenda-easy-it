@@ -3,9 +3,80 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { Weekday } from "@/types/database";
-import { WEEKDAY_NAMES, WEEKDAYS } from "@/lib/labels";
+import type { Lang } from "@/lib/i18n";
+import { weekdayNames, WEEKDAYS } from "@/lib/labels";
 import { mediaUrl, uploadMedia } from "@/lib/storage";
 import { addShift, deleteShift, saveProfessional } from "./actions";
+
+const COPY: Record<
+  Lang,
+  {
+    heading: string;
+    add: string;
+    namePh: (label: string) => string;
+    save: string;
+    cancel: string;
+    empty: (label: string) => string;
+    changePhoto: string;
+    uploadError: string;
+    rename: string;
+    inactive: string;
+    deactivate: string;
+    reactivate: string;
+    shifts: string;
+    noShifts: string;
+    removeShift: string;
+    day: string;
+    start: string;
+    end: string;
+    addShift: string;
+  }
+> = {
+  it: {
+    heading: "Team",
+    add: "Aggiungi",
+    namePh: (label) => `Nome del ${label.toLowerCase()}`,
+    save: "Salva",
+    cancel: "Annulla",
+    empty: (label) =>
+      `Aggiungi almeno un ${label.toLowerCase()} e definisci i turni di lavoro per aprire l'agenda.`,
+    changePhoto: "Cambia foto",
+    uploadError: "Caricamento della foto non riuscito.",
+    rename: "Rinomina",
+    inactive: "non attivo",
+    deactivate: "Disattiva",
+    reactivate: "Riattiva",
+    shifts: "Turni",
+    noShifts: "Nessun turno — non compare in agenda. Aggiungi i giorni di lavoro.",
+    removeShift: "Rimuovi turno",
+    day: "Giorno",
+    start: "Inizio",
+    end: "Fine",
+    addShift: "Aggiungi turno",
+  },
+  en: {
+    heading: "Team",
+    add: "Add",
+    namePh: (label) => `${label}'s name`,
+    save: "Save",
+    cancel: "Cancel",
+    empty: (label) =>
+      `Add at least one ${label.toLowerCase()} and set their working shifts to open the agenda.`,
+    changePhoto: "Change photo",
+    uploadError: "Couldn't upload the photo.",
+    rename: "Rename",
+    inactive: "inactive",
+    deactivate: "Deactivate",
+    reactivate: "Reactivate",
+    shifts: "Shifts",
+    noShifts: "No shifts — not shown in the agenda. Add working days.",
+    removeShift: "Remove shift",
+    day: "Day",
+    start: "Start",
+    end: "End",
+    addShift: "Add shift",
+  },
+};
 
 interface ProfessionalRow {
   id: string;
@@ -27,15 +98,18 @@ const hhmm = (t: string) => t.slice(0, 5);
 
 export function ProfessionalsManager({
   businessId,
+  lang,
   label,
   professionals,
   shifts,
 }: {
   businessId: string;
+  lang: Lang;
   label: string;
   professionals: ProfessionalRow[];
   shifts: ShiftRow[];
 }) {
+  const t = COPY[lang];
   const router = useRouter();
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState("");
@@ -63,13 +137,13 @@ export function ProfessionalsManager({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold">Team</h2>
+        <h2 className="font-semibold">{t.heading}</h2>
         <button
           type="button"
           onClick={() => setAdding(true)}
           className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white"
         >
-          Aggiungi
+          {t.add}
         </button>
       </div>
 
@@ -84,21 +158,21 @@ export function ProfessionalsManager({
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-            placeholder={`Nome del ${label.toLowerCase()}`}
+            placeholder={t.namePh(label)}
           />
           <button
             type="submit"
             disabled={pending}
             className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
           >
-            Salva
+            {t.save}
           </button>
           <button
             type="button"
             onClick={() => setAdding(false)}
             className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
           >
-            Annulla
+            {t.cancel}
           </button>
         </form>
       )}
@@ -111,8 +185,7 @@ export function ProfessionalsManager({
 
       {professionals.length === 0 && !adding ? (
         <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm">
-          Aggiungi almeno un {label.toLowerCase()} e definisci i turni di
-          lavoro per aprire l&apos;agenda.
+          {t.empty(label)}
         </p>
       ) : (
         <ul className="space-y-3">
@@ -120,6 +193,8 @@ export function ProfessionalsManager({
             <li key={p.id}>
               <ProfessionalCard
                 businessId={businessId}
+                lang={lang}
+                t={t}
                 professional={p}
                 shifts={shifts.filter((s) => s.professional_id === p.id)}
               />
@@ -133,13 +208,18 @@ export function ProfessionalsManager({
 
 function ProfessionalCard({
   businessId,
+  lang,
+  t,
   professional,
   shifts,
 }: {
   businessId: string;
+  lang: Lang;
+  t: (typeof COPY)[Lang];
   professional: ProfessionalRow;
   shifts: ShiftRow[];
 }) {
+  const WEEKDAY_NAMES = weekdayNames(lang);
   const router = useRouter();
   const [expanded, setExpanded] = useState(false);
   const [renaming, setRenaming] = useState(false);
@@ -165,7 +245,7 @@ function ProfessionalCard({
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-3">
-          <label className="group relative cursor-pointer" title="Cambia foto">
+          <label className="group relative cursor-pointer" title={t.changePhoto}>
             {professional.image_path ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -198,7 +278,7 @@ function ProfessionalCard({
                       image_path: path,
                     });
                   } catch {
-                    return { error: "Caricamento della foto non riuscito." };
+                    return { error: t.uploadError };
                   }
                 });
               }}
@@ -245,14 +325,14 @@ function ProfessionalCard({
                   setNameDraft(professional.display_name);
                   setRenaming(true);
                 }}
-                aria-label="Rinomina"
+                aria-label={t.rename}
                 className="ml-1.5 text-zinc-400 hover:text-zinc-700"
               >
                 ✎
               </button>
               {!professional.active && (
                 <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
-                  non attivo
+                  {t.inactive}
                 </span>
               )}
             </p>
@@ -273,14 +353,14 @@ function ProfessionalCard({
             }
             className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm disabled:opacity-60"
           >
-            {professional.active ? "Disattiva" : "Riattiva"}
+            {professional.active ? t.deactivate : t.reactivate}
           </button>
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
             className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm"
           >
-            Turni ({shifts.length})
+            {t.shifts} ({shifts.length})
           </button>
         </div>
       </div>
@@ -289,7 +369,7 @@ function ProfessionalCard({
         <div className="mt-3 border-t border-zinc-100 pt-3">
           {shifts.length === 0 && (
             <p className="mb-2 text-sm text-zinc-500">
-              Nessun turno — non compare in agenda. Aggiungi i giorni di lavoro.
+              {t.noShifts}
             </p>
           )}
           <ul className="mb-3 space-y-1">
@@ -307,7 +387,7 @@ function ProfessionalCard({
                   disabled={pending}
                   onClick={() => run(() => deleteShift(s.id))}
                   className="rounded px-2 py-0.5 text-zinc-400 hover:text-red-600"
-                  aria-label="Rimuovi turno"
+                  aria-label={t.removeShift}
                 >
                   ✕
                 </button>
@@ -330,7 +410,7 @@ function ProfessionalCard({
             }}
           >
             <label className="block">
-              <span className="mb-1 block text-xs text-zinc-500">Giorno</span>
+              <span className="mb-1 block text-xs text-zinc-500">{t.day}</span>
               <select
                 value={weekday}
                 onChange={(e) => setWeekday(Number(e.target.value) as Weekday)}
@@ -344,7 +424,7 @@ function ProfessionalCard({
               </select>
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs text-zinc-500">Inizio</span>
+              <span className="mb-1 block text-xs text-zinc-500">{t.start}</span>
               <input
                 type="time"
                 required
@@ -354,7 +434,7 @@ function ProfessionalCard({
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs text-zinc-500">Fine</span>
+              <span className="mb-1 block text-xs text-zinc-500">{t.end}</span>
               <input
                 type="time"
                 required
@@ -368,7 +448,7 @@ function ProfessionalCard({
               disabled={pending}
               className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-60"
             >
-              Aggiungi turno
+              {t.addShift}
             </button>
           </form>
 

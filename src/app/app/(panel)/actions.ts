@@ -9,6 +9,8 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import type { AppointmentStatus } from "@/types/database";
+import { actionMessages } from "@/lib/i18n/messages";
+import { getLang } from "@/lib/i18n/server";
 import { paymentMethodSchema, uuidSchema } from "@/lib/validation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -20,10 +22,11 @@ export async function confirmDeposit(
   appointmentId: string,
   method: string
 ): Promise<ActionResult> {
+  const t = actionMessages(await getLang());
   const parsed = z
     .object({ id: uuidSchema, method: paymentMethodSchema })
     .safeParse({ id: appointmentId, method });
-  if (!parsed.success) return { error: "Dati non validi." };
+  if (!parsed.success) return { error: t.invalidData };
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("confirm_deposit", {
@@ -33,13 +36,13 @@ export async function confirmDeposit(
 
   if (error) {
     if (error.message.includes("invalid_status")) {
-      return { error: "Questa prenotazione non è più in attesa di acconto." };
+      return { error: t.apptNotAwaiting };
     }
     if (error.message.includes("appointment_not_found")) {
-      return { error: "Prenotazione non trovata." };
+      return { error: t.apptNotFound };
     }
     console.error("confirm_deposit error", error);
-    return { error: "Conferma non riuscita. Riprova." };
+    return { error: t.confirmFailed };
   }
 
   revalidatePath("/app");
@@ -57,13 +60,14 @@ export async function setAppointmentStatus(
   appointmentId: string,
   target: string
 ): Promise<ActionResult> {
+  const t = actionMessages(await getLang());
   const parsed = z
     .object({
       id: uuidSchema,
       target: z.enum(["cancelled", "completed", "no_show"]),
     })
     .safeParse({ id: appointmentId, target });
-  if (!parsed.success) return { error: "Dati non validi." };
+  if (!parsed.success) return { error: t.invalidData };
 
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
@@ -75,10 +79,10 @@ export async function setAppointmentStatus(
 
   if (error) {
     console.error("setAppointmentStatus error", error);
-    return { error: "Aggiornamento non riuscito. Riprova." };
+    return { error: t.updateFailed };
   }
   if (!data || data.length === 0) {
-    return { error: "Lo stato di questa prenotazione è cambiato. Ricarica la pagina." };
+    return { error: t.statusChanged };
   }
 
   revalidatePath("/app");

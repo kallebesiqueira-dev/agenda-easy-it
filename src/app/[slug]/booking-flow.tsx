@@ -452,6 +452,7 @@ export function BookingFlow({
           {step === "professional" && service && (
             <StepShell
               title={t.chooseWho(profile.professional_label)}
+              backLabel={t.backAria}
               onBack={() => setStep("service")}
             >
               <ul className="space-y-2">
@@ -486,6 +487,7 @@ export function BookingFlow({
           {step === "datetime" && service && (
             <StepShell
               title={t.chooseDateTime}
+              backLabel={t.backAria}
               onBack={() =>
                 setStep(profile.professionals.length > 1 ? "professional" : "service")
               }
@@ -547,7 +549,11 @@ export function BookingFlow({
           )}
 
           {step === "details" && service && selectedSlot && (
-            <StepShell title={t.yourDetails} onBack={() => setStep("datetime")}>
+            <StepShell
+              title={t.yourDetails}
+              backLabel={t.backAria}
+              onBack={() => setStep("datetime")}
+            >
               <Summary
                 serviceName={service.name}
                 when={formatDateTimeInTz(
@@ -727,10 +733,12 @@ export function BookingFlow({
 function StepShell({
   title,
   onBack,
+  backLabel = "Indietro",
   children,
 }: {
   title: string;
   onBack?: () => void;
+  backLabel?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -740,7 +748,7 @@ function StepShell({
           <button
             type="button"
             onClick={onBack}
-            aria-label="Indietro"
+            aria-label={backLabel}
             className="rounded-lg px-2 py-1 text-zinc-500 hover:bg-zinc-100"
           >
             ←

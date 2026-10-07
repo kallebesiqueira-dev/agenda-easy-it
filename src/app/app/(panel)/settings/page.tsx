@@ -1,13 +1,16 @@
+import { getLang } from "@/lib/i18n/server";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { SettingsForm } from "./settings-form";
 
 export default async function SettingsPage() {
   const ctx = (await getCurrentBusiness())!;
+  const lang = await getLang();
   const b = ctx.business;
 
   return (
     <SettingsForm
       businessId={b.id}
+      lang={lang}
       initial={{
         name: b.name,
         logo_path: b.logo_path,

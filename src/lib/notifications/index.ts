@@ -60,8 +60,14 @@ const esc = (s: string) =>
  */
 export type EmailLine = string | { raw: string };
 
-/** Layout mínimo e seguro para os e-mails transacionais. */
-export function emailLayout(title: string, lines: EmailLine[]): string {
+/** Layout minimo e sicuro per le e-mail transazionali (footer bilingue). */
+export function emailLayout(
+  title: string,
+  lines: EmailLine[],
+  lang: "it" | "en" = "it"
+): string {
+  const footer =
+    lang === "en" ? "Agenda Easy — online bookings" : "Agenda Easy — prenotazioni online";
   return `<div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#18181b">
     <h2 style="margin:24px 0 12px">${esc(title)}</h2>
     ${lines
@@ -70,7 +76,7 @@ export function emailLayout(title: string, lines: EmailLine[]): string {
           `<p style="margin:6px 0;line-height:1.5">${typeof l === "string" ? esc(l) : l.raw}</p>`
       )
       .join("")}
-    <p style="margin-top:24px;font-size:12px;color:#a1a1aa">Agenda Easy — prenotazioni online</p>
+    <p style="margin-top:24px;font-size:12px;color:#a1a1aa">${footer}</p>
   </div>`;
 }
 

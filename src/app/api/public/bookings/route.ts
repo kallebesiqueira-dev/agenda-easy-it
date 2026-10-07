@@ -10,6 +10,7 @@
 import type { BookingHoldResult } from "@/types/database";
 import { publicBookingSchema } from "@/lib/validation";
 import { formatDateTimeInTz, zonedTimeToUtc } from "@/lib/dates";
+import { getLang } from "@/lib/i18n/server";
 import { formatEUR } from "@/lib/money";
 import { AvailabilityError, getDayAvailability } from "@/lib/availability/query";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -107,6 +108,9 @@ export async function POST(request: Request) {
   }
 
   const booking = data as BookingHoldResult;
+  // Lingua scelta dal cliente nel browser (cookie) — salvata sulla prenotazione
+  // per conferma e promemoria nella stessa lingua.
+  const lang = await getLang();
 
   // Complementi post-prenotazione (non possono far fallire la risposta):
   // cancel_token per il link di annullamento e conferma via e-mail AL CLIENTE
@@ -119,28 +123,59 @@ export async function POST(request: Request) {
       .single();
     booking.cancel_token = appt?.cancel_token ?? "";
 
-    if (input.customer_email) {
-      // SEC-001: l'e-mail resta sulla PRENOTAZIONE (vale solo per questa) —
-      // non sovrascrive mai la scheda del cliente identificato dal telefono.
-      await supabase
-        .from("appointments")
-        .update({ customer_email: input.customer_email })
-        .eq("id", booking.appointment_id);
+    await supabase
+      .from("appointments")
+      .update({
+        lang,
+        ...(input.customer_email
+          ? // SEC-001: l'e-mail resta sulla PRENOTAZIONE (vale solo per questa) —
+            // non sovrascrive mai la scheda del cliente identificato dal telefono.
+            { customer_email: input.customer_email }
+          : {}),
+      })
+      .eq("id", booking.appointment_id);
 
+    if (input.customer_email) {
       const { data: service } = await supabase
         .from("services")
         .select("name")
         .eq("id", input.service_id)
         .single();
-      const when = formatDateTimeInTz(booking.starts_at, business.timezone);
+      const when = formatDateTimeInTz(booking.starts_at, business.timezone, lang);
+      const deadline = formatDateTimeInTz(
+        booking.hold_expires_at,
+        business.timezone,
+        lang
+      );
+      const amount = formatEUR(booking.deposit_due_minor);
+      const cancelUrl = `${SITE_URL}/annulla/${encodeURIComponent(booking.appointment_id)}?t=${encodeURIComponent(booking.cancel_token)}`;
+
+      const subject =
+        lang === "en"
+          ? `Booking received: ${service?.name ?? "service"} — ${business.name}`
+          : `Prenotazione ricevuta: ${service?.name ?? "servizio"} — ${business.name}`;
+      const lines =
+        lang === "en"
+          ? [
+              { raw: `<strong>${escapeHtml(service?.name ?? "")}</strong> at <strong>${escapeHtml(business.name)}</strong>: <strong>${when}</strong>.` },
+              { raw: `To confirm, pay the <strong>${amount}</strong> deposit by ${deadline}${booking.pix_key ? ` (payment details: <code>${escapeHtml(booking.pix_key)}</code>)` : ""}.` },
+              { raw: `Change of plans? <a href="${cancelUrl}">Cancel here</a> (up to 2h before).` },
+            ]
+          : [
+              { raw: `<strong>${escapeHtml(service?.name ?? "")}</strong> presso <strong>${escapeHtml(business.name)}</strong>: <strong>${when}</strong>.` },
+              { raw: `Per confermare, paga l'acconto di <strong>${amount}</strong> entro ${deadline}${booking.pix_key ? ` (coordinate di pagamento: <code>${escapeHtml(booking.pix_key)}</code>)` : ""}.` },
+              { raw: `Imprevisto? <a href="${cancelUrl}">Annulla da qui</a> (fino a 2h prima).` },
+            ];
       await sendEmail({
         to: input.customer_email,
-        subject: `Prenotazione ricevuta: ${service?.name ?? "servizio"} — ${business.name}`,
-        html: emailLayout(`Prenotazione ricevuta, ${input.customer_name}!`, [
-          { raw: `<strong>${escapeHtml(service?.name ?? "")}</strong> presso <strong>${escapeHtml(business.name)}</strong>: <strong>${when}</strong>.` },
-          { raw: `Per confermare, paga l'acconto di <strong>${formatEUR(booking.deposit_due_minor)}</strong> entro ${formatDateTimeInTz(booking.hold_expires_at, business.timezone)}${booking.pix_key ? ` (coordinate di pagamento: <code>${escapeHtml(booking.pix_key)}</code>)` : ""}.` },
-          { raw: `Imprevisto? <a href="${SITE_URL}/annulla/${encodeURIComponent(booking.appointment_id)}?t=${encodeURIComponent(booking.cancel_token)}">Annulla da qui</a> (fino a 2h prima).` },
-        ]),
+        subject,
+        html: emailLayout(
+          lang === "en"
+            ? `Booking received, ${input.customer_name}!`
+            : `Prenotazione ricevuta, ${input.customer_name}!`,
+          lines,
+          lang
+        ),
       });
     }
   } catch (err) {

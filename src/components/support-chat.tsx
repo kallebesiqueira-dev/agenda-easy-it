@@ -7,10 +7,8 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-
-const WHATSAPP_URL =
-  "https://wa.me/5575999689825?text=" +
-  encodeURIComponent("Ciao! Ho bisogno di aiuto con Agenda Easy.");
+import type { Lang } from "@/lib/i18n";
+import { useLang } from "@/lib/i18n/use-lang";
 
 interface Msg {
   from: "bot" | "user";
@@ -18,18 +16,11 @@ interface Msg {
   whatsapp?: boolean;
 }
 
-const GREETING: Msg = {
-  from: "bot",
-  text: "Ciao! 👋 Sono Gio, del supporto di Agenda Easy. Posso aiutarti con prezzo, prova gratuita, prenotazioni, pagamenti... di cosa hai bisogno?",
-};
-
-const QUICK = ["Quanto costa?", "Come funziona la prova gratuita?", "Come ricevo l'acconto?", "Parlare con una persona"];
-
 /** Rimuove gli accenti e porta in minuscolo per il matching. */
 const norm = (s: string) =>
   s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 
-const FAQ: { match: RegExp; reply: string; whatsapp?: boolean }[] = [
+const FAQ_IT: { match: RegExp; reply: string; whatsapp?: boolean }[] = [
   {
     match: /(prezzo|quanto costa|costo|mensile|piano|caro|tariffa)/,
     reply:
@@ -98,23 +89,162 @@ const FAQ: { match: RegExp; reply: string; whatsapp?: boolean }[] = [
   },
 ];
 
-function answer(text: string): Msg {
+const FAQ_EN: { match: RegExp; reply: string; whatsapp?: boolean }[] = [
+  {
+    match: /(price|how much|cost|monthly|plan|expensive|fee)/,
+    reply:
+      "There's a single plan: €9.90/month with everything included — booking page, agenda, team and reports, no limits. And you start with 7 days free, no card required. 😉",
+  },
+  {
+    match: /(trial|free|try)/,
+    reply:
+      "When you create your account you get 7 days free with full access — no card required. You only subscribe if you like it. Create it in 2 minutes at agendaeasy.it/signup",
+  },
+  {
+    match: /(create account|sign ?up|register|get started|how does it work|start)/,
+    reply:
+      "It's quick: 1) create your account, 2) add services, team and hours, 3) publish from Settings and share your link. Your clients book on their own and pay the deposit by instant bank transfer. 🚀",
+  },
+  {
+    match: /(deposit|transfer|receive|payment|charge|down ?payment)/,
+    reply:
+      "The client pays a 50% deposit straight to YOUR payment details (set in Settings) to confirm the appointment. The rest is paid on site, in cash or by card. Nothing goes through us — the money goes directly to you. 💰",
+  },
+  {
+    match: /(link|page|share|publish|instagram|not public|404)/,
+    reply:
+      'Your link looks like agendaeasy.it/your-business. Important: it only goes live after you tick "Page published" in Settings and save. Then just paste it in your Instagram bio! 📲',
+  },
+  {
+    match: /(cancel subscription|unsubscribe|stop paying)/,
+    reply:
+      "You can cancel anytime, no penalties. Message me on WhatsApp and we'll sort it out right away, ok?",
+    whatsapp: true,
+  },
+  {
+    match: /(cancel|reschedule|move)/,
+    reply:
+      "Clients can cancel on their own via the link they receive in the confirmation (up to 2h before the appointment). You can also cancel any booking from the dashboard, in Agenda. The slot becomes free again automatically.",
+  },
+  {
+    match: /(hours|shift|availab|no slots|no times)/,
+    reply:
+      "The times clients see are the intersection of your opening hours (Hours tab) and each professional's shifts (Team → Shifts). If no times show up, check that the professional has shifts set. 😉",
+  },
+  {
+    match: /(photo|image|logo|profile)/,
+    reply:
+      "You can customise everything: logo in Settings, each service's photo in Services → Edit, and the professional's photo by clicking their avatar in Team.",
+  },
+  {
+    match: /(google|sign in with)/,
+    reply:
+      'Yes! You can sign in with your Google account — just click "Continue with Google" on the sign-in screen. No password to remember. ✌️',
+  },
+  {
+    match: /(password|forgot|can'?t (sign|log) ?in)/,
+    reply:
+      'No stress: on the sign-in screen, click "I forgot my password" and we\'ll e-mail you a link to create a new one.',
+  },
+  {
+    match: /(reminder|email|e-mail|notification)/,
+    reply:
+      "When the client leaves their e-mail at booking, they get an instant confirmation and a reminder the day before — all automatic. Fewer gaps in your agenda! ⏰",
+  },
+  {
+    match: /(human|person|agent|whats|talk to|support|help)/,
+    reply: "Of course! Message me on WhatsApp and I'll help you personally: 👇",
+    whatsapp: true,
+  },
+];
+
+const UI: Record<
+  Lang,
+  {
+    waText: string;
+    greeting: string;
+    quick: string[];
+    fallback: string;
+    headerName: string;
+    online: string;
+    closeChat: string;
+    waCta: string;
+    typing: string;
+    inputPh: string;
+    send: string;
+    openSupport: string;
+    closeSupport: string;
+    bubble: string;
+    faq: { match: RegExp; reply: string; whatsapp?: boolean }[];
+  }
+> = {
+  it: {
+    waText: "Ciao! Ho bisogno di aiuto con Agenda Easy.",
+    greeting:
+      "Ciao! 👋 Sono Gio, del supporto di Agenda Easy. Posso aiutarti con prezzo, prova gratuita, prenotazioni, pagamenti... di cosa hai bisogno?",
+    quick: [
+      "Quanto costa?",
+      "Come funziona la prova gratuita?",
+      "Come ricevo l'acconto?",
+      "Parlare con una persona",
+    ],
+    fallback:
+      "Bella domanda! Meglio chiarirla con il nostro team per non darti informazioni sbagliate. Scrivimi su WhatsApp: 👇",
+    headerName: "Gio · Supporto",
+    online: "online adesso",
+    closeChat: "Chiudi chat",
+    waCta: "Scrivici su WhatsApp",
+    typing: "sta scrivendo…",
+    inputPh: "Scrivi la tua domanda…",
+    send: "Invia",
+    openSupport: "Apri supporto",
+    closeSupport: "Chiudi supporto",
+    bubble: "Supporto",
+    faq: FAQ_IT,
+  },
+  en: {
+    waText: "Hi! I need help with Agenda Easy.",
+    greeting:
+      "Hi! 👋 I'm Gio from Agenda Easy support. I can help with pricing, the free trial, bookings, payments... what do you need?",
+    quick: [
+      "How much does it cost?",
+      "How does the free trial work?",
+      "How do I receive the deposit?",
+      "Talk to a person",
+    ],
+    fallback:
+      "Good question! Best to sort that one out with our team so I don't give you wrong info. Message me on WhatsApp: 👇",
+    headerName: "Gio · Support",
+    online: "online now",
+    closeChat: "Close chat",
+    waCta: "Message us on WhatsApp",
+    typing: "typing…",
+    inputPh: "Type your question…",
+    send: "Send",
+    openSupport: "Open support",
+    closeSupport: "Close support",
+    bubble: "Support",
+    faq: FAQ_EN,
+  },
+};
+
+function answer(text: string, t: (typeof UI)[Lang]): Msg {
   const n = norm(text);
-  for (const f of FAQ) {
+  for (const f of t.faq) {
     if (f.match.test(n)) {
       return { from: "bot", text: f.reply, whatsapp: f.whatsapp };
     }
   }
-  return {
-    from: "bot",
-    text: "Bella domanda! Meglio chiarirla con il nostro team per non darti informazioni sbagliate. Scrivimi su WhatsApp: 👇",
-    whatsapp: true,
-  };
+  return { from: "bot", text: t.fallback, whatsapp: true };
 }
 
 export function SupportChat() {
+  const lang = useLang();
+  const t = UI[lang];
+  const whatsappUrl =
+    "https://wa.me/5575999689825?text=" + encodeURIComponent(t.waText);
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Msg[]>([GREETING]);
+  const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -130,10 +260,13 @@ export function SupportChat() {
     setInput("");
     setTyping(true);
     setTimeout(() => {
-      setMessages((m) => [...m, answer(clean)]);
+      setMessages((m) => [...m, answer(clean, t)]);
       setTyping(false);
     }, 900);
   }
+
+  // Saluto sempre come primo messaggio (segue la lingua corrente)
+  const thread: Msg[] = [{ from: "bot", text: t.greeting }, ...messages];
 
   return (
     <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
@@ -147,16 +280,16 @@ export function SupportChat() {
               className="size-10 rounded-full bg-white/10 object-cover"
             />
             <div className="min-w-0 flex-1">
-              <p className="font-semibold leading-tight">Gio · Supporto</p>
+              <p className="font-semibold leading-tight">{t.headerName}</p>
               <p className="flex items-center gap-1.5 text-xs text-white/70">
                 <span className="size-1.5 rounded-full bg-emerald-400" />
-                online adesso
+                {t.online}
               </p>
             </div>
             <button
               type="button"
               onClick={() => setOpen(false)}
-              aria-label="Chiudi chat"
+              aria-label={t.closeChat}
               className="rounded-lg p-1.5 text-white/70 hover:bg-white/10 hover:text-white"
             >
               ✕
@@ -164,7 +297,7 @@ export function SupportChat() {
           </div>
 
           <div className="flex-1 space-y-3 overflow-y-auto bg-zinc-50 p-4 text-sm">
-            {messages.map((m, i) => (
+            {thread.map((m, i) => (
               <div key={i}>
                 <div
                   className={
@@ -177,19 +310,19 @@ export function SupportChat() {
                 </div>
                 {m.whatsapp && (
                   <a
-                    href={WHATSAPP_URL}
+                    href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-2 inline-block rounded-xl bg-[#25D366] px-4 py-2 font-semibold text-white"
                   >
-                    Scrivici su WhatsApp
+                    {t.waCta}
                   </a>
                 )}
               </div>
             ))}
             {typing && (
               <div className="w-20 rounded-2xl rounded-tl-sm bg-white px-3.5 py-2.5 text-zinc-400 shadow-sm">
-                <span className="animate-pulse">sta scrivendo…</span>
+                <span className="animate-pulse">{t.typing}</span>
               </div>
             )}
             <div ref={bottomRef} />
@@ -197,7 +330,7 @@ export function SupportChat() {
 
           {/* Domande rapide fisse — sempre visibili, non scompaiono */}
           <div className="flex flex-wrap gap-1.5 border-t border-zinc-100 bg-white px-3 pt-2.5">
-            {QUICK.map((q) => (
+            {t.quick.map((q) => (
               <button
                 key={q}
                 type="button"
@@ -219,12 +352,12 @@ export function SupportChat() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Scrivi la tua domanda…"
+              placeholder={t.inputPh}
               className="flex-1 rounded-xl border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-[#17493b]"
             />
             <button
               type="submit"
-              aria-label="Invia"
+              aria-label={t.send}
               className="rounded-xl bg-[#17493b] px-3.5 py-2 font-semibold text-white"
             >
               ➤
@@ -236,18 +369,18 @@ export function SupportChat() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-label={open ? "Chiudi supporto" : "Apri supporto"}
+        aria-label={open ? t.closeSupport : t.openSupport}
         className="group relative flex flex-col items-center transition-transform hover:scale-105"
       >
         {/* fumetto "Supporto" sopra la testa */}
         <span className="relative mb-1 rounded-xl bg-white px-3 py-1 text-xs font-semibold text-[#17493b] shadow-md">
-          Supporto
+          {t.bubble}
           <span className="absolute -bottom-1 left-1/2 size-2 -translate-x-1/2 rotate-45 bg-white" />
         </span>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/suporte-avatar.png"
-          alt="Supporto"
+          alt={t.bubble}
           className="w-20 object-contain"
         />
       </button>
