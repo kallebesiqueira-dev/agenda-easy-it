@@ -321,8 +321,14 @@ export function SupportChat() {
               </div>
             ))}
             {typing && (
-              <div className="w-20 rounded-2xl rounded-tl-sm bg-white px-3.5 py-2.5 text-zinc-400 shadow-sm">
-                <span className="animate-pulse">{t.typing}</span>
+              <div
+                role="status"
+                aria-label={t.typing}
+                className="flex items-center gap-1 px-2 py-1.5"
+              >
+                <span className="chat-typing-dot size-2 rounded-full bg-zinc-400" />
+                <span className="chat-typing-dot size-2 rounded-full bg-zinc-400" />
+                <span className="chat-typing-dot size-2 rounded-full bg-zinc-400" />
               </div>
             )}
             <div ref={bottomRef} />
