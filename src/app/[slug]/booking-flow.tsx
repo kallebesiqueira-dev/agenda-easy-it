@@ -368,9 +368,6 @@ export function BookingFlow({
             }}
           />
         )}
-        <div className="absolute right-4 top-4 z-10">
-          <LanguageSwitcher current={lang} variant="dark" />
-        </div>
         <div className="relative mx-auto flex w-full max-w-md items-center gap-4 sm:max-w-lg lg:max-w-xl">
           {profile.logo_path ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -384,7 +381,7 @@ export function BookingFlow({
               {profile.name.charAt(0).toUpperCase()}
             </div>
           )}
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="text-xs/none uppercase tracking-[0.14em] opacity-80">
               {t.onlineBooking}
             </p>
@@ -394,6 +391,9 @@ export function BookingFlow({
             {profile.address && (
               <p className="mt-1 truncate text-sm opacity-80">{profile.address}</p>
             )}
+          </div>
+          <div className="self-start">
+            <LanguageSwitcher current={lang} variant="dark" />
           </div>
         </div>
       </header>
