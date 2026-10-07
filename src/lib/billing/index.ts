@@ -2,7 +2,7 @@
  * Piano e politica di accesso del SaaS.
  *
  * Decisioni di prodotto concentrate qui (cambia i valori, non la logica):
- *   PLAN        — Piano Unico, 49,90 €/mese, accesso completo.
+ *   PLAN        — Piano Unico, 9,90 €/mese, accesso completo.
  *   TRIAL_DAYS  — prova gratuita alla creazione dell'attività (7 giorni).
  *   GRACE_DAYS  — tolleranza dopo un addebito scaduto prima del blocco (3 giorni).
  */
@@ -13,7 +13,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const PLAN = {
   name: "Piano Unico",
-  priceMinor: 4990, // centesimi di euro (Stripe usa lo stesso formato)
+  priceMinor: 990, // 9,90 € in centesimi (Stripe usa lo stesso formato)
   description: "Agenda Easy — Piano Unico (accesso completo)",
 } as const;
 

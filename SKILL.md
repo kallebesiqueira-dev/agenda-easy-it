@@ -18,7 +18,7 @@ Observação: o `next dev` gera automaticamente um arquivo `AGENTS.md` na raiz c
 ## Comandos úteis
 
 ```bash
-npm run dev                      # dev server na porta 8888
+npm run dev                      # dev server na porta 7778
 npm run build                    # build + typecheck
 npx supabase start               # Supabase local (Docker)
 npx supabase db push             # aplica migrations no projeto linkado

@@ -33,7 +33,7 @@ const FAQ: { match: RegExp; reply: string; whatsapp?: boolean }[] = [
   {
     match: /(prezzo|quanto costa|costo|mensile|piano|caro|tariffa)/,
     reply:
-      "Il piano è unico: 49,90 €/mese tutto incluso — pagina di prenotazione, agenda, team e report, senza limiti. E inizi con 7 giorni gratis, senza carta. 😉",
+      "Il piano è unico: 9,90 €/mese tutto incluso — pagina di prenotazione, agenda, team e report, senza limiti. E inizi con 7 giorni gratis, senza carta. 😉",
   },
   {
     match: /(prova|gratis|trial|provare|gratuita)/,

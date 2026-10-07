@@ -52,7 +52,7 @@ EUR, mensal, com os dias restantes do trial convertidos em `trial_period_days`).
    Customers, Checkout Sessions, Subscriptions e Billing Portal →
    `STRIPE_SECRET_KEY`.
 3. (Recomendado) Crie no Dashboard o produto **Piano Unico** com um Price
-   recorrente de **49,90 EUR/mês** e aponte `STRIPE_PRICE_ID` para ele.
+   recorrente de **9,90 EUR/mês** e aponte `STRIPE_PRICE_ID` para ele.
    Sem essa variável, o preço é criado inline a partir de `PLAN.priceMinor`.
 4. Webhook: Dashboard > Developers > Webhooks > endpoint
    `https://agendaeasy.it/api/webhooks/stripe`, eventos:
@@ -63,7 +63,7 @@ EUR, mensal, com os dias restantes do trial convertidos em `trial_period_days`).
 5. Ative o **Customer Portal** (Settings > Billing > Customer portal) — o
    botão "Gestisci abbonamento e fatture" do painel usa esse portal
    (trocar cartão, baixar fatturas, disdire).
-6. Teste local: `stripe listen --forward-to localhost:8888/api/webhooks/stripe`.
+6. Teste local: `stripe listen --forward-to localhost:7778/api/webhooks/stripe`.
 7. IVA: se quiser que a Stripe calcule a IVA italiana automaticamente, ative
    o **Stripe Tax** e registre a empresa (Registrations) ANTES de ligar
    `automatic_tax` — sem registro ativo a Stripe não cobra imposto algum.

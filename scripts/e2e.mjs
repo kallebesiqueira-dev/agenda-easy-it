@@ -1,5 +1,5 @@
 /**
- * E2E completo contra o dev server (http://localhost:8888) + Supabase cloud + Asaas sandbox.
+ * E2E completo contra o dev server (http://localhost:7778) + Supabase cloud + Asaas sandbox.
  * Fluxo: signup(admin) → login → onboarding → serviço → profissional+turnos →
  * horários → reserva pública → agenda do painel → assinatura Asaas → webhook → ativa.
  *
@@ -8,7 +8,7 @@
 import { chromium } from "playwright";
 import { readFileSync, mkdirSync } from "node:fs";
 
-const BASE = process.env.E2E_BASE ?? "http://localhost:8888";
+const BASE = process.env.E2E_BASE ?? "http://localhost:7778";
 const ART = "e2e-artifacts";
 mkdirSync(ART, { recursive: true });
 

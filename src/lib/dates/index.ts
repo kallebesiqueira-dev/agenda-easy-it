@@ -76,19 +76,24 @@ export function formatTimeInTz(utc: Date | string, timeZone: string): string {
   }).format(d);
 }
 
-/** Formatta un istante UTC come data+ora locali, es. "ven 03/10 alle 14:30". */
+/**
+ * Formatta un istante UTC come data+ora locali, es. "ven 03/10 alle 14:30"
+ * (en: "Fri 03/10 at 14:30"). Default italiano — e-mail e pannello.
+ */
 export function formatDateTimeInTz(
   utc: Date | string,
-  timeZone: string
+  timeZone: string,
+  lang: "it" | "en" = "it"
 ): string {
   const d = typeof utc === "string" ? new Date(utc) : utc;
-  const date = new Intl.DateTimeFormat("it-IT", {
+  const date = new Intl.DateTimeFormat(lang === "en" ? "en-GB" : "it-IT", {
     timeZone,
     weekday: "short",
     day: "2-digit",
     month: "2-digit",
   }).format(d);
-  return `${date} alle ${formatTimeInTz(d, timeZone)}`;
+  const connector = lang === "en" ? "at" : "alle";
+  return `${date} ${connector} ${formatTimeInTz(d, timeZone)}`;
 }
 
 /** Data local de hoje ("YYYY-MM-DD") no fuso do negócio. */

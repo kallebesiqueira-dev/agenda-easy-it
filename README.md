@@ -105,10 +105,10 @@ Pré-requisitos: Node 20+, Docker (Supabase local).
 npm install
 npx supabase start            # Postgres + Auth locais (migrations + seed)
 cp .env.example .env.local    # preencha com as chaves exibidas pelo supabase start
-npm run dev                   # http://localhost:8888
+npm run dev                   # http://localhost:7778
 ```
 
-Página demo do seed: `http://localhost:8888/barbearia-demo`.
+Página demo do seed: `http://localhost:7778/barbearia-demo`.
 
 ### Variáveis de ambiente
 

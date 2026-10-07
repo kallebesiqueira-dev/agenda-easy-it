@@ -2,7 +2,7 @@
 import { chromium } from "playwright";
 import { readFileSync, mkdirSync } from "node:fs";
 
-const BASE = "http://localhost:8888";
+const BASE = "http://localhost:7778";
 mkdirSync("e2e-artifacts/mobile", { recursive: true });
 
 const env = Object.fromEntries(

@@ -26,7 +26,7 @@ export default function TermsPage() {
           <h2 className="mb-1 font-semibold text-zinc-900">2. Abbonamento e prova gratuita</h2>
           <p>
             L&apos;uso del pannello richiede un abbonamento (Piano Unico,
-            49,90 €/mese), con 7 giorni di prova gratuita dalla creazione
+            9,90 €/mese), con 7 giorni di prova gratuita dalla creazione
             dell&apos;attività. Al termine della prova, l&apos;accesso viene
             bloccato fino alla conferma del pagamento. La disdetta può essere
             effettuata in qualsiasi momento e interrompe gli addebiti

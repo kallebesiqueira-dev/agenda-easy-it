@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { formatDateTimeInTz } from "@/lib/dates";
+import { getLang } from "@/lib/i18n/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { CancelPanel } from "./cancel-panel";
 
@@ -14,6 +15,7 @@ interface Props {
 export default async function CancelBookingPage({ params, searchParams }: Props) {
   const { id } = await params;
   const { t: token } = await searchParams;
+  const lang = await getLang();
   if (!token || !/^[0-9a-f-]{36}$/.test(id) || !/^[0-9a-f-]{36}$/.test(token)) {
     notFound();
   }
@@ -39,12 +41,14 @@ export default async function CancelBookingPage({ params, searchParams }: Props)
 
   if (!appt || appt.cancel_token !== token || !appt.business) notFound();
 
-  const when = formatDateTimeInTz(appt.starts_at, appt.business.timezone);
+  const when = formatDateTimeInTz(appt.starts_at, appt.business.timezone, lang);
 
   return (
     <main className="flex min-h-dvh items-center justify-center bg-zinc-100 px-4 text-zinc-900">
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm">
-        <h1 className="text-xl font-bold">Annulla prenotazione</h1>
+        <h1 className="text-xl font-bold">
+          {lang === "en" ? "Cancel booking" : "Annulla prenotazione"}
+        </h1>
         <div className="mt-3 rounded-xl bg-zinc-50 p-3 text-sm">
           <p className="font-medium">{appt.service?.name}</p>
           <p className="text-zinc-600">{appt.business.name}</p>
@@ -55,6 +59,7 @@ export default async function CancelBookingPage({ params, searchParams }: Props)
           token={token}
           alreadyCancelled={appt.status === "cancelled"}
           finished={appt.status === "completed" || appt.status === "no_show"}
+          lang={lang}
         />
       </div>
     </main>

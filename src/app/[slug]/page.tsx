@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getLang } from "@/lib/i18n/server";
 import { getPublicBusinessProfile } from "@/lib/public-profile";
 import { BookingFlow } from "./booking-flow";
 
@@ -19,8 +20,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PublicBookingPage({ params }: Props) {
   const { slug } = await params;
-  const profile = await getPublicBusinessProfile(slug);
+  const [profile, lang] = await Promise.all([
+    getPublicBusinessProfile(slug),
+    getLang(),
+  ]);
   if (!profile) notFound();
 
-  return <BookingFlow profile={profile} />;
+  return <BookingFlow profile={profile} lang={lang} />;
 }
