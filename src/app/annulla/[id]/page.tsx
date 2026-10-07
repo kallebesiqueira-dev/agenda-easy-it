@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { formatDateTimeInTz } from "@/lib/dates";
 import { getLang } from "@/lib/i18n/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -46,9 +47,12 @@ export default async function CancelBookingPage({ params, searchParams }: Props)
   return (
     <main className="flex min-h-dvh items-center justify-center bg-zinc-100 px-4 text-zinc-900">
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm">
-        <h1 className="text-xl font-bold">
-          {lang === "en" ? "Cancel booking" : "Annulla prenotazione"}
-        </h1>
+        <div className="flex items-start justify-between gap-2">
+          <h1 className="text-xl font-bold">
+            {lang === "en" ? "Cancel booking" : "Annulla prenotazione"}
+          </h1>
+          <LanguageSwitcher current={lang} />
+        </div>
         <div className="mt-3 rounded-xl bg-zinc-50 p-3 text-sm">
           <p className="font-medium">{appt.service?.name}</p>
           <p className="text-zinc-600">{appt.business.name}</p>

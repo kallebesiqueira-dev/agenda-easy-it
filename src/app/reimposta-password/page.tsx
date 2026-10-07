@@ -8,6 +8,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import type { Lang } from "@/lib/i18n";
 import { useLang } from "@/lib/i18n/use-lang";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
@@ -83,7 +84,10 @@ export default function ResetPasswordPage() {
         <span className="text-orange-600">.</span>
       </Link>
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm">
-        <h1 className="text-xl font-bold">{t.title}</h1>
+        <div className="flex items-start justify-between gap-2">
+          <h1 className="text-xl font-bold">{t.title}</h1>
+          <LanguageSwitcher current={lang} />
+        </div>
         <p className="mb-4 mt-1 text-sm text-zinc-500">{t.sub}</p>
         <form onSubmit={onSubmit} className="space-y-3">
           <label className="block">

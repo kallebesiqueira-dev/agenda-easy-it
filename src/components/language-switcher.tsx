@@ -5,6 +5,10 @@
  * Cliccando si apre il menu con le lingue; la scelta scrive il cookie `lang`
  * (1 anno) e fa router.refresh() così i Server Components ri-renderizzano.
  *
+ * Le bandiere sono SVG inline (NON emoji): su Windows e su alcuni Android le
+ * emoji di bandiera non vengono renderizzate — l'SVG appare identico su
+ * Android, iOS, Windows e macOS.
+ *
  * Responsive: su mobile solo bandiera + freccia (target touch ≥40px);
  * da tablet/desktop in su compare anche il codice (IT/EN).
  */
@@ -15,9 +19,36 @@ import type { Lang } from "@/lib/i18n";
 
 const YEAR_SECONDS = 60 * 60 * 24 * 365;
 
-const OPTIONS: { value: Lang; flag: string; code: string; label: string }[] = [
-  { value: "it", flag: "🇮🇹", code: "IT", label: "Italiano" },
-  { value: "en", flag: "🇬🇧", code: "EN", label: "English" },
+function FlagIT({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 30 20" aria-hidden className={className}>
+      <rect width="30" height="20" fill="#ffffff" />
+      <rect width="10" height="20" fill="#009246" />
+      <rect x="20" width="10" height="20" fill="#CE2B37" />
+    </svg>
+  );
+}
+
+function FlagGB({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 30 20" aria-hidden className={className}>
+      <rect width="30" height="20" fill="#012169" />
+      <path d="M0 0l30 20M30 0L0 20" stroke="#ffffff" strokeWidth="4" />
+      <path d="M0 0l30 20M30 0L0 20" stroke="#C8102E" strokeWidth="1.6" />
+      <path d="M15 0v20M0 10h30" stroke="#ffffff" strokeWidth="7" />
+      <path d="M15 0v20M0 10h30" stroke="#C8102E" strokeWidth="4" />
+    </svg>
+  );
+}
+
+const OPTIONS: {
+  value: Lang;
+  code: string;
+  label: string;
+  Flag: (props: { className?: string }) => React.ReactElement;
+}[] = [
+  { value: "it", code: "IT", label: "Italiano", Flag: FlagIT },
+  { value: "en", code: "EN", label: "English", Flag: FlagGB },
 ];
 
 function writeLangCookie(lang: Lang) {
@@ -65,6 +96,7 @@ export function LanguageSwitcher({
   }
 
   const active = OPTIONS.find((o) => o.value === current) ?? OPTIONS[0];
+  const ActiveFlag = active.Flag;
 
   const trigger =
     variant === "dark"
@@ -81,9 +113,7 @@ export function LanguageSwitcher({
         aria-label="Lingua / Language"
         className={`flex min-h-10 items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-sm font-semibold backdrop-blur-sm transition-colors sm:min-h-0 sm:px-3 ${trigger}`}
       >
-        <span aria-hidden className="text-base leading-none">
-          {active.flag}
-        </span>
+        <ActiveFlag className="h-3.5 w-5 shrink-0 rounded-[3px] ring-1 ring-black/10" />
         <span className="hidden sm:inline">{active.code}</span>
         <svg
           width="12"
@@ -107,7 +137,7 @@ export function LanguageSwitcher({
         <ul
           role="listbox"
           aria-label="Lingua / Language"
-          className="absolute right-0 z-50 mt-2 w-40 overflow-hidden rounded-xl border border-zinc-200 bg-white py-1 text-zinc-900 shadow-xl"
+          className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-xl border border-zinc-200 bg-white py-1 text-zinc-900 shadow-xl"
         >
           {OPTIONS.map((o) => (
             <li key={o.value}>
@@ -120,9 +150,7 @@ export function LanguageSwitcher({
                   o.value === current ? "font-semibold" : ""
                 }`}
               >
-                <span aria-hidden className="text-base leading-none">
-                  {o.flag}
-                </span>
+                <o.Flag className="h-3.5 w-5 shrink-0 rounded-[3px] ring-1 ring-black/10" />
                 <span className="flex-1">{o.label}</span>
                 {o.value === current && (
                   <span aria-hidden className="text-emerald-600">

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { getLang } from "@/lib/i18n/server";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { OnboardingForm } from "./onboarding-form";
@@ -25,7 +26,10 @@ export default async function OnboardingPage() {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-zinc-100 px-4 text-zinc-900">
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm">
-        <h1 className="text-xl font-bold">{t.title}</h1>
+        <div className="flex items-start justify-between gap-2">
+          <h1 className="text-xl font-bold">{t.title}</h1>
+          <LanguageSwitcher current={lang} />
+        </div>
         <p className="mb-4 mt-1 text-sm text-zinc-500">{t.sub}</p>
         <OnboardingForm lang={lang} />
       </div>

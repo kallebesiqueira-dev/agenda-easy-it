@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { getSubscriptionAccess, PLAN, TRIAL_DAYS } from "@/lib/billing";
 import { getLang } from "@/lib/i18n/server";
 import { formatEUR } from "@/lib/money";
@@ -48,7 +49,10 @@ export default async function BillingPage() {
     <main className="flex min-h-dvh items-center justify-center bg-zinc-100 px-4 text-zinc-900">
       <div className="w-full max-w-sm">
         <div className="rounded-2xl bg-white p-6 shadow-sm">
-          <h1 className="text-xl font-bold">{t.title}</h1>
+          <div className="flex items-start justify-between gap-2">
+            <h1 className="text-xl font-bold">{t.title}</h1>
+            <LanguageSwitcher current={lang} />
+          </div>
           <p className="mt-1 text-sm text-zinc-500">{ctx.business.name}</p>
 
           <div className="mt-4 rounded-xl border border-zinc-200 p-4">
