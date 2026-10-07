@@ -20,6 +20,10 @@ const OPTIONS: { value: Lang; flag: string; code: string; label: string }[] = [
   { value: "en", flag: "🇬🇧", code: "EN", label: "English" },
 ];
 
+function writeLangCookie(lang: Lang) {
+  document.cookie = `lang=${lang}; path=/; max-age=${YEAR_SECONDS}; samesite=lax`;
+}
+
 export function LanguageSwitcher({
   current,
   variant = "light",
@@ -56,7 +60,7 @@ export function LanguageSwitcher({
   function setLang(lang: Lang) {
     setOpen(false);
     if (lang === current) return;
-    document.cookie = `lang=${lang}; path=/; max-age=${YEAR_SECONDS}; samesite=lax`;
+    writeLangCookie(lang);
     router.refresh();
   }
 
