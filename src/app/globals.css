@@ -25,6 +25,13 @@ body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Campo password: nasconde l'occhio nativo di Edge/IE — resta solo il
+   nostro bottone emoji (👁️/🙈) per mostrare/nascondere la password. */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
 /* ---- Landing (/) ---- */
 
 @keyframes landing-rise {
