@@ -33,7 +33,7 @@ export function SettingsForm({
     setForm((f) => ({ ...f, [key]: value }));
   }
 
-  /** Inputs de texto opcionais: string vazia vira null no submit. */
+  /** Input di testo opzionali: stringa vuota diventa null al submit. */
   const orNull = (v: string) => (v.trim() === "" ? null : v.trim());
 
   function onSubmit(e: React.FormEvent) {
@@ -47,7 +47,7 @@ export function SettingsForm({
         if (coverFile)
           coverPath = await uploadMedia(businessId, "cover", coverFile);
       } catch {
-        setError("Não foi possível enviar a imagem. Tente novamente.");
+        setError("Caricamento dell'immagine non riuscito. Riprova.");
         return;
       }
       const result = await saveSettings({
@@ -74,11 +74,11 @@ export function SettingsForm({
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <section className="space-y-3 rounded-2xl bg-white p-4 shadow-sm">
-        <h2 className="font-semibold">Negócio</h2>
+        <h2 className="font-semibold">Attività</h2>
 
         <div>
           <span className="mb-1 block text-sm font-medium">
-            Foto de perfil / logo
+            Foto profilo / logo
           </span>
           <div className="flex flex-wrap items-center gap-3">
             {logoFile || form.logo_path ? (
@@ -113,7 +113,7 @@ export function SettingsForm({
                   }}
                   className="text-xs text-zinc-500 underline"
                 >
-                  Remover foto
+                  Rimuovi foto
                 </button>
               )}
             </div>
@@ -122,7 +122,7 @@ export function SettingsForm({
 
         <div>
           <span className="mb-1 block text-sm font-medium">
-            Capa da página (estilo Facebook)
+            Copertina della pagina (stile Facebook)
           </span>
           {coverFile || form.cover_path ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -132,13 +132,13 @@ export function SettingsForm({
                   ? URL.createObjectURL(coverFile)
                   : mediaUrl(form.cover_path)!
               }
-              alt="Capa"
+              alt="Copertina"
               className="h-28 w-full rounded-xl object-cover"
               style={{ objectPosition: `50% ${form.cover_position}%` }}
             />
           ) : (
             <div className="flex h-28 w-full items-center justify-center rounded-xl bg-zinc-100 text-sm text-zinc-400">
-              Sem capa — a página usa a cor da marca
+              Senza copertina — la pagina usa il colore del brand
             </div>
           )}
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
@@ -157,17 +157,17 @@ export function SettingsForm({
                 }}
                 className="whitespace-nowrap text-xs text-zinc-500 underline"
               >
-                Remover capa
+                Rimuovi copertina
               </button>
             )}
           </div>
           <span className="mt-1 block text-xs text-zinc-400">
-            Use uma foto do seu espaço ou do seu trabalho (ideal: 1600×500px).
+            Usa una foto del tuo spazio o del tuo lavoro (ideale: 1600×500px).
           </span>
           {(coverFile || form.cover_path) && (
             <label className="mt-2 block">
               <span className="mb-1 flex justify-between text-xs text-zinc-500">
-                <span>Ajustar enquadramento (↑ topo · ↓ base)</span>
+                <span>Regola l&apos;inquadratura (↑ alto · ↓ basso)</span>
                 <span>{form.cover_position}%</span>
               </span>
               <input
@@ -197,7 +197,7 @@ export function SettingsForm({
 
         <div className="flex gap-3">
           <label className="block flex-1">
-            <span className="mb-1 block text-sm font-medium">Tipo</span>
+            <span className="mb-1 block text-sm font-medium">Tipo di attività</span>
             <select
               value={form.business_type}
               onChange={(e) =>
@@ -213,7 +213,7 @@ export function SettingsForm({
             </select>
           </label>
           <label className="block flex-1">
-            <span className="mb-1 block text-sm font-medium">Cor da marca</span>
+            <span className="mb-1 block text-sm font-medium">Colore del brand</span>
             <input
               type="color"
               value={form.brand_primary}
@@ -225,74 +225,75 @@ export function SettingsForm({
 
         <label className="block">
           <span className="mb-1 block text-sm font-medium">
-            Como chamar a equipe (opcional)
+            Come chiamare il team (opzionale)
           </span>
           <input
             maxLength={30}
             value={form.custom_professional_label ?? ""}
             onChange={(e) => set("custom_professional_label", e.target.value)}
             className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-            placeholder='Ex.: "Barbeiro", "Manicure"'
+            placeholder='Es.: "Barbiere", "Onicotecnica"'
           />
         </label>
 
         <label className="block">
           <span className="mb-1 block text-sm font-medium">
-            Endereço (opcional)
+            Indirizzo (opzionale)
           </span>
           <input
             maxLength={200}
             value={form.address ?? ""}
             onChange={(e) => set("address", e.target.value)}
             className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-            placeholder="Rua, número, bairro"
+            placeholder="Via, numero civico, quartiere"
           />
         </label>
 
         <div className="flex gap-3">
           <label className="block flex-1">
             <span className="mb-1 block text-sm font-medium">
-              Telefone (opcional)
+              Telefono (opzionale)
             </span>
             <input
               type="tel"
               value={form.phone ?? ""}
               onChange={(e) => set("phone", e.target.value)}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-              placeholder="(11) 3333-4444"
+              placeholder="06 1234 5678"
             />
           </label>
           <label className="block flex-1">
             <span className="mb-1 block text-sm font-medium">
-              WhatsApp (opcional)
+              WhatsApp (opzionale)
             </span>
             <input
               type="tel"
               value={form.whatsapp ?? ""}
               onChange={(e) => set("whatsapp", e.target.value)}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-              placeholder="(11) 99999-9999"
+              placeholder="333 123 4567"
             />
           </label>
         </div>
       </section>
 
       <section className="space-y-3 rounded-2xl bg-white p-4 shadow-sm">
-        <h2 className="font-semibold">Pagamento do sinal</h2>
+        <h2 className="font-semibold">Pagamento dell&apos;acconto</h2>
         <label className="block">
           <span className="mb-1 block text-sm font-medium">
-            Chave Pix (opcional)
+            Coordinate di pagamento (opzionale)
           </span>
           <input
             maxLength={140}
             value={form.pix_key ?? ""}
             onChange={(e) => set("pix_key", e.target.value)}
             className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-            placeholder="CPF, e-mail, telefone ou chave aleatória"
+            placeholder="IBAN, PayPal o altro riferimento per il bonifico"
           />
           <span className="mt-1 block text-xs text-zinc-400">
-            Exibida ao cliente na confirmação da reserva para pagar o sinal de
-            50%. Sem chave, o sinal é combinado presencialmente.
+            Mostrate al cliente alla conferma della prenotazione per pagare
+            l&apos;acconto del 50%. Senza coordinate, l&apos;acconto viene
+            concordato di persona.
           </span>
         </label>
       </section>
@@ -306,10 +307,10 @@ export function SettingsForm({
             className="mt-1"
           />
           <span>
-            <span className="block font-medium">Página publicada</span>
+            <span className="block font-medium">Pagina pubblicata</span>
             <span className="block text-sm text-zinc-500">
-              Quando ativa, sua página fica no ar em <code>/{slug}</code> e
-              aceita reservas. Cadastre serviços, equipe e horários antes.
+              Quando attiva, la tua pagina è online su <code>/{slug}</code> e
+              accetta prenotazioni. Inserisci prima servizi, team e orari.
             </span>
           </span>
         </label>
@@ -327,9 +328,9 @@ export function SettingsForm({
           disabled={pending}
           className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
         >
-          {pending ? "Salvando…" : "Salvar configurações"}
+          {pending ? "Salvataggio…" : "Salva impostazioni"}
         </button>
-        {saved && <span className="text-sm text-emerald-600">Salvo ✓</span>}
+        {saved && <span className="text-sm text-emerald-600">Salvato ✓</span>}
       </div>
     </form>
   );

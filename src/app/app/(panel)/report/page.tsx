@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { todayInTz, zonedTimeToUtc } from "@/lib/dates";
-import { formatBRL } from "@/lib/money";
+import { formatEUR } from "@/lib/money";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -45,7 +45,7 @@ export default async function ReportsPage({ searchParams }: Props) {
 
   const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
   const nowRef = new Date();
-  // Retenção vencida não conta como "aguardando sinal" — o horário já voltou a ficar livre.
+  // La prenotazione trattenuta scaduta non conta come "in attesa di acconto" — l'orario è tornato libero.
   const byStatus = (s: string) =>
     rows.filter(
       (r) =>
@@ -78,47 +78,47 @@ export default async function ReportsPage({ searchParams }: Props) {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
 
-  const monthLabel = new Intl.DateTimeFormat("pt-BR", {
+  const monthLabel = new Intl.DateTimeFormat("it-IT", {
     month: "long",
     year: "numeric",
     timeZone: "UTC",
   }).format(new Date(Date.UTC(yy, mm - 1, 1, 12)));
 
   const stats = [
-    { label: "Receita prevista (confirmados + concluídos)", value: formatBRL(receita) },
-    { label: "Sinais recebidos", value: formatBRL(sinais) },
-    { label: "Concluídos", value: String(byStatus("completed").length) },
-    { label: "Confirmados", value: String(byStatus("confirmed").length) },
-    { label: "Aguardando sinal", value: String(byStatus("awaiting_deposit").length) },
-    { label: "Cancelados", value: String(byStatus("cancelled").length) },
-    { label: "Não compareceram", value: String(byStatus("no_show").length) },
-    { label: "Total de reservas", value: String(rows.length) },
+    { label: "Ricavi previsti (confermate + completate)", value: formatEUR(receita) },
+    { label: "Acconti ricevuti", value: formatEUR(sinais) },
+    { label: "Completate", value: String(byStatus("completed").length) },
+    { label: "Confermate", value: String(byStatus("confirmed").length) },
+    { label: "In attesa di acconto", value: String(byStatus("awaiting_deposit").length) },
+    { label: "Annullate", value: String(byStatus("cancelled").length) },
+    { label: "Non presentati", value: String(byStatus("no_show").length) },
+    { label: "Totale prenotazioni", value: String(rows.length) },
   ];
 
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold capitalize">Relatório · {monthLabel}</h2>
+        <h2 className="font-semibold capitalize">Report · {monthLabel}</h2>
         <div className="flex items-center gap-1 text-sm">
           <Link
-            href={`/app/relatorios?m=${prevM}`}
+            href={`/app/report?m=${prevM}`}
             className="rounded-lg px-2 py-1 hover:bg-zinc-200"
-            aria-label="Mês anterior"
+            aria-label="Mese precedente"
           >
             ←
           </Link>
           {month !== currentMonth && (
             <Link
-              href="/app/relatorios"
+              href="/app/report"
               className="rounded-lg px-2 py-1 font-medium hover:bg-zinc-200"
             >
-              Mês atual
+              Mese corrente
             </Link>
           )}
           <Link
-            href={`/app/relatorios?m=${nextM}`}
+            href={`/app/report?m=${nextM}`}
             className="rounded-lg px-2 py-1 hover:bg-zinc-200"
-            aria-label="Próximo mês"
+            aria-label="Mese successivo"
           >
             →
           </Link>
@@ -135,9 +135,9 @@ export default async function ReportsPage({ searchParams }: Props) {
       </div>
 
       <section className="mt-5 rounded-2xl bg-white p-4 shadow-sm">
-        <h3 className="mb-3 font-semibold">Serviços mais agendados</h3>
+        <h3 className="mb-3 font-semibold">Servizi più prenotati</h3>
         {topServices.length === 0 ? (
-          <p className="text-sm text-zinc-500">Sem reservas neste mês.</p>
+          <p className="text-sm text-zinc-500">Nessuna prenotazione in questo mese.</p>
         ) : (
           <ul className="space-y-2 text-sm">
             {topServices.map(([name, count]) => (

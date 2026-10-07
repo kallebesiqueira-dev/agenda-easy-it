@@ -7,7 +7,7 @@ import { BUSINESS_TYPE_OPTIONS } from "@/lib/labels";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { createBusinessSchema } from "@/lib/validation";
 
-/** "Barbearia do Zé" → "barbearia-do-ze" */
+/** "Barberia da Pino" → "barberia-da-pino" */
 function slugify(name: string): string {
   return name
     .normalize("NFD")
@@ -35,10 +35,10 @@ export function OnboardingForm() {
       name: name.trim(),
       slug,
       business_type: type,
-      timezone: "America/Sao_Paulo",
+      timezone: "Europe/Rome",
     });
     if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? "Dados inválidos.");
+      setError(parsed.error.issues[0]?.message ?? "Dati non validi.");
       return;
     }
 
@@ -55,8 +55,8 @@ export function OnboardingForm() {
     if (error) {
       setError(
         error.message.includes("businesses_slug_key")
-          ? "Esse endereço já está em uso. Escolha outro."
-          : "Não foi possível criar. Tente novamente."
+          ? "Questo indirizzo è già in uso. Scegline un altro."
+          : "Creazione non riuscita. Riprova."
       );
       return;
     }
@@ -67,7 +67,7 @@ export function OnboardingForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-3">
       <label className="block">
-        <span className="mb-1 block text-sm font-medium">Nome do negócio</span>
+        <span className="mb-1 block text-sm font-medium">Nome dell&apos;attività</span>
         <input
           required
           maxLength={80}
@@ -77,16 +77,16 @@ export function OnboardingForm() {
             if (!slugTouched) setSlug(slugify(e.target.value));
           }}
           className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-          placeholder="Barbearia do Zé"
+          placeholder="Barberia da Pino"
         />
       </label>
 
       <label className="block">
         <span className="mb-1 block text-sm font-medium">
-          Endereço da sua página
+          Indirizzo della tua pagina
         </span>
         <div className="flex items-center gap-1 rounded-lg border border-zinc-300 px-3 py-2 focus-within:border-zinc-900">
-          <span className="text-sm text-zinc-400">agenda-easy.vercel.app/</span>
+          <span className="text-sm text-zinc-400">agendaeasy.it/</span>
           <input
             required
             value={slug}
@@ -95,13 +95,13 @@ export function OnboardingForm() {
               setSlug(slugify(e.target.value));
             }}
             className="w-full outline-none"
-            placeholder="barbearia-do-ze"
+            placeholder="barberia-da-pino"
           />
         </div>
       </label>
 
       <label className="block">
-        <span className="mb-1 block text-sm font-medium">Tipo de negócio</span>
+        <span className="mb-1 block text-sm font-medium">Tipo di attività</span>
         <select
           value={type}
           onChange={(e) => setType(e.target.value as BusinessType)}
@@ -124,7 +124,7 @@ export function OnboardingForm() {
         disabled={loading}
         className="w-full rounded-xl bg-zinc-900 py-3 font-semibold text-white disabled:opacity-60"
       >
-        {loading ? "Criando…" : "Criar e ir para o painel"}
+        {loading ? "Creazione…" : "Crea e vai al pannello"}
       </button>
     </form>
   );

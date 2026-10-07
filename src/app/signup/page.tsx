@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AuthForm } from "@/components/auth-form";
 
-export const metadata: Metadata = { title: "Criar conta — Agenda Easy" };
+export const metadata: Metadata = { title: "Crea account — Agenda Easy" };
 
 export default function SignupPage() {
   return (
@@ -12,26 +12,26 @@ export default function SignupPage() {
         <span className="text-orange-600">.</span>
       </Link>
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm">
-        <h1 className="text-xl font-bold">Criar conta</h1>
+        <h1 className="text-xl font-bold">Crea account</h1>
         <p className="mb-4 mt-1 text-sm text-zinc-500">
-          Comece a receber agendamentos online em minutos.
+          Inizia a ricevere prenotazioni online in pochi minuti.
         </p>
         <AuthForm mode="signup" />
         <p className="mt-3 text-center text-xs text-zinc-400">
-          Ao criar a conta, você concorda com os{" "}
-          <Link href="/termos" className="underline">
-            Termos
+          Creando l&apos;account accetti i{" "}
+          <Link href="/termini" className="underline">
+            Termini
           </Link>{" "}
-          e a{" "}
-          <Link href="/privacidade" className="underline">
-            Privacidade
+          e la{" "}
+          <Link href="/privacy" className="underline">
+            Privacy
           </Link>
           .
         </p>
         <p className="mt-4 text-center text-sm text-zinc-500">
-          Já tem conta?{" "}
+          Hai già un account?{" "}
           <Link href="/login" className="font-medium text-zinc-900 underline">
-            Entrar
+            Accedi
           </Link>
         </p>
       </div>

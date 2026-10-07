@@ -1,11 +1,11 @@
 "use client";
 
 /**
- * Fluxo público de reserva em etapas. Mobile-first — o link será aberto
- * majoritariamente pelo WhatsApp/Instagram do negócio.
+ * Flusso pubblico di prenotazione a passi. Mobile-first — il link verrà aperto
+ * perlopiù dal WhatsApp/Instagram dell'attività.
  *
- * O servidor é a autoridade: esta UI só coleta escolhas; disponibilidade e
- * valores são sempre recalculados em /api/public/*.
+ * Il server è l'autorità: questa UI raccoglie solo le scelte; disponibilità e
+ * importi vengono sempre ricalcolati in /api/public/*.
  */
 
 import { useMemo, useState } from "react";
@@ -16,17 +16,17 @@ import type {
   PublicService,
 } from "@/types/database";
 import { formatDateTimeInTz, formatTimeInTz, todayInTz } from "@/lib/dates";
-import { formatBRL } from "@/lib/money";
+import { formatEUR } from "@/lib/money";
 import { mediaUrl } from "@/lib/storage";
 
-/** Janela máxima de agendamento futuro. Decisão de produto: 30 dias. */
+/** Finestra massima di prenotazione futura. Decisione di prodotto: 30 giorni. */
 const MAX_ADVANCE_DAYS = 30;
 
 type Step = "service" | "professional" | "datetime" | "details" | "done";
 
 interface DayOption {
-  dateISO: string; // AAAA-MM-DD no fuso do negócio
-  weekdayLabel: string; // "seg."
+  dateISO: string; // AAAA-MM-GG nel fuso dell'attività
+  weekdayLabel: string; // "lun"
   dayLabel: string; // "14/10"
 }
 
@@ -39,11 +39,11 @@ function buildDayOptions(timezone: string): DayOption[] {
     const dateISO = date.toISOString().slice(0, 10);
     days.push({
       dateISO,
-      weekdayLabel: new Intl.DateTimeFormat("pt-BR", {
+      weekdayLabel: new Intl.DateTimeFormat("it-IT", {
         weekday: "short",
         timeZone: "UTC",
       }).format(date),
-      dayLabel: new Intl.DateTimeFormat("pt-BR", {
+      dayLabel: new Intl.DateTimeFormat("it-IT", {
         day: "2-digit",
         month: "2-digit",
         timeZone: "UTC",
@@ -54,16 +54,16 @@ function buildDayOptions(timezone: string): DayOption[] {
 }
 
 const ERROR_MESSAGES: Record<string, string> = {
-  slot_unavailable: "Esse horário acabou de ser ocupado. Escolha outro.",
-  slot_taken: "Esse horário acabou de ser ocupado. Escolha outro.",
-  slot_in_past: "Esse horário já passou. Escolha outro.",
-  invalid_input: "Confira seu nome e telefone e tente novamente.",
+  slot_unavailable: "Questo orario è appena stato occupato. Scegline un altro.",
+  slot_taken: "Questo orario è appena stato occupato. Scegline un altro.",
+  slot_in_past: "Questo orario è già passato. Scegline un altro.",
+  invalid_input: "Controlla nome e telefono e riprova.",
 };
 
 export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
   const [step, setStep] = useState<Step>("service");
   const [service, setService] = useState<PublicService | null>(null);
-  /** undefined = ainda não escolhido; null = "qualquer disponível" */
+  /** undefined = non ancora scelto; null = "qualsiasi disponibile" */
   const [professionalId, setProfessionalId] = useState<string | null | undefined>();
   const [dateISO, setDateISO] = useState<string | null>(null);
   const [slots, setSlots] = useState<AvailableSlot[] | null>(null);
@@ -72,15 +72,15 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  // Decisão de produto: o sinal de 50% é sempre via Pix; o restante o
-  // cliente paga no local (dinheiro ou cartão).
+  // Decisione di prodotto: l'acconto del 50% è sempre tramite bonifico
+  // istantaneo; il resto il cliente lo paga sul posto (contanti o carta).
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<BookingHoldResult | null>(null);
 
   const dayOptions = useMemo(() => buildDayOptions(profile.timezone), [profile.timezone]);
 
-  /** Chamado em handlers (clique no dia / retry), nunca em efeitos. */
+  /** Chiamato nei handler (clic sul giorno / retry), mai negli effetti. */
   async function loadSlots(date: string, forProfessionalId = professionalId) {
     if (!service) return;
     setSlotsLoading(true);
@@ -103,15 +103,15 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
     }
   }
 
-  /** Reset ao trocar serviço/profissional: slots antigos ficam inválidos. */
+  /** Reset al cambio di servizio/professionista: gli slot vecchi diventano invalidi. */
   function resetDateSelection() {
     setDateISO(null);
     setSlots(null);
     setSelectedSlot(null);
   }
 
-  // Slots deduplicados por horário (vários profissionais livres no mesmo
-  // horário viram uma opção só quando "qualquer disponível").
+  // Slot deduplicati per orario (più professionisti liberi nello stesso
+  // orario diventano un'unica opzione con "qualsiasi disponibile").
   const timeOptions = useMemo(() => {
     if (!slots) return [];
     const seen = new Map<string, AvailableSlot>();
@@ -144,7 +144,7 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
       const json = await res.json();
       if (!res.ok) {
         const message =
-          ERROR_MESSAGES[json.error] ?? "Não foi possível concluir. Tente novamente.";
+          ERROR_MESSAGES[json.error] ?? "Operazione non riuscita. Riprova.";
         setError(message);
         if (json.error === "slot_unavailable" || json.error === "slot_taken") {
           setStep("datetime");
@@ -155,7 +155,7 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
       setResult(json.booking);
       setStep("done");
     } catch {
-      setError("Falha de conexão. Verifique sua internet e tente novamente.");
+      setError("Errore di connessione. Controlla la tua rete e riprova.");
     } finally {
       setSubmitting(false);
     }
@@ -168,7 +168,7 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
       <header className="relative overflow-hidden bg-[var(--brand)] px-4 pb-20 pt-10 text-white sm:pt-14">
         {profile.cover_path ? (
           <>
-            {/* capa do negócio + véu escuro para o texto continuar legível */}
+            {/* copertina dell'attività + velo scuro per mantenere il testo leggibile */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={mediaUrl(profile.cover_path)!}
@@ -183,7 +183,7 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
             />
           </>
         ) : (
-          // brilho decorativo sobre a cor da marca
+          // bagliore decorativo sopra il colore del brand
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0"
@@ -208,7 +208,7 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
           )}
           <div className="min-w-0">
             <p className="text-xs/none uppercase tracking-[0.14em] opacity-80">
-              Agendamento online
+              Prenotazioni online
             </p>
             <h1 className="mt-1.5 truncate text-2xl font-bold sm:text-3xl">
               {profile.name}
@@ -223,7 +223,7 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
       <main className="mx-auto w-full max-w-md px-4 pb-16 sm:max-w-lg lg:max-w-xl">
         <div className="relative -mt-12 rounded-3xl bg-white p-5 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.35)] ring-1 ring-black/5 sm:p-7">
           {step === "service" && (
-            <StepShell title="Escolha o serviço">
+            <StepShell title="Scegli il servizio">
               <ul className="space-y-2.5">
                 {profile.services.map((s) => (
                   <li key={s.id}>
@@ -257,7 +257,7 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
                         </span>
                       </span>
                       <span className="shrink-0 rounded-full bg-zinc-100 px-3 py-1.5 text-sm font-semibold transition-colors group-hover:bg-[var(--brand)] group-hover:text-white">
-                        {formatBRL(s.price_minor)}
+                        {formatEUR(s.price_minor)}
                       </span>
                     </button>
                   </li>
@@ -265,7 +265,7 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
               </ul>
               {profile.services.length === 0 && (
                 <p className="py-6 text-center text-sm text-zinc-500">
-                  Nenhum serviço disponível no momento.
+                  Nessun servizio disponibile al momento.
                 </p>
               )}
             </StepShell>
@@ -273,14 +273,14 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
 
           {step === "professional" && service && (
             <StepShell
-              title={`Escolha o ${profile.professional_label.toLowerCase()}`}
+              title={`Scegli il ${profile.professional_label.toLowerCase()}`}
               onBack={() => setStep("service")}
             >
               <ul className="space-y-2">
                 <li>
                   <ChoiceButton
-                    label="Qualquer disponível"
-                    sublabel="Mais horários livres"
+                    label="Qualsiasi disponibile"
+                    sublabel="Più orari liberi"
                     onClick={() => {
                       setProfessionalId(null);
                       resetDateSelection();
@@ -307,7 +307,7 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
 
           {step === "datetime" && service && (
             <StepShell
-              title="Escolha data e horário"
+              title="Scegli data e orario"
               onBack={() =>
                 setStep(profile.professionals.length > 1 ? "professional" : "service")
               }
@@ -335,17 +335,17 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
 
               {!dateISO && (
                 <p className="py-6 text-center text-sm text-zinc-500">
-                  Selecione um dia para ver os horários.
+                  Seleziona un giorno per vedere gli orari.
                 </p>
               )}
               {dateISO && slotsLoading && (
                 <p className="py-6 text-center text-sm text-zinc-500">
-                  Buscando horários…
+                  Ricerca degli orari…
                 </p>
               )}
               {dateISO && !slotsLoading && slots && timeOptions.length === 0 && (
                 <p className="py-6 text-center text-sm text-zinc-500">
-                  Sem horários livres nesse dia. Tente outra data.
+                  Nessun orario libero in questo giorno. Prova un&apos;altra data.
                 </p>
               )}
               {dateISO && !slotsLoading && timeOptions.length > 0 && (
@@ -369,7 +369,7 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
           )}
 
           {step === "details" && service && selectedSlot && (
-            <StepShell title="Seus dados" onBack={() => setStep("datetime")}>
+            <StepShell title="I tuoi dati" onBack={() => setStep("datetime")}>
               <Summary
                 serviceName={service.name}
                 when={formatDateTimeInTz(selectedSlot.starts_at, profile.timezone)}
@@ -391,12 +391,12 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-[var(--brand)]"
-                    placeholder="Seu nome"
+                    placeholder="Il tuo nome"
                   />
                 </label>
                 <label className="block">
                   <span className="mb-1 block text-sm font-medium">
-                    WhatsApp / celular
+                    WhatsApp / cellulare
                   </span>
                   <input
                     required
@@ -405,13 +405,13 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-[var(--brand)]"
-                    placeholder="(11) 99999-9999"
+                    placeholder="333 123 4567"
                   />
                 </label>
 
                 <label className="block">
                   <span className="mb-1 block text-sm font-medium">
-                    E-mail <span className="text-zinc-400">(opcional)</span>
+                    E-mail <span className="text-zinc-400">(opzionale)</span>
                   </span>
                   <input
                     type="email"
@@ -419,14 +419,14 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-[var(--brand)]"
-                    placeholder="Para receber lembrete do horário"
+                    placeholder="Per ricevere il promemoria dell'appuntamento"
                   />
                 </label>
 
                 <p className="rounded-xl bg-zinc-50 px-3 py-2.5 text-sm text-zinc-600">
-                  O sinal de 50% é pago por <strong>Pix</strong> para
-                  confirmar a reserva. O restante você paga no local, em
-                  dinheiro ou cartão.
+                  L&apos;acconto del 50% si paga con <strong>bonifico
+                  istantaneo</strong> per confermare la prenotazione. Il resto
+                  lo paghi sul posto, in contanti o con carta.
                 </p>
 
                 {error && (
@@ -440,7 +440,7 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
                   disabled={submitting}
                   className="w-full rounded-xl bg-[var(--brand)] py-3 font-semibold text-white disabled:opacity-60"
                 >
-                  {submitting ? "Reservando…" : "Reservar horário"}
+                  {submitting ? "Prenotazione…" : "Prenota l'orario"}
                 </button>
               </form>
             </StepShell>
@@ -449,7 +449,7 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
           {step === "done" && service && result && (
             <div className="py-2 text-center">
               <p className="text-3xl">⏳</p>
-              <h2 className="mt-2 text-lg font-bold">Horário reservado!</h2>
+              <h2 className="mt-2 text-lg font-bold">Orario riservato!</h2>
               <p className="mt-1 text-sm text-zinc-600">
                 {service.name} ·{" "}
                 {formatDateTimeInTz(result.starts_at, profile.timezone)}
@@ -457,16 +457,16 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
 
               <div className="mt-4 rounded-xl bg-zinc-50 p-4 text-left text-sm">
                 <p className="font-semibold">
-                  Confirme pagando o sinal de {formatBRL(result.deposit_due_minor)}
+                  Conferma pagando l&apos;acconto di {formatEUR(result.deposit_due_minor)}
                 </p>
                 <p className="mt-1 text-zinc-600">
-                  Prazo: até{" "}
+                  Scadenza: entro{" "}
                   {formatDateTimeInTz(result.hold_expires_at, profile.timezone)}.
-                  Após o prazo, a reserva é liberada para outros clientes.
+                  Dopo la scadenza, la prenotazione viene liberata per altri clienti.
                 </p>
                 {result.pix_key ? (
                   <div className="mt-3">
-                    <p className="text-zinc-600">Chave Pix:</p>
+                    <p className="text-zinc-600">Coordinate di pagamento:</p>
                     <div className="mt-1 flex items-center gap-2">
                       <code className="flex-1 truncate rounded-lg bg-white px-3 py-2">
                         {result.pix_key}
@@ -476,39 +476,39 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
                         onClick={() => navigator.clipboard.writeText(result.pix_key!)}
                         className="shrink-0 rounded-lg bg-[var(--brand)] px-3 py-2 font-medium text-white"
                       >
-                        Copiar
+                        Copia
                       </button>
                     </div>
                     <p className="mt-2 text-zinc-600">
-                      Envie o comprovante pelo WhatsApp para confirmar mais rápido.
+                      Invia la ricevuta su WhatsApp per confermare più in fretta.
                     </p>
                   </div>
                 ) : (
                   <p className="mt-2 text-zinc-600">
-                    Combine o Pix do sinal diretamente com o estabelecimento
-                    pelo WhatsApp.
+                    Concorda il pagamento dell&apos;acconto direttamente con
+                    l&apos;attività su WhatsApp.
                   </p>
                 )}
               </div>
 
               {profile.whatsapp && (
                 <a
-                  href={`https://wa.me/55${profile.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
-                    `Olá! Sou ${name}. Acabei de reservar ${service.name} para ${formatDateTimeInTz(
+                  href={`https://wa.me/39${profile.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
+                    `Ciao! Sono ${name}. Ho appena prenotato ${service.name} per ${formatDateTimeInTz(
                       result.starts_at,
                       profile.timezone
                     )}.` +
                       (result.pix_key
-                        ? ` Vou enviar o comprovante do sinal de ${formatBRL(result.deposit_due_minor)}.`
-                        : ` Como pago o Pix do sinal de ${formatBRL(result.deposit_due_minor)}?`)
+                        ? ` Ti invio la ricevuta dell'acconto di ${formatEUR(result.deposit_due_minor)}.`
+                        : ` Come pago l'acconto di ${formatEUR(result.deposit_due_minor)}?`)
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-4 block w-full rounded-xl bg-[#25D366] py-3 font-semibold text-white"
                 >
                   {result.pix_key
-                    ? "Enviar comprovante no WhatsApp"
-                    : "Combinar o Pix no WhatsApp"}
+                    ? "Invia la ricevuta su WhatsApp"
+                    : "Concorda l'acconto su WhatsApp"}
                 </a>
               )}
 
@@ -516,12 +516,12 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
                 <p className="mt-4 text-xs text-zinc-400">
                   Imprevisto?{" "}
                   <a
-                    href={`/cancelar/${result.appointment_id}?t=${result.cancel_token}`}
+                    href={`/annulla/${result.appointment_id}?t=${result.cancel_token}`}
                     className="underline"
                   >
-                    Cancelar esta reserva
+                    Annulla questa prenotazione
                   </a>{" "}
-                  (até 2h antes do horário).
+                  (fino a 2h prima dell&apos;orario).
                 </p>
               )}
             </div>
@@ -529,7 +529,7 @@ export function BookingFlow({ profile }: { profile: PublicBusinessProfile }) {
         </div>
 
         <p className="mt-6 text-center text-xs text-zinc-400">
-          Agendamento por Agenda Easy
+          Prenotazioni con Agenda Easy
         </p>
       </main>
     </div>
@@ -552,7 +552,7 @@ function StepShell({
           <button
             type="button"
             onClick={onBack}
-            aria-label="Voltar"
+            aria-label="Indietro"
             className="rounded-lg px-2 py-1 text-zinc-500 hover:bg-zinc-100"
           >
             ←
@@ -614,8 +614,8 @@ function Summary({
       <p className="font-medium">{serviceName}</p>
       <p className="text-zinc-600">{when}</p>
       <p className="mt-1 text-zinc-600">
-        Total: <strong>{formatBRL(priceMinor)}</strong> · Sinal de 50% para
-        confirmar
+        Totale: <strong>{formatEUR(priceMinor)}</strong> · Acconto del 50% per
+        confermare
       </p>
     </div>
   );

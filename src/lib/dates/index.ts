@@ -65,10 +65,10 @@ export function weekdayInTz(dateISO: string, timeZone: string): Weekday {
   return map[name];
 }
 
-/** Formata um instante UTC como hora local do negócio, ex. "14:30". */
+/** Formatta un istante UTC come ora locale dell'attività, es. "14:30". */
 export function formatTimeInTz(utc: Date | string, timeZone: string): string {
   const d = typeof utc === "string" ? new Date(utc) : utc;
-  return new Intl.DateTimeFormat("pt-BR", {
+  return new Intl.DateTimeFormat("it-IT", {
     timeZone,
     hour: "2-digit",
     minute: "2-digit",
@@ -76,19 +76,19 @@ export function formatTimeInTz(utc: Date | string, timeZone: string): string {
   }).format(d);
 }
 
-/** Formata um instante UTC como data+hora locais, ex. "sex., 03/10 às 14:30". */
+/** Formatta un istante UTC come data+ora locali, es. "ven 03/10 alle 14:30". */
 export function formatDateTimeInTz(
   utc: Date | string,
   timeZone: string
 ): string {
   const d = typeof utc === "string" ? new Date(utc) : utc;
-  const date = new Intl.DateTimeFormat("pt-BR", {
+  const date = new Intl.DateTimeFormat("it-IT", {
     timeZone,
     weekday: "short",
     day: "2-digit",
     month: "2-digit",
   }).format(d);
-  return `${date} às ${formatTimeInTz(d, timeZone)}`;
+  return `${date} alle ${formatTimeInTz(d, timeZone)}`;
 }
 
 /** Data local de hoje ("YYYY-MM-DD") no fuso do negócio. */

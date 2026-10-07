@@ -1,9 +1,9 @@
 "use server";
 
 /**
- * Server Actions do painel. Toda action é um endpoint público: valida a
- * entrada com Zod e deixa a RLS decidir o acesso (client do servidor com a
- * sessão do membro — nunca o admin).
+ * Server Actions del pannello. Ogni action è un endpoint pubblico: valida
+ * l'input con Zod e lascia che la RLS decida l'accesso (client del server con
+ * la sessione del membro — mai l'admin).
  */
 
 import { revalidatePath } from "next/cache";
@@ -23,7 +23,7 @@ export async function confirmDeposit(
   const parsed = z
     .object({ id: uuidSchema, method: paymentMethodSchema })
     .safeParse({ id: appointmentId, method });
-  if (!parsed.success) return { error: "Dados inválidos." };
+  if (!parsed.success) return { error: "Dati non validi." };
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("confirm_deposit", {
@@ -33,20 +33,20 @@ export async function confirmDeposit(
 
   if (error) {
     if (error.message.includes("invalid_status")) {
-      return { error: "Esse agendamento não está mais aguardando sinal." };
+      return { error: "Questa prenotazione non è più in attesa di acconto." };
     }
     if (error.message.includes("appointment_not_found")) {
-      return { error: "Agendamento não encontrado." };
+      return { error: "Prenotazione non trovata." };
     }
     console.error("confirm_deposit error", error);
-    return { error: "Não foi possível confirmar. Tente novamente." };
+    return { error: "Conferma non riuscita. Riprova." };
   }
 
   revalidatePath("/app");
   return {};
 }
 
-/** Transições permitidas por status atual — qualquer outra é rejeitada. */
+/** Transizioni consentite per stato attuale — qualsiasi altra viene rifiutata. */
 const ALLOWED_FROM: Record<string, AppointmentStatus[]> = {
   cancelled: ["awaiting_deposit", "confirmed"],
   completed: ["confirmed"],
@@ -63,7 +63,7 @@ export async function setAppointmentStatus(
       target: z.enum(["cancelled", "completed", "no_show"]),
     })
     .safeParse({ id: appointmentId, target });
-  if (!parsed.success) return { error: "Dados inválidos." };
+  if (!parsed.success) return { error: "Dati non validi." };
 
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
@@ -75,10 +75,10 @@ export async function setAppointmentStatus(
 
   if (error) {
     console.error("setAppointmentStatus error", error);
-    return { error: "Não foi possível atualizar. Tente novamente." };
+    return { error: "Aggiornamento non riuscito. Riprova." };
   }
   if (!data || data.length === 0) {
-    return { error: "O status desse agendamento mudou. Atualize a página." };
+    return { error: "Lo stato di questa prenotazione è cambiato. Ricarica la pagina." };
   }
 
   revalidatePath("/app");

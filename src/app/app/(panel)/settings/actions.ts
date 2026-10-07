@@ -10,15 +10,15 @@ export async function saveSettings(
 ): Promise<{ error?: string }> {
   const parsed = businessSettingsSchema.safeParse(input);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
+    return { error: parsed.error.issues[0]?.message ?? "Dati non validi." };
   }
 
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessão expirada." };
+  if (!ctx) return { error: "Sessione scaduta." };
 
   for (const path of [parsed.data.logo_path, parsed.data.cover_path]) {
     if (path && !path.startsWith(`${ctx.business.id}/`)) {
-      return { error: "Imagem inválida." };
+      return { error: "Immagine non valida." };
     }
   }
 
@@ -30,7 +30,7 @@ export async function saveSettings(
 
   if (error) {
     console.error("saveSettings error", error);
-    return { error: "Não foi possível salvar. Tente novamente." };
+    return { error: "Salvataggio non riuscito. Riprova." };
   }
 
   revalidatePath("/app/settings");

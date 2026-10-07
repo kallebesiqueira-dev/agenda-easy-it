@@ -1,8 +1,8 @@
 "use server";
 
 /**
- * Cancelamento pelo próprio cliente, autenticado pelo cancel_token (link
- * secreto entregue na reserva). Regra: até 2h antes do início.
+ * Annullamento da parte del cliente stesso, autenticato dal cancel_token
+ * (link segreto consegnato alla prenotazione). Regola: fino a 2h prima dell'inizio.
  */
 
 import { z } from "zod";
@@ -25,7 +25,7 @@ export async function cancelBookingPublic(
   token: string
 ): Promise<{ error?: string }> {
   const parsed = inputSchema.safeParse({ id, token });
-  if (!parsed.success) return { error: "Link inválido." };
+  if (!parsed.success) return { error: "Link non valido." };
 
   const supabase = createSupabaseAdminClient();
   const cutoff = new Date(
@@ -46,15 +46,15 @@ export async function cancelBookingPublic(
 
   if (error) {
     console.error("cancelBookingPublic error", error);
-    return { error: "Não foi possível cancelar. Tente novamente." };
+    return { error: "Annullamento non riuscito. Riprova." };
   }
   if (!cancelled) {
     return {
-      error: `Não foi possível cancelar — o prazo é até ${MIN_CANCEL_HOURS}h antes do horário (ou a reserva já foi encerrada).`,
+      error: `Annullamento non riuscito — il limite è fino a ${MIN_CANCEL_HOURS}h prima dell'orario (oppure la prenotazione è già stata chiusa).`,
     };
   }
 
-  // Avisa o dono (best-effort)
+  // Avvisa il titolare (best-effort)
   try {
     const rec = cancelled as unknown as {
       starts_at: string;
@@ -67,10 +67,10 @@ export async function cancelBookingPublic(
       const when = formatDateTimeInTz(rec.starts_at, rec.business.timezone);
       await sendEmail({
         to: ownerEmail,
-        subject: `Reserva cancelada pelo cliente — ${when}`,
-        html: emailLayout(`Cancelamento em ${rec.business.name}`, [
-          { raw: `<strong>${escapeHtml(rec.customer?.name ?? "Cliente")}</strong> (${escapeHtml(rec.customer?.phone ?? "")}) cancelou <strong>${escapeHtml(rec.service?.name ?? "")}</strong> de ${when}.` },
-          "O horário voltou a ficar disponível na sua página.",
+        subject: `Prenotazione annullata dal cliente — ${when}`,
+        html: emailLayout(`Annullamento presso ${rec.business.name}`, [
+          { raw: `<strong>${escapeHtml(rec.customer?.name ?? "Cliente")}</strong> (${escapeHtml(rec.customer?.phone ?? "")}) ha annullato <strong>${escapeHtml(rec.service?.name ?? "")}</strong> del ${when}.` },
+          "L'orario è di nuovo disponibile sulla tua pagina.",
         ]),
       });
     }

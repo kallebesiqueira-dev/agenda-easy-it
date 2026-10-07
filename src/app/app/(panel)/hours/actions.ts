@@ -1,8 +1,8 @@
 "use server";
 
 /**
- * Horário de funcionamento (1 linha por dia, upsert) e pausas gerais do
- * negócio (professional_id null — valem para toda a equipe, ex.: almoço).
+ * Orari di apertura (1 riga per giorno, upsert) e pause generali
+ * dell'attività (professional_id null — valgono per tutto il team, es.: pranzo).
  */
 
 import { revalidatePath } from "next/cache";
@@ -22,11 +22,11 @@ export async function saveBusinessHours(
 ): Promise<{ error?: string }> {
   const parsed = weekSchema.safeParse(hours);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
+    return { error: parsed.error.issues[0]?.message ?? "Dati non validi." };
   }
 
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessão expirada." };
+  if (!ctx) return { error: "Sessione scaduta." };
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("business_hours").upsert(
@@ -35,7 +35,7 @@ export async function saveBusinessHours(
   );
   if (error) {
     console.error("saveBusinessHours error", error);
-    return { error: "Não foi possível salvar. Tente novamente." };
+    return { error: "Salvataggio non riuscito. Riprova." };
   }
 
   revalidatePath("/app/hours");
@@ -46,20 +46,20 @@ export async function addBreak(input: {
   weekday: number;
   starts_at: string;
   ends_at: string;
-  /** null/ausente = pausa geral (toda a equipe) */
+  /** null/assente = pausa generale (tutto il team) */
   professional_id?: string | null;
 }): Promise<{ error?: string }> {
   const parsed = shiftInputSchema.safeParse(input);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
+    return { error: parsed.error.issues[0]?.message ?? "Dati non validi." };
   }
   const professionalId = input.professional_id ?? null;
   if (professionalId !== null && !uuidSchema.safeParse(professionalId).success) {
-    return { error: "Dados inválidos." };
+    return { error: "Dati non validi." };
   }
 
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessão expirada." };
+  if (!ctx) return { error: "Sessione scaduta." };
 
   const supabase = await createSupabaseServerClient();
   if (professionalId !== null) {
@@ -69,7 +69,7 @@ export async function addBreak(input: {
       .eq("id", professionalId)
       .eq("business_id", ctx.business.id)
       .maybeSingle();
-    if (!pro) return { error: "Profissional inválido." };
+    if (!pro) return { error: "Professionista non valido." };
   }
   const { error } = await supabase.from("breaks").insert({
     ...parsed.data,
@@ -78,7 +78,7 @@ export async function addBreak(input: {
   });
   if (error) {
     console.error("addBreak error", error);
-    return { error: "Não foi possível adicionar a pausa." };
+    return { error: "Aggiunta della pausa non riuscita." };
   }
 
   revalidatePath("/app/hours");
@@ -89,10 +89,10 @@ export async function deleteBreak(
   breakId: string
 ): Promise<{ error?: string }> {
   const parsed = uuidSchema.safeParse(breakId);
-  if (!parsed.success) return { error: "Dados inválidos." };
+  if (!parsed.success) return { error: "Dati non validi." };
 
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessão expirada." };
+  if (!ctx) return { error: "Sessione scaduta." };
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
@@ -102,7 +102,7 @@ export async function deleteBreak(
     .eq("business_id", ctx.business.id);
   if (error) {
     console.error("deleteBreak error", error);
-    return { error: "Não foi possível remover a pausa." };
+    return { error: "Rimozione della pausa non riuscita." };
   }
 
   revalidatePath("/app/hours");

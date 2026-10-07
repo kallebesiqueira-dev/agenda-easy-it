@@ -1,17 +1,20 @@
 /**
- * GET /api/cron/reminders — roda 1× por dia às 11:00 UTC (08:00 BRT; plano
- * Hobby da Vercel só permite cron diário). Lembra por e-mail os clientes com
- * horário confirmado nas próximas 26h que ainda não foram lembrados
- * (reminded_at garante idempotência).
- * Proteção: header Authorization: Bearer CRON_SECRET (Vercel envia sozinho).
+ * GET /api/cron/reminders — gira 1× al giorno (il piano Hobby di Vercel
+ * consente solo cron giornalieri). Ricorda via e-mail i clienti con
+ * appuntamento confermato nelle prossime 26h non ancora avvisati
+ * (reminded_at garantisce l'idempotenza).
+ * Protezione: header Authorization: Bearer CRON_SECRET (Vercel lo invia da solo).
  */
 
 import { formatDateTimeInTz } from "@/lib/dates";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { emailLayout, escapeHtml, sendEmail } from "@/lib/notifications";
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://agendaeasy.it";
+
 export async function GET(request: Request) {
-  // Fail-closed: sem CRON_SECRET configurado, ninguém executa.
+  // Fail-closed: senza CRON_SECRET configurato, nessuno esegue.
   const secret = process.env.CRON_SECRET;
   if (!secret || request.headers.get("authorization") !== `Bearer ${secret}`) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
@@ -19,7 +22,7 @@ export async function GET(request: Request) {
 
   const supabase = createSupabaseAdminClient();
   const now = Date.now();
-  // Janela 1h–27h: cobre manhã cedo em UTC-3 e dá folga a atrasos do cron.
+  // Finestra 1h–27h: copre la mattina presto a Roma e tollera ritardi del cron.
   const from = new Date(now + 1 * 60 * 60 * 1000).toISOString();
   const to = new Date(now + 27 * 60 * 60 * 1000).toISOString();
 
@@ -59,8 +62,8 @@ export async function GET(request: Request) {
     };
     if (!rec.customer_email || !rec.business) continue;
 
-    // Marca ANTES de enviar: se o processo cair no meio, não reenvia spam
-    // na próxima execução (perder 1 lembrete é melhor que duplicar).
+    // Marca PRIMA di inviare: se il processo cade a metà, non rimanda spam
+    // alla prossima esecuzione (perdere 1 promemoria è meglio che duplicarlo).
     await supabase
       .from("appointments")
       .update({ reminded_at: new Date().toISOString() })
@@ -69,14 +72,14 @@ export async function GET(request: Request) {
     const when = formatDateTimeInTz(rec.starts_at, rec.business.timezone);
     await sendEmail({
       to: rec.customer_email,
-      subject: `Lembrete: ${rec.service?.name ?? "seu horário"} — ${rec.business.name}`,
-      html: emailLayout(`Olá, ${rec.customer?.name ?? ""}! Seu horário está chegando`, [
-        { raw: `Seu horário de <strong>${escapeHtml(rec.service?.name ?? "")}</strong> em <strong>${escapeHtml(rec.business.name)}</strong> é <strong>${when}</strong>.` },
-        rec.business.address ? `Endereço: ${rec.business.address}` : "",
+      subject: `Promemoria: ${rec.service?.name ?? "il tuo appuntamento"} — ${rec.business.name}`,
+      html: emailLayout(`Ciao, ${rec.customer?.name ?? ""}! Il tuo appuntamento si avvicina`, [
+        { raw: `Il tuo appuntamento di <strong>${escapeHtml(rec.service?.name ?? "")}</strong> presso <strong>${escapeHtml(rec.business.name)}</strong> è <strong>${when}</strong>.` },
+        rec.business.address ? `Indirizzo: ${rec.business.address}` : "",
         rec.business.whatsapp
-          ? { raw: `Dúvidas? <a href="https://wa.me/55${rec.business.whatsapp.replace(/\D/g, "")}">Chame no WhatsApp</a>.` }
+          ? { raw: `Domande? <a href="https://wa.me/39${rec.business.whatsapp.replace(/\D/g, "")}">Scrivici su WhatsApp</a>.` }
           : "",
-        { raw: `Imprevisto? <a href="https://agenda-easy.vercel.app/cancelar/${encodeURIComponent(rec.id)}?t=${encodeURIComponent(rec.cancel_token)}">Cancele por aqui</a> (até 2h antes).` },
+        { raw: `Imprevisto? <a href="${SITE_URL}/annulla/${encodeURIComponent(rec.id)}?t=${encodeURIComponent(rec.cancel_token)}">Annulla da qui</a> (fino a 2h prima).` },
       ].filter((l) => l !== "")),
     });
     sent++;

@@ -28,7 +28,7 @@ interface ProfessionalOption {
 
 const hhmm = (t: string) => t.slice(0, 5);
 
-/** Padrão inicial: seg–sáb 09:00–18:00, domingo fechado. */
+/** Default iniziale: lun–sab 09:00–18:00, domenica chiuso. */
 function defaultWeek(saved: HourRow[]): HourRow[] {
   return WEEKDAYS.map((weekday) => {
     const row = saved.find((h) => h.weekday === weekday);
@@ -60,7 +60,7 @@ export function HoursManager({
   const [breakWeekday, setBreakWeekday] = useState<Weekday>(1);
   const [breakStart, setBreakStart] = useState("12:00");
   const [breakEnd, setBreakEnd] = useState("13:00");
-  /** "" = toda a equipe; senão id do profissional */
+  /** "" = tutto il team; altrimenti id del professionista */
   const [breakProfessional, setBreakProfessional] = useState("");
 
   const proName = (id: string | null) =>
@@ -88,7 +88,7 @@ export function HoursManager({
   return (
     <div className="space-y-6">
       <section className="rounded-2xl bg-white p-4 shadow-sm">
-        <h2 className="mb-3 font-semibold">Horário de funcionamento</h2>
+        <h2 className="mb-3 font-semibold">Orari di apertura</h2>
         <ul className="space-y-2">
           {week.map((row) => (
             <li
@@ -106,7 +106,7 @@ export function HoursManager({
                     updateDay(row.weekday, { is_closed: !e.target.checked })
                   }
                 />
-                Aberto
+                Aperto
               </label>
               {!row.is_closed && (
                 <>
@@ -118,7 +118,7 @@ export function HoursManager({
                     }
                     className="rounded-lg border border-zinc-300 px-2 py-1"
                   />
-                  <span className="text-zinc-400">às</span>
+                  <span className="text-zinc-400">alle</span>
                   <input
                     type="time"
                     value={row.closes_at}
@@ -151,17 +151,17 @@ export function HoursManager({
             }
             className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
           >
-            {pending ? "Salvando…" : "Salvar horários"}
+            {pending ? "Salvataggio…" : "Salva orari"}
           </button>
-          {saved && <span className="text-sm text-emerald-600">Salvo ✓</span>}
+          {saved && <span className="text-sm text-emerald-600">Salvato ✓</span>}
         </div>
       </section>
 
       <section className="rounded-2xl bg-white p-4 shadow-sm">
-        <h2 className="mb-1 font-semibold">Pausas</h2>
+        <h2 className="mb-1 font-semibold">Pause</h2>
         <p className="mb-3 text-sm text-zinc-500">
-          Intervalos sem atendimento (ex.: almoço) — para toda a equipe ou
-          para um profissional específico.
+          Intervalli senza appuntamenti (es.: pranzo) — per tutto il team o
+          per un professionista specifico.
         </p>
 
         <ul className="mb-3 space-y-1">
@@ -171,7 +171,7 @@ export function HoursManager({
                 {WEEKDAY_NAMES[b.weekday as Weekday]} · {hhmm(b.starts_at)}–
                 {hhmm(b.ends_at)}
                 <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
-                  {proName(b.professional_id) ?? "Toda a equipe"}
+                  {proName(b.professional_id) ?? "Tutto il team"}
                 </span>
               </span>
               <button
@@ -179,14 +179,14 @@ export function HoursManager({
                 disabled={pending}
                 onClick={() => run(() => deleteBreak(b.id))}
                 className="rounded px-2 py-0.5 text-zinc-400 hover:text-red-600"
-                aria-label="Remover pausa"
+                aria-label="Rimuovi pausa"
               >
                 ✕
               </button>
             </li>
           ))}
           {breaks.length === 0 && (
-            <li className="text-sm text-zinc-400">Nenhuma pausa cadastrada.</li>
+            <li className="text-sm text-zinc-400">Nessuna pausa inserita.</li>
           )}
         </ul>
 
@@ -205,13 +205,13 @@ export function HoursManager({
           }}
         >
           <label className="block">
-            <span className="mb-1 block text-xs text-zinc-500">Quem</span>
+            <span className="mb-1 block text-xs text-zinc-500">Chi</span>
             <select
               value={breakProfessional}
               onChange={(e) => setBreakProfessional(e.target.value)}
               className="rounded-lg border border-zinc-300 bg-white px-2 py-1.5 text-sm"
             >
-              <option value="">Toda a equipe</option>
+              <option value="">Tutto il team</option>
               {professionals.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.display_name}
@@ -220,7 +220,7 @@ export function HoursManager({
             </select>
           </label>
           <label className="block">
-            <span className="mb-1 block text-xs text-zinc-500">Dia</span>
+            <span className="mb-1 block text-xs text-zinc-500">Giorno</span>
             <select
               value={breakWeekday}
               onChange={(e) => setBreakWeekday(Number(e.target.value) as Weekday)}
@@ -234,7 +234,7 @@ export function HoursManager({
             </select>
           </label>
           <label className="block">
-            <span className="mb-1 block text-xs text-zinc-500">Início</span>
+            <span className="mb-1 block text-xs text-zinc-500">Inizio</span>
             <input
               type="time"
               required
@@ -244,7 +244,7 @@ export function HoursManager({
             />
           </label>
           <label className="block">
-            <span className="mb-1 block text-xs text-zinc-500">Fim</span>
+            <span className="mb-1 block text-xs text-zinc-500">Fine</span>
             <input
               type="time"
               required
@@ -258,7 +258,7 @@ export function HoursManager({
             disabled={pending}
             className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-60"
           >
-            Adicionar pausa
+            Aggiungi pausa
           </button>
         </form>
       </section>

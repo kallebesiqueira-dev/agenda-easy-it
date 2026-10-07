@@ -77,7 +77,7 @@ try {
   log("3. Onboarding: criando negócio");
   if (!page.url().includes("onboarding")) await page.goto(`${BASE}/app/onboarding`);
   await page.getByPlaceholder("Barbearia do Zé").fill(BIZ_NAME);
-  await page.getByPlaceholder("barbearia-do-ze").fill(SLUG);
+  await page.getByPlaceholder("barberia-da-pino").fill(SLUG);
   await page.getByRole("button", { name: "Criar e ir para o painel" }).click();
   await page.waitForURL(/\/app(?!\/onboarding)/, { timeout: 30000 });
   console.log("   negócio criado →", page.url());

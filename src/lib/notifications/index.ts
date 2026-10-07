@@ -70,7 +70,7 @@ export function emailLayout(title: string, lines: EmailLine[]): string {
           `<p style="margin:6px 0;line-height:1.5">${typeof l === "string" ? esc(l) : l.raw}</p>`
       )
       .join("")}
-    <p style="margin-top:24px;font-size:12px;color:#a1a1aa">Agenda Easy — agendamento online</p>
+    <p style="margin-top:24px;font-size:12px;color:#a1a1aa">Agenda Easy — prenotazioni online</p>
   </div>`;
 }
 

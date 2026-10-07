@@ -24,7 +24,7 @@ export default async function ProfessionalsPage() {
   return (
     <ProfessionalsManager
       businessId={ctx.business.id}
-      label={ctx.business.custom_professional_label ?? "Profissional"}
+      label={ctx.business.custom_professional_label ?? "Professionista"}
       professionals={
         (professionalsRes.data ?? []) as Pick<
           Professional,

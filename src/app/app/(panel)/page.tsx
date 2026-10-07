@@ -6,7 +6,7 @@ import {
   todayInTz,
   zonedTimeToUtc,
 } from "@/lib/dates";
-import { formatBRL } from "@/lib/money";
+import { formatEUR } from "@/lib/money";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { AppointmentCard, type AppointmentCardData } from "./appointment-card";
@@ -73,7 +73,7 @@ export default async function AgendaPage({ searchParams }: Props) {
     dayCounts.set(key, c);
   }
 
-  const monthLabel = new Intl.DateTimeFormat("pt-BR", {
+  const monthLabel = new Intl.DateTimeFormat("it-IT", {
     month: "long",
     year: "numeric",
     timeZone: "UTC",
@@ -120,8 +120,8 @@ export default async function AgendaPage({ searchParams }: Props) {
         rec.status === "awaiting_deposit" &&
         rec.hold_expires_at !== null &&
         new Date(rec.hold_expires_at) < now,
-      priceLabel: formatBRL(rec.service_price_minor),
-      depositDueLabel: formatBRL(rec.deposit_due_minor),
+      priceLabel: formatEUR(rec.service_price_minor),
+      depositDueLabel: formatEUR(rec.deposit_due_minor),
       depositPaid: rec.deposit_paid_at !== null,
       holdExpiresLabel: rec.hold_expires_at
         ? formatTimeInTz(rec.hold_expires_at, business.timezone)
@@ -129,7 +129,7 @@ export default async function AgendaPage({ searchParams }: Props) {
     };
   });
 
-  const dateLabel = new Intl.DateTimeFormat("pt-BR", {
+  const dateLabel = new Intl.DateTimeFormat("it-IT", {
     weekday: "long",
     day: "2-digit",
     month: "long",
@@ -146,14 +146,14 @@ export default async function AgendaPage({ searchParams }: Props) {
             <Link
               href={`/app?date=${prevMonthISO}`}
               className="rounded-lg px-2 py-1 hover:bg-zinc-100"
-              aria-label="Mês anterior"
+              aria-label="Mese precedente"
             >
               ←
             </Link>
             <Link
               href={`/app?date=${nextMonthISO}`}
               className="rounded-lg px-2 py-1 hover:bg-zinc-100"
-              aria-label="Próximo mês"
+              aria-label="Mese successivo"
             >
               →
             </Link>
@@ -161,7 +161,7 @@ export default async function AgendaPage({ searchParams }: Props) {
         </div>
 
         <div className="grid grid-cols-7 gap-1 text-center text-xs text-zinc-400">
-          {["dom", "seg", "ter", "qua", "qui", "sex", "sáb"].map((d) => (
+          {["dom", "lun", "mar", "mer", "gio", "ven", "sab"].map((d) => (
             <span key={d} className="py-1">
               {d}
             </span>
@@ -223,14 +223,14 @@ export default async function AgendaPage({ searchParams }: Props) {
         </div>
         <p className="mt-3 flex gap-4 text-xs text-zinc-500">
           <span className="flex items-center gap-1">
-            <span className="size-2 rounded-full bg-emerald-500" /> confirmados
+            <span className="size-2 rounded-full bg-emerald-500" /> confermate
           </span>
           <span className="flex items-center gap-1">
-            <span className="size-2 rounded-full bg-amber-500" /> aguardando
-            sinal
+            <span className="size-2 rounded-full bg-amber-500" /> in attesa di
+            acconto
           </span>
           <span className="flex items-center gap-1">
-            <span className="size-2 rounded-full bg-zinc-300" /> dia vago
+            <span className="size-2 rounded-full bg-zinc-300" /> giorno libero
           </span>
         </p>
       </section>
@@ -241,7 +241,7 @@ export default async function AgendaPage({ searchParams }: Props) {
           <Link
             href={`/app?date=${shiftDateISO(dateISO, -1)}`}
             className="rounded-lg px-2 py-1 hover:bg-zinc-200"
-            aria-label="Dia anterior"
+            aria-label="Giorno precedente"
           >
             ←
           </Link>
@@ -250,13 +250,13 @@ export default async function AgendaPage({ searchParams }: Props) {
               href="/app"
               className="rounded-lg px-2 py-1 font-medium hover:bg-zinc-200"
             >
-              Hoje
+              Oggi
             </Link>
           )}
           <Link
             href={`/app?date=${shiftDateISO(dateISO, 1)}`}
             className="rounded-lg px-2 py-1 hover:bg-zinc-200"
-            aria-label="Próximo dia"
+            aria-label="Giorno successivo"
           >
             →
           </Link>
@@ -265,7 +265,7 @@ export default async function AgendaPage({ searchParams }: Props) {
 
       {cards.length === 0 ? (
         <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm">
-          Nenhum agendamento nesse dia.
+          Nessuna prenotazione in questo giorno.
         </p>
       ) : (
         <ul className="space-y-3">

@@ -1,10 +1,10 @@
 /**
- * Plano e política de acesso do SaaS.
+ * Piano e politica di accesso del SaaS.
  *
- * Decisões de produto concentradas aqui (mude os valores, não a lógica):
- *   PLAN        — Plano Único, R$ 49,90/mês, acesso total.
- *   TRIAL_DAYS  — teste grátis ao criar o negócio (7 dias).
- *   GRACE_DAYS  — carência após cobrança vencida antes de bloquear (3 dias).
+ * Decisioni di prodotto concentrate qui (cambia i valori, non la logica):
+ *   PLAN        — Piano Unico, 49,90 €/mese, accesso completo.
+ *   TRIAL_DAYS  — prova gratuita alla creazione dell'attività (7 giorni).
+ *   GRACE_DAYS  — tolleranza dopo un addebito scaduto prima del blocco (3 giorni).
  */
 
 import type { Subscription, SubscriptionStatus } from "@/types/database";
@@ -12,11 +12,9 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const PLAN = {
-  name: "Plano Único",
-  priceMinor: 4990,
-  /** Valor no formato da Asaas (reais, decimal). */
-  asaasValue: 49.9,
-  description: "Agenda Easy — Plano Único (acesso total)",
+  name: "Piano Unico",
+  priceMinor: 4990, // centesimi di euro (Stripe usa lo stesso formato)
+  description: "Agenda Easy — Piano Unico (accesso completo)",
 } as const;
 
 export const TRIAL_DAYS = 7;

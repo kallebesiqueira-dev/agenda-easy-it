@@ -21,7 +21,7 @@ export function CancelPanel({
   if (finished) {
     return (
       <p className="mt-4 rounded-lg bg-zinc-50 px-3 py-2 text-sm text-zinc-600">
-        Este agendamento já foi encerrado.
+        Questa prenotazione è già stata chiusa.
       </p>
     );
   }
@@ -29,8 +29,8 @@ export function CancelPanel({
   if (done) {
     return (
       <p className="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-        Reserva cancelada. O horário foi liberado — se mudar de ideia, é só
-        agendar de novo.
+        Prenotazione annullata. L&apos;orario è stato liberato — se cambi idea,
+        basta prenotare di nuovo.
       </p>
     );
   }
@@ -38,7 +38,7 @@ export function CancelPanel({
   return (
     <div className="mt-4">
       <p className="text-sm text-zinc-500">
-        O cancelamento é permitido até 2 horas antes do horário.
+        L&apos;annullamento è consentito fino a 2 ore prima dell&apos;orario.
       </p>
       {error && (
         <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -58,7 +58,7 @@ export function CancelPanel({
         }}
         className="mt-3 w-full rounded-xl bg-red-600 py-3 font-semibold text-white disabled:opacity-60"
       >
-        {pending ? "Cancelando…" : "Cancelar minha reserva"}
+        {pending ? "Annullamento…" : "Annulla la mia prenotazione"}
       </button>
     </div>
   );

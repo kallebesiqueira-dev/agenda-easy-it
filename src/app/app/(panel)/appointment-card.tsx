@@ -1,9 +1,9 @@
 "use client";
 
 /**
- * Card de agendamento na agenda do dia. Recebe dados já formatados do
- * servidor (strings prontas); aqui só interação: confirmar sinal, concluir,
- * cancelar, não compareceu.
+ * Card della prenotazione nell'agenda del giorno. Riceve dati già formattati
+ * dal server (stringhe pronte); qui solo interazione: confermare l'acconto,
+ * completare, annullare, non presentato.
  */
 
 import { useState, useTransition } from "react";
@@ -29,11 +29,11 @@ const STATUS_BADGES: Record<
   AppointmentStatus,
   { label: string; className: string }
 > = {
-  awaiting_deposit: { label: "Aguardando sinal", className: "bg-amber-100 text-amber-800" },
-  confirmed: { label: "Confirmado", className: "bg-emerald-100 text-emerald-800" },
-  cancelled: { label: "Cancelado", className: "bg-zinc-100 text-zinc-500" },
-  completed: { label: "Concluído", className: "bg-blue-100 text-blue-800" },
-  no_show: { label: "Não compareceu", className: "bg-red-100 text-red-700" },
+  awaiting_deposit: { label: "In attesa di acconto", className: "bg-amber-100 text-amber-800" },
+  confirmed: { label: "Confermata", className: "bg-emerald-100 text-emerald-800" },
+  cancelled: { label: "Annullata", className: "bg-zinc-100 text-zinc-500" },
+  completed: { label: "Completata", className: "bg-blue-100 text-blue-800" },
+  no_show: { label: "Non presentato", className: "bg-red-100 text-red-700" },
 };
 
 export function AppointmentCard({ data }: { data: AppointmentCardData }) {
@@ -41,7 +41,7 @@ export function AppointmentCard({ data }: { data: AppointmentCardData }) {
   const [error, setError] = useState<string | null>(null);
 
   const badge = data.holdExpired
-    ? { label: "Sinal vencido", className: "bg-zinc-100 text-zinc-500" }
+    ? { label: "Acconto scaduto", className: "bg-zinc-100 text-zinc-500" }
     : STATUS_BADGES[data.status];
 
   function run(action: () => Promise<{ error?: string }>) {
@@ -67,7 +67,7 @@ export function AppointmentCard({ data }: { data: AppointmentCardData }) {
               <>
                 {" · "}
                 <a
-                  href={`https://wa.me/55${data.customerPhone}`}
+                  href={`https://wa.me/39${data.customerPhone}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-zinc-500 underline"
@@ -89,12 +89,12 @@ export function AppointmentCard({ data }: { data: AppointmentCardData }) {
       </div>
 
       <p className="mt-2 text-sm text-zinc-600">
-        Total {data.priceLabel} · Sinal {data.depositDueLabel}
+        Totale {data.priceLabel} · Acconto {data.depositDueLabel}
         {data.status === "awaiting_deposit" &&
           !data.holdExpired &&
           data.holdExpiresLabel &&
-          ` (até ${data.holdExpiresLabel})`}
-        {data.depositPaid && " ✓ pago"}
+          ` (entro le ${data.holdExpiresLabel})`}
+        {data.depositPaid && " ✓ pagato"}
       </p>
 
       {error && (
@@ -110,13 +110,13 @@ export function AppointmentCard({ data }: { data: AppointmentCardData }) {
             disabled={pending}
             onClick={() => run(() => confirmDeposit(data.id, "pix"))}
           >
-            Pix do sinal recebido
+            Acconto ricevuto
           </ActionButton>
           <ActionButton
             disabled={pending}
             onClick={() => run(() => setAppointmentStatus(data.id, "cancelled"))}
           >
-            Cancelar
+            Annulla
           </ActionButton>
         </div>
       )}
@@ -128,19 +128,19 @@ export function AppointmentCard({ data }: { data: AppointmentCardData }) {
             disabled={pending}
             onClick={() => run(() => setAppointmentStatus(data.id, "completed"))}
           >
-            Concluir
+            Completa
           </ActionButton>
           <ActionButton
             disabled={pending}
             onClick={() => run(() => setAppointmentStatus(data.id, "no_show"))}
           >
-            Não compareceu
+            Non presentato
           </ActionButton>
           <ActionButton
             disabled={pending}
             onClick={() => run(() => setAppointmentStatus(data.id, "cancelled"))}
           >
-            Cancelar
+            Annulla
           </ActionButton>
         </div>
       )}

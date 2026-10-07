@@ -1,9 +1,9 @@
 /**
- * Landing pública do Agenda Easy.
+ * Landing pubblica di Agenda Easy.
  *
- * Toda a copy reflete o produto real: página pública /{slug}, sinal de 50%
- * via Asaas, Plano Único (PLAN) e teste grátis (TRIAL_DAYS). Se a política
- * de preço/trial mudar em src/lib/billing, esta página acompanha sozinha.
+ * Tutta la copy riflette il prodotto reale: pagina pubblica /{slug}, acconto del 50%,
+ * Piano Unico (PLAN) e prova gratuita (TRIAL_DAYS). Se la politica di
+ * prezzo/prova cambia in src/lib/billing, questa pagina si aggiorna da sola.
  */
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -11,7 +11,7 @@ import { Fraunces, Instrument_Sans } from "next/font/google";
 import { ScrollBubbles } from "@/components/scroll-bubbles";
 import { SupportChat } from "@/components/support-chat";
 import { PLAN, TRIAL_DAYS } from "@/lib/billing";
-import { formatBRL } from "@/lib/money";
+import { formatEUR } from "@/lib/money";
 
 const display = Fraunces({
   subsets: ["latin"],
@@ -26,73 +26,73 @@ const sans = Instrument_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Agenda Easy — Sua agenda cheia, seu WhatsApp em paz",
+  title: "Agenda Easy — Agenda piena, WhatsApp in pace",
 };
 
 const SEGMENTS = [
-  "Salões de beleza",
-  "Barbearias",
-  "Clínicas",
-  "Manicures",
-  "Tatuadores",
-  "Fisioterapeutas",
-  "Dentistas",
-  "Pet shops",
-  "Personal trainers",
-  "Professores particulares",
-  "Consultórios",
-  "Estúdios",
-  "E qualquer serviço com hora marcada",
+  "Saloni di bellezza",
+  "Barberie",
+  "Cliniche",
+  "Onicotecniche",
+  "Tatuatori",
+  "Fisioterapisti",
+  "Dentisti",
+  "Toelettature",
+  "Personal trainer",
+  "Insegnanti privati",
+  "Studi medici",
+  "Studi professionali",
+  "E qualsiasi servizio su appuntamento",
 ];
 
 const STEPS = [
   {
-    title: "Crie sua conta",
-    body: `Cadastre seu negócio, seus serviços (preço, duração, foto) e os horários de funcionamento. Leva menos de dez minutos — e os primeiros ${TRIAL_DAYS} dias são por nossa conta.`,
+    title: "Crea il tuo account",
+    body: `Registra la tua attività, i tuoi servizi (prezzo, durata, foto) e gli orari di apertura. Ci vogliono meno di dieci minuti — e i primi ${TRIAL_DAYS} giorni li offriamo noi.`,
   },
   {
-    title: "Compartilhe seu link",
-    body: "Você ganha uma página pública com o endereço do seu negócio. Cole no Instagram, no WhatsApp, onde seus clientes estiverem. Eles escolhem serviço, profissional e horário sozinhos.",
+    title: "Condividi il tuo link",
+    body: "Ottieni una pagina pubblica con l'indirizzo della tua attività. Incollala su Instagram, su WhatsApp, ovunque siano i tuoi clienti. Scelgono servizio, professionista e orario da soli.",
   },
   {
-    title: "Receba o sinal, confirme o horário",
-    body: "Para reservar, o cliente paga um sinal de 50% do serviço. Quem pagou, aparece. Sua agenda do dia fica organizada no painel, sem vaivém de mensagens.",
+    title: "Ricevi l'acconto, conferma l'appuntamento",
+    body: "Per prenotare, il cliente versa un acconto del 50% del servizio. Chi ha pagato, si presenta. L'agenda del giorno resta organizzata nel pannello, senza scambi infiniti di messaggi.",
   },
 ];
 
 const FEATURES = [
   {
-    title: "Página de agendamento com a sua cara",
-    body: "Nome, descrição e serviços com foto em um link público só seu. O cliente reserva sem baixar aplicativo e sem criar conta.",
+    title: "Pagina di prenotazione con il tuo stile",
+    body: "Nome, descrizione e servizi con foto in un link pubblico tutto tuo. Il cliente prenota senza scaricare app e senza creare un account.",
   },
   {
-    title: "Sinal de 50% contra furos",
-    body: "A reserva só vale depois que o cliente paga metade do valor do serviço. Chega de bloquear horário para quem não aparece.",
+    title: "Acconto del 50% contro i no-show",
+    body: "La prenotazione vale solo dopo che il cliente ha pagato metà del valore del servizio. Basta bloccare orari per chi poi non si presenta.",
   },
   {
-    title: "Agenda do dia no painel",
-    body: "Veja quem vem hoje, a que horas, qual serviço e quanto já foi pago de sinal — tudo em uma tela.",
+    title: "Agenda del giorno nel pannello",
+    body: "Vedi chi arriva oggi, a che ora, quale servizio e quanto è già stato versato di acconto — tutto in un'unica schermata.",
   },
   {
-    title: "Equipe e horários por profissional",
-    body: "Cadastre cada profissional do seu time e deixe o cliente escolher com quem quer ser atendido.",
+    title: "Team e orari per professionista",
+    body: "Registra ogni professionista del tuo team e lascia che il cliente scelga da chi farsi seguire.",
   },
   {
-    title: "Serviços do seu jeito",
-    body: "Preço, duração e foto de cada serviço. O tempo de cada atendimento é respeitado na grade de horários automaticamente.",
+    title: "Servizi a modo tuo",
+    body: "Prezzo, durata e foto di ogni servizio. La durata di ogni appuntamento viene rispettata automaticamente nella griglia degli orari.",
   },
   {
-    title: "Horário de funcionamento real",
-    body: "Defina os dias e janelas de atendimento do seu negócio. Só aparecem para o cliente os horários que realmente existem.",
+    title: "Orari di apertura reali",
+    body: "Definisci i giorni e le fasce orarie della tua attività. Al cliente appaiono solo gli orari che esistono davvero.",
   },
 ];
 
 const PLAN_BULLETS = [
-  "Página pública de agendamento",
-  "Agendamentos e sinal de 50% ilimitados",
-  "Serviços, equipe e horários sem limite",
-  `${TRIAL_DAYS} dias grátis, sem cartão de crédito`,
-  "Cancele quando quiser",
+  "Pagina pubblica di prenotazione",
+  "Prenotazioni e acconti del 50% illimitati",
+  "Servizi, team e orari senza limiti",
+  `${TRIAL_DAYS} giorni gratis, senza carta di credito`,
+  "Disdici quando vuoi",
 ];
 
 export default function LandingPage() {
@@ -100,7 +100,7 @@ export default function LandingPage() {
     <div
       className={`${display.variable} ${sans.variable} min-h-dvh bg-[#f6f1e7] font-[family-name:var(--font-landing-sans)] text-[#221c15]`}
     >
-      {/* textura de papel sutil */}
+      {/* texture carta leggera */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 opacity-[0.35]"
@@ -120,20 +120,20 @@ export default function LandingPage() {
           <span className="text-[#e4572e]">.</span>
         </p>
         <nav className="flex items-center gap-2 text-sm font-medium sm:gap-5">
-          <a href="#como-funciona" className="hidden hover:underline sm:block">
-            Como funciona
+          <a href="#come-funziona" className="hidden hover:underline sm:block">
+            Come funziona
           </a>
-          <a href="#preco" className="hidden hover:underline sm:block">
-            Preço
+          <a href="#prezzo" className="hidden hover:underline sm:block">
+            Prezzo
           </a>
           <Link href="/login" className="px-2 py-2 hover:underline">
-            Entrar
+            Accedi
           </Link>
           <Link
             href="/signup"
             className="rounded-full bg-[#221c15] px-4 py-2 text-[#f6f1e7] transition-colors hover:bg-[#17493b]"
           >
-            Criar conta
+            Crea account
           </Link>
         </nav>
         </div>
@@ -147,7 +147,7 @@ export default function LandingPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/home.png"
-            alt="Agenda Easy — agendamento online"
+            alt="Agenda Easy — prenotazioni online"
             className="landing-rise w-full"
           />
           <div
@@ -158,16 +158,16 @@ export default function LandingPage() {
               href="/signup"
               className="rounded-full bg-[#e4572e] px-7 py-3.5 text-base font-semibold text-white shadow-[0_8px_24px_-8px_rgba(228,87,46,0.6)] transition-transform hover:-translate-y-0.5"
             >
-              Começar grátis por {TRIAL_DAYS} dias
+              Inizia gratis per {TRIAL_DAYS} giorni
             </Link>
             <p className="text-sm text-[#221c15]/60">
-              Sem cartão de crédito
-              <br className="sm:hidden" /> no cadastro.
+              Nessuna carta di credito
+              <br className="sm:hidden" /> alla registrazione.
             </p>
           </div>
         </div>
 
-        {/* Mock da página pública de agendamento */}
+        {/* Mock della pagina pubblica di prenotazione */}
         <div
           aria-hidden
           className="landing-rise relative mx-auto w-full max-w-sm"
@@ -176,16 +176,16 @@ export default function LandingPage() {
           <div className="absolute -inset-6 rounded-[2rem] bg-[#17493b]/10 [transform:rotate(-2deg)]" />
           <div className="relative rounded-3xl border border-[#221c15]/10 bg-white p-5 shadow-[0_24px_60px_-24px_rgba(34,28,21,0.35)]">
             <p className="inline-block rounded-full bg-[#f6f1e7] px-3 py-1 font-mono text-xs text-[#221c15]/70">
-              agenda-easy.vercel.app/studio-ana
+              agendaeasy.it/studio-anna
             </p>
             <p className="mt-4 font-[family-name:var(--font-landing-display)] text-lg font-semibold">
-              Studio Ana — Beleza &amp; Estética
+              Studio Anna — Bellezza &amp; Estetica
             </p>
             <div className="mt-3 space-y-2">
               {[
-                ["Corte + escova", "1h", "R$ 90,00"],
-                ["Coloração", "2h", "R$ 180,00"],
-                ["Manicure", "45min", "R$ 45,00"],
+                ["Taglio + piega", "1h", "45,00 €"],
+                ["Colore", "2h", "90,00 €"],
+                ["Manicure", "45min", "25,00 €"],
               ].map(([name, duration, price]) => (
                 <div
                   key={name}
@@ -199,7 +199,7 @@ export default function LandingPage() {
               ))}
             </div>
             <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-[#221c15]/50">
-              Horários de amanhã
+              Orari di domani
             </p>
             <div className="mt-2 grid grid-cols-4 gap-2 text-center text-sm">
               {["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"].map(
@@ -218,13 +218,13 @@ export default function LandingPage() {
               )}
             </div>
             <div className="mt-4 rounded-xl bg-[#221c15] px-4 py-3 text-center text-sm font-semibold text-[#f6f1e7]">
-              Reservar com sinal de R$ 45,00
+              Prenota con acconto di 22,50 €
             </div>
           </div>
         </div>
       </section>
 
-      {/* ---------------- Marquee de segmentos ---------------- */}
+      {/* ---------------- Marquee dei segmenti ---------------- */}
       <div className="relative overflow-hidden border-y border-[#221c15]/10 bg-[#17493b] py-3 text-[#f6f1e7]">
         <div className="landing-marquee flex w-max">
           {[0, 1].map((copy) => (
@@ -243,18 +243,18 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* ---------------- Como funciona ---------------- */}
+      {/* ---------------- Come funziona ---------------- */}
       <section
-        id="como-funciona"
+        id="come-funziona"
         className="relative mx-auto w-full max-w-6xl px-5 py-24"
       >
         <h2
           data-bubble
           className="text-center font-[family-name:var(--font-landing-display)] text-4xl font-semibold tracking-tight sm:text-5xl"
         >
-          Do cadastro ao primeiro
+          Dalla registrazione alla prima
           <br />
-          agendamento <em className="text-[#e4572e]">em um dia.</em>
+          prenotazione <em className="text-[#e4572e]">in un giorno.</em>
         </h2>
         <div className="mt-12 grid gap-10 md:grid-cols-3">
           {STEPS.map((step, i) => (
@@ -271,16 +271,16 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---------------- Recursos ---------------- */}
+      {/* ---------------- Funzionalità ---------------- */}
       <section className="relative border-y border-[#221c15]/10 bg-[#fffdf8]">
         <div className="mx-auto w-full max-w-6xl px-5 py-24">
           <h2
             data-bubble
             className="text-center font-[family-name:var(--font-landing-display)] text-4xl font-semibold tracking-tight sm:text-5xl"
           >
-            Tudo que o balcão faz,
+            Tutto quello che fa la reception,
             <br />
-            <em className="text-[#17493b]">sem precisar do balcão.</em>
+            <em className="text-[#17493b]">senza bisogno della reception.</em>
           </h2>
           <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-[#221c15]/10 bg-[#221c15]/10 sm:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map((f) => (
@@ -299,19 +299,19 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---------------- Preço ---------------- */}
-      <section id="preco" className="relative mx-auto w-full max-w-6xl px-5 py-24">
+      {/* ---------------- Prezzo ---------------- */}
+      <section id="prezzo" className="relative mx-auto w-full max-w-6xl px-5 py-24">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div data-bubble>
             <h2 className="font-[family-name:var(--font-landing-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-              Um plano só.
+              Un solo piano.
               <br />
-              <em className="text-[#e4572e]">Tudo incluso.</em>
+              <em className="text-[#e4572e]">Tutto incluso.</em>
             </h2>
             <p className="mt-5 max-w-md text-lg leading-relaxed text-[#221c15]/70">
-              Sem degraus de plano, sem recurso bloqueado, sem surpresa na
-              fatura. Um único sinal de 50% recebido a mais no mês já paga a
-              assinatura.
+              Niente scalini di piano, niente funzioni bloccate, niente sorprese
+              in fattura. Un solo acconto del 50% in più al mese ripaga già
+              l&apos;abbonamento.
             </p>
           </div>
           <div data-bubble className="relative">
@@ -321,10 +321,10 @@ export default function LandingPage() {
                 {PLAN.name}
               </p>
               <p className="mt-3 font-[family-name:var(--font-landing-display)] text-5xl font-semibold tracking-tight">
-                {formatBRL(PLAN.priceMinor)}
+                {formatEUR(PLAN.priceMinor)}
                 <span className="text-xl font-normal text-[#221c15]/50">
                   {" "}
-                  /mês
+                  /mese
                 </span>
               </p>
               <ul className="mt-6 space-y-3 text-sm">
@@ -339,30 +339,30 @@ export default function LandingPage() {
                 href="/signup"
                 className="mt-8 block rounded-full bg-[#221c15] py-3.5 text-center font-semibold text-[#f6f1e7] transition-colors hover:bg-[#17493b]"
               >
-                Testar grátis por {TRIAL_DAYS} dias
+                Prova gratis per {TRIAL_DAYS} giorni
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ---------------- CTA final ---------------- */}
+      {/* ---------------- CTA finale ---------------- */}
       <section className="relative overflow-hidden bg-[#17493b] text-[#f6f1e7]">
         <div data-bubble className="mx-auto w-full max-w-6xl px-5 py-24 text-center">
           <h2 className="mx-auto max-w-2xl font-[family-name:var(--font-landing-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            Enquanto você atende,
+            Mentre tu lavori,
             <br />
-            <em className="text-[#e4572e]">sua página agenda.</em>
+            <em className="text-[#e4572e]">la tua pagina prenota.</em>
           </h2>
           <Link
             href="/signup"
             className="mt-10 inline-block rounded-full bg-[#e4572e] px-8 py-4 text-lg font-semibold text-white transition-transform hover:-translate-y-0.5"
           >
-            Criar minha página de agendamento
+            Crea la mia pagina di prenotazione
           </Link>
           <p className="mt-4 text-sm text-[#f6f1e7]/60">
-            {TRIAL_DAYS} dias grátis · {formatBRL(PLAN.priceMinor)}/mês depois ·
-            cancele quando quiser
+            {TRIAL_DAYS} giorni gratis · {formatEUR(PLAN.priceMinor)}/mese dopo ·
+            disdici quando vuoi
           </p>
         </div>
       </section>
@@ -376,21 +376,21 @@ export default function LandingPage() {
             </p>
             <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               <Link href="/login" className="hover:text-[#f6f1e7]">
-                Entrar
+                Accedi
               </Link>
               <Link href="/signup" className="hover:text-[#f6f1e7]">
-                Criar conta
+                Crea account
               </Link>
-              <Link href="/termos" className="hover:text-[#f6f1e7]">
-                Termos
+              <Link href="/termini" className="hover:text-[#f6f1e7]">
+                Termini
               </Link>
-              <Link href="/privacidade" className="hover:text-[#f6f1e7]">
-                Privacidade
+              <Link href="/privacy" className="hover:text-[#f6f1e7]">
+                Privacy
               </Link>
             </nav>
           </div>
           <p className="mt-6 border-t border-[#f6f1e7]/10 pt-5 text-center text-xs">
-            © {new Date().getFullYear()} Agenda Easy · Desenvolvido por{" "}
+            © {new Date().getFullYear()} Agenda Easy · Sviluppato da{" "}
             <a
               href="https://digitalpauloafonso.com.br"
               target="_blank"

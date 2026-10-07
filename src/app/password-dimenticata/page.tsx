@@ -16,11 +16,11 @@ export default function ForgotPasswordPage() {
     setLoading(true);
     const supabase = createSupabaseBrowserClient();
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/callback?next=/redefinir-senha`,
+      redirectTo: `${window.location.origin}/auth/callback?next=/reimposta-password`,
     });
     setLoading(false);
     if (error) {
-      setError("Não foi possível enviar. Confira o e-mail e tente de novo.");
+      setError("Invio non riuscito. Controlla l'e-mail e riprova.");
       return;
     }
     setSent(true);
@@ -33,15 +33,15 @@ export default function ForgotPasswordPage() {
         <span className="text-orange-600">.</span>
       </Link>
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm">
-        <h1 className="text-xl font-bold">Recuperar senha</h1>
+        <h1 className="text-xl font-bold">Recupera password</h1>
         <p className="mb-4 mt-1 text-sm text-zinc-500">
-          Enviaremos um link para você criar uma nova senha.
+          Ti invieremo un link per creare una nuova password.
         </p>
 
         {sent ? (
           <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-            Se existir uma conta com esse e-mail, o link foi enviado. Confira
-            também a caixa de spam.
+            Se esiste un account con questa e-mail, il link è stato inviato.
+            Controlla anche la cartella spam.
           </p>
         ) : (
           <form onSubmit={onSubmit} className="space-y-3">
@@ -54,7 +54,7 @@ export default function ForgotPasswordPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-                placeholder="voce@exemplo.com"
+                placeholder="tu@esempio.com"
               />
             </label>
             {error && (
@@ -67,14 +67,14 @@ export default function ForgotPasswordPage() {
               disabled={loading}
               className="w-full rounded-xl bg-zinc-900 py-3 font-semibold text-white disabled:opacity-60"
             >
-              {loading ? "Enviando…" : "Enviar link"}
+              {loading ? "Invio in corso…" : "Invia link"}
             </button>
           </form>
         )}
 
         <p className="mt-4 text-center text-sm text-zinc-500">
           <Link href="/login" className="font-medium text-zinc-900 underline">
-            Voltar ao login
+            Torna all&apos;accesso
           </Link>
         </p>
       </div>

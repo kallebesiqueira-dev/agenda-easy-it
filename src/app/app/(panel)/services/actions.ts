@@ -1,9 +1,9 @@
 "use server";
 
 /**
- * CRUD de serviços. Exclusão não existe: agendamentos passados referenciam o
- * serviço (FK restrict) — desativar tira da página pública e preserva o
- * histórico.
+ * CRUD dei servizi. L'eliminazione non esiste: le prenotazioni passate
+ * referenziano il servizio (FK restrict) — disattivarlo lo toglie dalla
+ * pagina pubblica e preserva lo storico.
  */
 
 import { revalidatePath } from "next/cache";
@@ -28,18 +28,18 @@ export async function saveService(
     .extend({ id: uuidSchema.optional() })
     .safeParse(input);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
+    return { error: parsed.error.issues[0]?.message ?? "Dati non validi." };
   }
 
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessão expirada." };
+  if (!ctx) return { error: "Sessione scaduta." };
 
-  // Imagem precisa estar na pasta deste negócio no Storage
+  // L'immagine deve stare nella cartella di questa attività nello Storage
   if (
     parsed.data.image_path &&
     !parsed.data.image_path.startsWith(`${ctx.business.id}/`)
   ) {
-    return { error: "Imagem inválida." };
+    return { error: "Immagine non valida." };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -57,7 +57,7 @@ export async function saveService(
 
   if (error) {
     console.error("saveService error", error);
-    return { error: "Não foi possível salvar. Tente novamente." };
+    return { error: "Salvataggio non riuscito. Riprova." };
   }
 
   revalidatePath("/app/services");

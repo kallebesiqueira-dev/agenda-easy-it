@@ -18,19 +18,20 @@ const SITE_URL =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Agenda Easy — Agendamento online com sinal via Pix",
+  title: "Agenda Easy — Prenotazioni online con acconto",
   description:
-    "Página de agendamento online para qualquer serviço com hora marcada. Seus clientes reservam horário e pagam sinal de 50% — você só confirma quem vai aparecer.",
+    "Pagina di prenotazione online per qualsiasi servizio su appuntamento. I tuoi clienti prenotano e versano un acconto del 50% — tu confermi solo chi si presenterà davvero.",
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "Agenda Easy — Sua agenda cheia, seu WhatsApp em paz",
+    title: "Agenda Easy — Agenda piena, WhatsApp in pace",
     description:
-      "Agendamento online com sinal de 50% para qualquer serviço com hora marcada.",
+      "Prenotazioni online con acconto del 50% per qualsiasi servizio su appuntamento.",
     type: "website",
-    locale: "pt_BR",
+    locale: "it_IT",
   },
   twitter: { card: "summary_large_image" },
   appleWebApp: {
-    title: "AgendaEasy", // nome do atalho ao salvar na tela inicial (iOS)
+    title: "AgendaEasy", // nome della scorciatoia salvata nella home (iOS)
     statusBarStyle: "default",
   },
 };
@@ -38,7 +39,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="pt-BR"
+      lang="it"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>

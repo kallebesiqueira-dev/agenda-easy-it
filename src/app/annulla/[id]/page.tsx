@@ -4,7 +4,7 @@ import { formatDateTimeInTz } from "@/lib/dates";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { CancelPanel } from "./cancel-panel";
 
-export const metadata: Metadata = { title: "Cancelar reserva — Agenda Easy" };
+export const metadata: Metadata = { title: "Annulla prenotazione — Agenda Easy" };
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -25,7 +25,7 @@ export default async function CancelBookingPage({ params, searchParams }: Props)
       "id, starts_at, status, cancel_token, business:businesses(name, timezone), service:services(name)"
     )
     .eq("id", id)
-    .eq("cancel_token", token) // token validado no banco, não em memória
+    .eq("cancel_token", token) // token validato nel database, non in memoria
     .maybeSingle();
 
   const appt = data as unknown as {
@@ -44,7 +44,7 @@ export default async function CancelBookingPage({ params, searchParams }: Props)
   return (
     <main className="flex min-h-dvh items-center justify-center bg-zinc-100 px-4 text-zinc-900">
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm">
-        <h1 className="text-xl font-bold">Cancelar reserva</h1>
+        <h1 className="text-xl font-bold">Annulla prenotazione</h1>
         <div className="mt-3 rounded-xl bg-zinc-50 p-3 text-sm">
           <p className="font-medium">{appt.service?.name}</p>
           <p className="text-zinc-600">{appt.business.name}</p>

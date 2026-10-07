@@ -7,11 +7,11 @@ import { SignOutButton } from "./sign-out-button";
 
 const NAV = [
   { href: "/app", label: "Agenda" },
-  { href: "/app/services", label: "Serviços" },
-  { href: "/app/professionals", label: "Equipe" },
-  { href: "/app/hours", label: "Horários" },
-  { href: "/app/relatorios", label: "Relatórios" },
-  { href: "/app/settings", label: "Configurações" },
+  { href: "/app/services", label: "Servizi" },
+  { href: "/app/professionals", label: "Team" },
+  { href: "/app/hours", label: "Orari" },
+  { href: "/app/report", label: "Report" },
+  { href: "/app/settings", label: "Impostazioni" },
 ];
 
 export default async function PanelLayout({
@@ -41,7 +41,7 @@ export default async function PanelLayout({
               target="_blank"
             >
               /{ctx.business.slug}
-              {!ctx.business.published && " · não publicado"}
+              {!ctx.business.published && " · non pubblicata"}
             </Link>
           </div>
           <SignOutButton />
@@ -61,11 +61,11 @@ export default async function PanelLayout({
       {!ctx.business.published && (
         <div className="bg-sky-50 text-sky-900">
           <p className="mx-auto w-full max-w-3xl px-4 py-2 text-sm">
-            🔒 Sua página ainda <strong>não está pública</strong> — clientes
-            não conseguem agendar. Quando terminar de cadastrar serviços,
-            equipe e horários,{" "}
+            🔒 La tua pagina <strong>non è ancora pubblica</strong> — i clienti
+            non possono prenotare. Quando hai finito di inserire servizi,
+            team e orari,{" "}
             <Link href="/app/settings" className="font-medium underline">
-              publique nas Configurações
+              pubblicala dalle Impostazioni
             </Link>
             .
           </p>
@@ -74,9 +74,9 @@ export default async function PanelLayout({
       {access.status === "trialing" && (
         <div className="bg-amber-50 text-amber-800">
           <p className="mx-auto w-full max-w-3xl px-4 py-2 text-sm">
-            Teste grátis: {access.trialDaysLeft} dia(s) restante(s).{" "}
+            Prova gratuita: {access.trialDaysLeft} giorno/i rimanente/i.{" "}
             <Link href="/app/billing" className="font-medium underline">
-              Assinar agora
+              Abbonati ora
             </Link>
           </p>
         </div>
@@ -84,9 +84,9 @@ export default async function PanelLayout({
       {access.status === "past_due" && (
         <div className="bg-red-50 text-red-700">
           <p className="mx-auto w-full max-w-3xl px-4 py-2 text-sm">
-            Fatura vencida — o acesso será bloqueado em breve.{" "}
+            Fattura scaduta — l&apos;accesso verrà bloccato a breve.{" "}
             <Link href="/app/billing" className="font-medium underline">
-              Pagar agora
+              Paga ora
             </Link>
           </p>
         </div>

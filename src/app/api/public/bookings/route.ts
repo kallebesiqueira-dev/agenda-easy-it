@@ -1,19 +1,22 @@
 /**
- * POST /api/public/bookings — cria a retenção de reserva (awaiting_deposit).
+ * POST /api/public/bookings — crea la ritenzione della prenotazione (awaiting_deposit).
  *
- * Fluxo: valida entrada (Zod) → recalcula disponibilidade no servidor →
- * escolhe o profissional ("qualquer disponível" quando null) → RPC atômica
- * create_booking_hold (service role; a exclusion constraint do banco decide
- * corridas de último milissegundo).
+ * Flusso: valida l'input (Zod) → ricalcola la disponibilità sul server →
+ * sceglie il professionista ("qualsiasi disponibile" quando null) → RPC atomica
+ * create_booking_hold (service role; l'exclusion constraint del database decide
+ * le gare all'ultimo millisecondo).
  */
 
 import type { BookingHoldResult } from "@/types/database";
 import { publicBookingSchema } from "@/lib/validation";
 import { formatDateTimeInTz, zonedTimeToUtc } from "@/lib/dates";
-import { formatBRL } from "@/lib/money";
+import { formatEUR } from "@/lib/money";
 import { AvailabilityError, getDayAvailability } from "@/lib/availability/query";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { emailLayout, escapeHtml, sendEmail } from "@/lib/notifications";
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://agendaeasy.it";
 
 const RPC_ERROR_STATUS: Record<string, number> = {
   business_not_found: 404,
@@ -52,8 +55,8 @@ export async function POST(request: Request) {
     return Response.json({ error: "business_not_found" }, { status: 404 });
   }
 
-  // Revalidação no servidor: o horário pedido precisa estar entre os slots
-  // que o motor oferece AGORA (cobre expediente, pausas, antecedência mínima).
+  // Riconvalida sul server: l'orario richiesto deve stare tra gli slot che il
+  // motore offre ADESSO (copre apertura, pause, anticipo minimo).
   let slots;
   try {
     slots = await getDayAvailability({
@@ -79,7 +82,7 @@ export async function POST(request: Request) {
   if (matching.length === 0) {
     return Response.json({ error: "slot_unavailable" }, { status: 409 });
   }
-  // "Qualquer disponível": primeiro profissional livre no horário.
+  // "Qualsiasi disponibile": primo professionista libero nell'orario.
   const professionalId = input.professional_id ?? matching[0].professional_id;
 
   const { data, error } = await supabase.rpc("create_booking_hold", {
@@ -105,9 +108,9 @@ export async function POST(request: Request) {
 
   const booking = data as BookingHoldResult;
 
-  // Complementos pós-reserva (não podem falhar a resposta): cancel_token
-  // para o link de cancelamento e confirmação por e-mail AO CLIENTE (quando
-  // informado). O dono não recebe e-mail por reserva — acompanha pelo painel.
+  // Complementi post-prenotazione (non possono far fallire la risposta):
+  // cancel_token per il link di annullamento e conferma via e-mail AL CLIENTE
+  // (quando fornita). Il titolare non riceve e-mail per prenotazione — segue dal pannello.
   try {
     const { data: appt } = await supabase
       .from("appointments")
@@ -117,8 +120,8 @@ export async function POST(request: Request) {
     booking.cancel_token = appt?.cancel_token ?? "";
 
     if (input.customer_email) {
-      // SEC-001: o e-mail fica no AGENDAMENTO (vale só para esta reserva) —
-      // nunca sobrescreve o cadastro do cliente identificado por telefone.
+      // SEC-001: l'e-mail resta sulla PRENOTAZIONE (vale solo per questa) —
+      // non sovrascrive mai la scheda del cliente identificato dal telefono.
       await supabase
         .from("appointments")
         .update({ customer_email: input.customer_email })
@@ -132,11 +135,11 @@ export async function POST(request: Request) {
       const when = formatDateTimeInTz(booking.starts_at, business.timezone);
       await sendEmail({
         to: input.customer_email,
-        subject: `Reserva recebida: ${service?.name ?? "serviço"} — ${business.name}`,
-        html: emailLayout(`Reserva recebida, ${input.customer_name}!`, [
-          { raw: `<strong>${escapeHtml(service?.name ?? "")}</strong> em <strong>${escapeHtml(business.name)}</strong>: <strong>${when}</strong>.` },
-          { raw: `Para confirmar, pague o sinal de <strong>${formatBRL(booking.deposit_due_minor)}</strong> até ${formatDateTimeInTz(booking.hold_expires_at, business.timezone)}${booking.pix_key ? ` (chave Pix: <code>${escapeHtml(booking.pix_key)}</code>)` : ""}.` },
-          { raw: `Imprevisto? <a href="https://agenda-easy.vercel.app/cancelar/${encodeURIComponent(booking.appointment_id)}?t=${encodeURIComponent(booking.cancel_token)}">Cancele por aqui</a> (até 2h antes).` },
+        subject: `Prenotazione ricevuta: ${service?.name ?? "servizio"} — ${business.name}`,
+        html: emailLayout(`Prenotazione ricevuta, ${input.customer_name}!`, [
+          { raw: `<strong>${escapeHtml(service?.name ?? "")}</strong> presso <strong>${escapeHtml(business.name)}</strong>: <strong>${when}</strong>.` },
+          { raw: `Per confermare, paga l'acconto di <strong>${formatEUR(booking.deposit_due_minor)}</strong> entro ${formatDateTimeInTz(booking.hold_expires_at, business.timezone)}${booking.pix_key ? ` (coordinate di pagamento: <code>${escapeHtml(booking.pix_key)}</code>)` : ""}.` },
+          { raw: `Imprevisto? <a href="${SITE_URL}/annulla/${encodeURIComponent(booking.appointment_id)}?t=${encodeURIComponent(booking.cancel_token)}">Annulla da qui</a> (fino a 2h prima).` },
         ]),
       });
     }

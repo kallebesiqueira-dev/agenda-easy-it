@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Agenda Easy — Agendamento online com sinal via Pix";
+export const alt = "Agenda Easy — Prenotazioni online con acconto";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -33,14 +33,14 @@ export default function OgImage() {
             lineHeight: 1.05,
           }}
         >
-          <span>Sua agenda cheia.</span>
+          <span>Agenda piena.</span>
           <span>
-            Seu WhatsApp{" "}
-            <span style={{ fontStyle: "italic", color: "#17493b" }}>em paz.</span>
+            WhatsApp{" "}
+            <span style={{ fontStyle: "italic", color: "#17493b" }}>in pace.</span>
           </span>
         </div>
         <div style={{ display: "flex", fontSize: 30, color: "#5c554b" }}>
-          Agendamento online com sinal de 50% · para qualquer serviço com hora marcada
+          Prenotazioni online con acconto del 50% · per qualsiasi servizio su appuntamento
         </div>
       </div>
     ),

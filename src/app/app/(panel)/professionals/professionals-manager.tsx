@@ -22,7 +22,7 @@ interface ShiftRow {
   ends_at: string;
 }
 
-/** "HH:MM:SS" do Postgres → "HH:MM" */
+/** "HH:MM:SS" di Postgres → "HH:MM" */
 const hhmm = (t: string) => t.slice(0, 5);
 
 export function ProfessionalsManager({
@@ -63,13 +63,13 @@ export function ProfessionalsManager({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold">Equipe</h2>
+        <h2 className="font-semibold">Team</h2>
         <button
           type="button"
           onClick={() => setAdding(true)}
           className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white"
         >
-          Adicionar
+          Aggiungi
         </button>
       </div>
 
@@ -84,21 +84,21 @@ export function ProfessionalsManager({
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-            placeholder={`Nome do ${label.toLowerCase()}`}
+            placeholder={`Nome del ${label.toLowerCase()}`}
           />
           <button
             type="submit"
             disabled={pending}
             className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
           >
-            Salvar
+            Salva
           </button>
           <button
             type="button"
             onClick={() => setAdding(false)}
             className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
           >
-            Cancelar
+            Annulla
           </button>
         </form>
       )}
@@ -111,8 +111,8 @@ export function ProfessionalsManager({
 
       {professionals.length === 0 && !adding ? (
         <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm">
-          Adicione pelo menos um {label.toLowerCase()} e defina os turnos de
-          trabalho para abrir a agenda.
+          Aggiungi almeno un {label.toLowerCase()} e definisci i turni di
+          lavoro per aprire l&apos;agenda.
         </p>
       ) : (
         <ul className="space-y-3">
@@ -165,7 +165,7 @@ function ProfessionalCard({
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-3">
-          <label className="group relative cursor-pointer" title="Trocar foto">
+          <label className="group relative cursor-pointer" title="Cambia foto">
             {professional.image_path ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -198,7 +198,7 @@ function ProfessionalCard({
                       image_path: path,
                     });
                   } catch {
-                    return { error: "Não foi possível enviar a foto." };
+                    return { error: "Caricamento della foto non riuscito." };
                   }
                 });
               }}
@@ -245,14 +245,14 @@ function ProfessionalCard({
                   setNameDraft(professional.display_name);
                   setRenaming(true);
                 }}
-                aria-label="Renomear"
+                aria-label="Rinomina"
                 className="ml-1.5 text-zinc-400 hover:text-zinc-700"
               >
                 ✎
               </button>
               {!professional.active && (
                 <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
-                  inativo
+                  non attivo
                 </span>
               )}
             </p>
@@ -273,14 +273,14 @@ function ProfessionalCard({
             }
             className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm disabled:opacity-60"
           >
-            {professional.active ? "Desativar" : "Reativar"}
+            {professional.active ? "Disattiva" : "Riattiva"}
           </button>
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
             className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm"
           >
-            Turnos ({shifts.length})
+            Turni ({shifts.length})
           </button>
         </div>
       </div>
@@ -289,7 +289,7 @@ function ProfessionalCard({
         <div className="mt-3 border-t border-zinc-100 pt-3">
           {shifts.length === 0 && (
             <p className="mb-2 text-sm text-zinc-500">
-              Sem turnos — não aparece na agenda. Adicione os dias de trabalho.
+              Nessun turno — non compare in agenda. Aggiungi i giorni di lavoro.
             </p>
           )}
           <ul className="mb-3 space-y-1">
@@ -307,7 +307,7 @@ function ProfessionalCard({
                   disabled={pending}
                   onClick={() => run(() => deleteShift(s.id))}
                   className="rounded px-2 py-0.5 text-zinc-400 hover:text-red-600"
-                  aria-label="Remover turno"
+                  aria-label="Rimuovi turno"
                 >
                   ✕
                 </button>
@@ -330,7 +330,7 @@ function ProfessionalCard({
             }}
           >
             <label className="block">
-              <span className="mb-1 block text-xs text-zinc-500">Dia</span>
+              <span className="mb-1 block text-xs text-zinc-500">Giorno</span>
               <select
                 value={weekday}
                 onChange={(e) => setWeekday(Number(e.target.value) as Weekday)}
@@ -344,7 +344,7 @@ function ProfessionalCard({
               </select>
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs text-zinc-500">Início</span>
+              <span className="mb-1 block text-xs text-zinc-500">Inizio</span>
               <input
                 type="time"
                 required
@@ -354,7 +354,7 @@ function ProfessionalCard({
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs text-zinc-500">Fim</span>
+              <span className="mb-1 block text-xs text-zinc-500">Fine</span>
               <input
                 type="time"
                 required
@@ -368,7 +368,7 @@ function ProfessionalCard({
               disabled={pending}
               className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-60"
             >
-              Adicionar turno
+              Aggiungi turno
             </button>
           </form>
 

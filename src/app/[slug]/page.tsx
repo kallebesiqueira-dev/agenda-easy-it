@@ -12,8 +12,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const profile = await getPublicBusinessProfile(slug);
   if (!profile) return { title: "Agenda Easy" };
   return {
-    title: `${profile.name} — Agendar horário`,
-    description: `Agende seu horário em ${profile.name} pelo Agenda Easy.`,
+    title: `${profile.name} — Prenota un appuntamento`,
+    description: `Prenota il tuo appuntamento da ${profile.name} con Agenda Easy.`,
   };
 }
 

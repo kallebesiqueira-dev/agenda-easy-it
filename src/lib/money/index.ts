@@ -1,30 +1,30 @@
 /**
- * Dinheiro sempre em centavos inteiros (minor units) + código de moeda explícito.
- * MVP limitado a BRL/Brasil.
+ * Denaro sempre in centesimi interi (minor units) + codice valuta esplicito.
+ * MVP limitato a EUR/Italia.
  */
 
-/** Sinal obrigatório: 50% do preço vigente, arredondando PARA CIMA ao centavo. */
+/** Acconto obbligatorio: 50% del prezzo corrente, arrotondato PER ECCESSO al centesimo. */
 export function depositDueMinor(priceMinor: number): number {
   if (!Number.isInteger(priceMinor) || priceMinor <= 0) {
-    throw new Error("Preço inválido: esperado inteiro positivo em centavos.");
+    throw new Error("Prezzo non valido: atteso intero positivo in centesimi.");
   }
   return Math.ceil(priceMinor / 2);
 }
 
-const brl = new Intl.NumberFormat("pt-BR", {
+const eur = new Intl.NumberFormat("it-IT", {
   style: "currency",
-  currency: "BRL",
+  currency: "EUR",
 });
 
-/** Formata centavos como "R$ 45,00". */
-export function formatBRL(minor: number): string {
-  return brl.format(minor / 100);
+/** Formatta centesimi come "45,00 €". */
+export function formatEUR(minor: number): string {
+  return eur.format(minor / 100);
 }
 
-/** Converte entrada do operador ("45", "45,50", "R$ 45,50") para centavos. Retorna null se inválida. */
-export function parseBRLToMinor(input: string): number | null {
+/** Converte l'input dell'operatore ("45", "45,50", "€ 45,50") in centesimi. Restituisce null se non valido. */
+export function parseEURToMinor(input: string): number | null {
   const cleaned = input
-    .replace(/[R$\s]/g, "")
+    .replace(/[€\s]/g, "")
     .replace(/\./g, "")
     .replace(",", ".");
   if (cleaned === "" || !/^\d+(\.\d{1,2})?$/.test(cleaned)) return null;

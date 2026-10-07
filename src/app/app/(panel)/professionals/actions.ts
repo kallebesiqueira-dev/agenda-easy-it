@@ -1,9 +1,9 @@
 "use server";
 
 /**
- * Equipe e turnos. Profissionais não são excluídos (FK restrict em
- * agendamentos) — apenas desativados. Turnos podem ser removidos livremente:
- * agendamentos já criados guardam o horário congelado.
+ * Team e turni. I professionisti non vengono eliminati (FK restrict sulle
+ * prenotazioni) — solo disattivati. I turni possono essere rimossi liberamente:
+ * le prenotazioni già create conservano l'orario congelato.
  */
 
 import { revalidatePath } from "next/cache";
@@ -25,17 +25,17 @@ export async function saveProfessional(input: {
     .extend({ id: uuidSchema.optional() })
     .safeParse(input);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
+    return { error: parsed.error.issues[0]?.message ?? "Dati non validi." };
   }
 
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessão expirada." };
+  if (!ctx) return { error: "Sessione scaduta." };
 
   if (
     parsed.data.image_path &&
     !parsed.data.image_path.startsWith(`${ctx.business.id}/`)
   ) {
-    return { error: "Imagem inválida." };
+    return { error: "Immagine non valida." };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -49,7 +49,7 @@ export async function saveProfessional(input: {
       .eq("business_id", ctx.business.id);
     if (error) {
       console.error("saveProfessional error", error);
-      return { error: "Não foi possível salvar. Tente novamente." };
+      return { error: "Salvataggio non riuscito. Riprova." };
     }
   } else {
     const { data: created, error } = await supabase
@@ -59,12 +59,12 @@ export async function saveProfessional(input: {
       .single();
     if (error || !created) {
       console.error("saveProfessional error", error);
-      return { error: "Não foi possível salvar. Tente novamente." };
+      return { error: "Salvataggio non riuscito. Riprova." };
     }
 
-    // Turnos iniciais espelhando o horário de funcionamento (ou padrão
-    // seg–sáb 09–18 se ainda não salvo) — sem isso o profissional não
-    // gera nenhum horário disponível e a página pública fica vazia.
+    // Turni iniziali che rispecchiano l'orario di apertura (o il default
+    // lun–sab 09–18 se non ancora salvato) — senza di questo il professionista
+    // non genera nessun orario disponibile e la pagina pubblica resta vuota.
     const { data: hours } = await supabase
       .from("business_hours")
       .select("weekday, opens_at, closes_at, is_closed")
@@ -107,23 +107,23 @@ export async function addShift(input: {
   const parsedShift = shiftInputSchema.safeParse(input);
   if (!parsedId.success || !parsedShift.success) {
     return {
-      error: parsedShift.error?.issues[0]?.message ?? "Dados inválidos.",
+      error: parsedShift.error?.issues[0]?.message ?? "Dati non validi.",
     };
   }
 
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessão expirada." };
+  if (!ctx) return { error: "Sessione scaduta." };
 
   const supabase = await createSupabaseServerClient();
 
-  // FK não garante mesmo tenant: confere que o profissional é deste negócio
+  // La FK non garantisce lo stesso tenant: verifica che il professionista sia di questa attività
   const { data: professional } = await supabase
     .from("professionals")
     .select("id")
     .eq("id", parsedId.data)
     .eq("business_id", ctx.business.id)
     .maybeSingle();
-  if (!professional) return { error: "Profissional não encontrado." };
+  if (!professional) return { error: "Professionista non trovato." };
 
   const { error } = await supabase.from("professional_shifts").insert({
     ...parsedShift.data,
@@ -132,7 +132,7 @@ export async function addShift(input: {
   });
   if (error) {
     console.error("addShift error", error);
-    return { error: "Não foi possível adicionar o turno." };
+    return { error: "Aggiunta del turno non riuscita." };
   }
 
   revalidatePath("/app/professionals");
@@ -143,10 +143,10 @@ export async function deleteShift(
   shiftId: string
 ): Promise<{ error?: string }> {
   const parsed = uuidSchema.safeParse(shiftId);
-  if (!parsed.success) return { error: "Dados inválidos." };
+  if (!parsed.success) return { error: "Dati non validi." };
 
   const ctx = await getCurrentBusiness();
-  if (!ctx) return { error: "Sessão expirada." };
+  if (!ctx) return { error: "Sessione scaduta." };
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
@@ -156,7 +156,7 @@ export async function deleteShift(
     .eq("business_id", ctx.business.id);
   if (error) {
     console.error("deleteShift error", error);
-    return { error: "Não foi possível remover o turno." };
+    return { error: "Rimozione del turno non riuscita." };
   }
 
   revalidatePath("/app/professionals");

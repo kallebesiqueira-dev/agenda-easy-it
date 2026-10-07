@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { Service } from "@/types/database";
-import { formatBRL, parseBRLToMinor } from "@/lib/money";
+import { formatEUR, parseEURToMinor } from "@/lib/money";
 import { mediaUrl, uploadMedia } from "@/lib/storage";
 import { saveService } from "./actions";
 
@@ -28,7 +28,7 @@ export function ServicesManager({
   services: ServiceRow[];
 }) {
   const router = useRouter();
-  /** null = fechado; "new" = criando; senão id do serviço em edição */
+  /** null = chiuso; "new" = creazione; altrimenti id del servizio in modifica */
   const [editing, setEditing] = useState<string | null>(null);
 
   const current = services.find((s) => s.id === editing) ?? null;
@@ -36,13 +36,13 @@ export function ServicesManager({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold">Serviços</h2>
+        <h2 className="font-semibold">Servizi</h2>
         <button
           type="button"
           onClick={() => setEditing("new")}
           className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white"
         >
-          Novo serviço
+          Nuovo servizio
         </button>
       </div>
 
@@ -61,7 +61,7 @@ export function ServicesManager({
 
       {services.length === 0 && !editing ? (
         <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm">
-          Cadastre seu primeiro serviço para aparecer na página de agendamento.
+          Inserisci il tuo primo servizio per comparire nella pagina di prenotazione.
         </p>
       ) : (
         <ul className="space-y-2">
@@ -87,12 +87,12 @@ export function ServicesManager({
                   {s.name}
                   {!s.active && (
                     <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
-                      inativo
+                      non attivo
                     </span>
                   )}
                 </p>
                 <p className="text-sm text-zinc-500">
-                  {formatBRL(s.price_minor)} · {s.duration_minutes} min
+                  {formatEUR(s.price_minor)} · {s.duration_minutes} min
                 </p>
               </div>
               <button
@@ -100,7 +100,7 @@ export function ServicesManager({
                 onClick={() => setEditing(s.id)}
                 className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm"
               >
-                Editar
+                Modifica
               </button>
             </li>
           ))}
@@ -136,9 +136,9 @@ function ServiceForm({
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const priceMinor = parseBRLToMinor(price);
+    const priceMinor = parseEURToMinor(price);
     if (priceMinor === null) {
-      setError("Preço inválido. Ex.: 45,00");
+      setError("Prezzo non valido. Es.: 45,00");
       return;
     }
     startTransition(async () => {
@@ -147,7 +147,7 @@ function ServiceForm({
         try {
           finalImagePath = await uploadMedia(businessId, "services", imageFile);
         } catch {
-          setError("Não foi possível enviar a foto. Tente novamente.");
+          setError("Caricamento della foto non riuscito. Riprova.");
           return;
         }
       }
@@ -174,7 +174,7 @@ function ServiceForm({
       onSubmit={onSubmit}
       className="mb-4 space-y-3 rounded-2xl bg-white p-4 shadow-sm"
     >
-      <p className="font-semibold">{service ? "Editar serviço" : "Novo serviço"}</p>
+      <p className="font-semibold">{service ? "Modifica servizio" : "Nuovo servizio"}</p>
       <label className="block">
         <span className="mb-1 block text-sm font-medium">Nome</span>
         <input
@@ -183,24 +183,24 @@ function ServiceForm({
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-          placeholder="Corte masculino"
+          placeholder="Taglio uomo"
         />
       </label>
       <label className="block">
         <span className="mb-1 block text-sm font-medium">
-          Descrição (opcional)
+          Descrizione (opzionale)
         </span>
         <input
           maxLength={500}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-          placeholder="Tesoura e máquina"
+          placeholder="Forbici e macchinetta"
         />
       </label>
       <div className="flex gap-3">
         <label className="block flex-1">
-          <span className="mb-1 block text-sm font-medium">Preço (R$)</span>
+          <span className="mb-1 block text-sm font-medium">Prezzo (€)</span>
           <input
             required
             inputMode="decimal"
@@ -211,7 +211,7 @@ function ServiceForm({
           />
         </label>
         <label className="block flex-1">
-          <span className="mb-1 block text-sm font-medium">Duração</span>
+          <span className="mb-1 block text-sm font-medium">Durata</span>
           <select
             value={duration}
             onChange={(e) => setDuration(Number(e.target.value))}
@@ -226,13 +226,13 @@ function ServiceForm({
         </label>
       </div>
       <div>
-        <span className="mb-1 block text-sm font-medium">Foto (opcional)</span>
+        <span className="mb-1 block text-sm font-medium">Foto (opzionale)</span>
         <div className="flex items-center gap-3">
           {previewUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={previewUrl}
-              alt="Pré-visualização"
+              alt="Anteprima"
               className="size-16 rounded-xl object-cover"
             />
           ) : (
@@ -256,7 +256,7 @@ function ServiceForm({
                 }}
                 className="text-xs text-zinc-500 underline"
               >
-                Remover foto
+                Rimuovi foto
               </button>
             )}
           </div>
@@ -269,7 +269,7 @@ function ServiceForm({
           checked={active}
           onChange={(e) => setActive(e.target.checked)}
         />
-        Visível na página de agendamento
+        Visibile nella pagina di prenotazione
       </label>
 
       {error && (
@@ -282,14 +282,14 @@ function ServiceForm({
           disabled={pending}
           className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
         >
-          {pending ? "Salvando…" : "Salvar"}
+          {pending ? "Salvataggio…" : "Salva"}
         </button>
         <button
           type="button"
           onClick={onCancel}
           className="rounded-lg border border-zinc-300 px-4 py-2 text-sm"
         >
-          Cancelar
+          Annulla
         </button>
       </div>
     </form>

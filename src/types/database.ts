@@ -43,8 +43,8 @@ export interface Business {
   address: string | null;
   phone: string | null;
   whatsapp: string | null;
-  timezone: string; // IANA, ex. "America/Sao_Paulo"
-  country_code: "BR";
+  timezone: string; // IANA, es. "Europe/Rome"
+  country_code: "BR" | "IT";
   pix_key: string | null;
   published: boolean;
   comped: boolean; // cortesia: isento de assinatura
@@ -100,7 +100,7 @@ export interface Service {
   name: string;
   description: string | null;
   price_minor: number; // centavos
-  currency: "BRL";
+  currency: "BRL" | "EUR";
   duration_minutes: number;
   image_path: string | null;
   active: boolean;
@@ -137,7 +137,7 @@ export interface Payment {
   business_id: string;
   appointment_id: string;
   amount_minor: number;
-  currency: "BRL";
+  currency: "BRL" | "EUR";
   purpose: PaymentPurpose;
   method: PaymentMethod;
   status: PaymentStatus;
@@ -156,6 +156,8 @@ export interface Subscription {
   business_id: string;
   asaas_customer_id: string | null;
   asaas_subscription_id: string | null;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
   status: SubscriptionStatus;
   trial_ends_at: string;
   overdue_since: string | null;

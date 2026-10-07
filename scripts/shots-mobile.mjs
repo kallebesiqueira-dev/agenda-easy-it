@@ -60,7 +60,7 @@ const shots = [
   ["/app/services", "02-servicos"],
   ["/app/professionals", "03-equipe"],
   ["/app/hours", "04-horarios"],
-  ["/app/relatorios", "05-relatorios"],
+  ["/app/report", "05-relatorios"],
   ["/app/settings", "06-config"],
   ["/app/billing", "07-billing"],
 ];
