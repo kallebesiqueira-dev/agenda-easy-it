@@ -53,7 +53,8 @@ const COPY: Record<
     coverAlt: "Copertina",
     noCover: "Senza copertina — la pagina usa il colore del brand",
     removeCover: "Rimuovi copertina",
-    coverHint: "Usa una foto del tuo spazio o del tuo lavoro (ideale: 1600×500px).",
+    coverHint:
+      "Dimensione esatta: 1600×500 px. Usa una foto del tuo spazio o del tuo lavoro, senza bordi bianchi.",
     framing: "Regola l'inquadratura (↑ alto · ↓ basso)",
     name: "Nome",
     type: "Tipo di attività",
@@ -89,7 +90,8 @@ const COPY: Record<
     coverAlt: "Cover",
     noCover: "No cover — the page uses the brand colour",
     removeCover: "Remove cover",
-    coverHint: "Use a photo of your space or your work (ideal: 1600×500px).",
+    coverHint:
+      "Exact size: 1600×500 px. Use a photo of your space or your work, without white borders.",
     framing: "Adjust framing (↑ top · ↓ bottom)",
     name: "Name",
     type: "Business type",
