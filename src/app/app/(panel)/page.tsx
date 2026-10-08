@@ -88,13 +88,31 @@ export default async function AgendaPage({ searchParams }: Props) {
 
   const supabase = await createSupabaseServerClient();
 
-  const { data: monthAppointments } = await supabase
-    .from("appointments")
-    .select("starts_at, status, hold_expires_at")
-    .eq("business_id", business.id)
-    .in("status", ["awaiting_deposit", "confirmed"])
-    .gte("starts_at", monthStart.toISOString())
-    .lt("starts_at", monthEnd.toISOString());
+  // Le due query (mese per il calendario + giorno per le card) non dipendono
+  // l'una dall'altra: in parallelo si risparmia un round-trip al database.
+  const [{ data: monthAppointments }, { data: appointments }] =
+    await Promise.all([
+      supabase
+        .from("appointments")
+        .select("starts_at, status, hold_expires_at")
+        .eq("business_id", business.id)
+        .in("status", ["awaiting_deposit", "confirmed"])
+        .gte("starts_at", monthStart.toISOString())
+        .lt("starts_at", monthEnd.toISOString()),
+      supabase
+        .from("appointments")
+        .select(
+          `id, starts_at, ends_at, status, service_price_minor, deposit_due_minor,
+       deposit_paid_at, hold_expires_at,
+       customer:customers(name, phone),
+       service:services(name),
+       professional:professionals(display_name)`
+        )
+        .eq("business_id", business.id)
+        .gte("starts_at", dayStart.toISOString())
+        .lt("starts_at", dayEnd.toISOString())
+        .order("starts_at"),
+    ]);
 
   const nowRef = new Date();
   const dayKeyFmt = new Intl.DateTimeFormat("en-CA", {
@@ -124,20 +142,6 @@ export default async function AgendaPage({ searchParams }: Props) {
     year: "numeric",
     timeZone: "UTC",
   }).format(new Date(Date.UTC(yy, mm - 1, 1, 12)));
-
-  const { data: appointments } = await supabase
-    .from("appointments")
-    .select(
-      `id, starts_at, ends_at, status, service_price_minor, deposit_due_minor,
-       deposit_paid_at, hold_expires_at,
-       customer:customers(name, phone),
-       service:services(name),
-       professional:professionals(display_name)`
-    )
-    .eq("business_id", business.id)
-    .gte("starts_at", dayStart.toISOString())
-    .lt("starts_at", dayEnd.toISOString())
-    .order("starts_at");
 
   const now = new Date();
   const cards: AppointmentCardData[] = (appointments ?? []).map((a) => {

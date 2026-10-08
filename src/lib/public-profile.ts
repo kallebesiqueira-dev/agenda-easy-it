@@ -10,10 +10,10 @@ import { isPublicBusinessAllowed } from "@/lib/billing";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const DEFAULT_PROFESSIONAL_LABELS: Record<BusinessType, string> = {
-  barbershop: "Barbeiro",
-  beauty: "Profissional",
-  hair_salon: "Cabeleireiro(a)",
-  other: "Profissional",
+  barbershop: "Barbiere",
+  beauty: "Professionista",
+  hair_salon: "Parrucchiere",
+  other: "Professionista",
 };
 
 /** cache() deduplica a busca entre generateMetadata e a página na mesma requisição. */
@@ -33,10 +33,10 @@ export const getPublicBusinessProfile = cache(
       .maybeSingle();
     if (!business) return null;
 
-    // Assinatura vencida tira a página do ar (exceto contas cortesia)
-    if (!(await isPublicBusinessAllowed(business))) return null;
-
-    const [servicesRes, professionalsRes] = await Promise.all([
+    // Verifica dell'abbonamento IN PARALLELO con servizi/professionisti:
+    // un round-trip in meno verso il database per ogni visita pubblica.
+    const [allowed, servicesRes, professionalsRes] = await Promise.all([
+      isPublicBusinessAllowed(business),
       supabase
         .from("services")
         .select("id, name, description, price_minor, duration_minutes, image_path")
@@ -50,6 +50,9 @@ export const getPublicBusinessProfile = cache(
         .eq("active", true)
         .order("display_name"),
     ]);
+
+    // Abbonamento scaduto toglie la pagina dal web (tranne account cortesia)
+    if (!allowed) return null;
 
     return {
       slug: business.slug,
