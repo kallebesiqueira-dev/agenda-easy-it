@@ -7,6 +7,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import type { Lang } from "@/lib/i18n";
 import { useLang } from "@/lib/i18n/use-lang";
 
@@ -273,10 +274,11 @@ export function SupportChat() {
       {open && (
         <div className="flex max-h-[70vh] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10">
           <div className="flex items-center gap-3 bg-[#17493b] px-4 py-3 text-white">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src="/suporte-avatar.png"
               alt=""
+              width={40}
+              height={40}
               className="size-10 rounded-full bg-white/10 object-cover"
             />
             <div className="min-w-0 flex-1">
@@ -383,10 +385,11 @@ export function SupportChat() {
           {t.bubble}
           <span className="absolute -bottom-1 left-1/2 size-2 -translate-x-1/2 rotate-45 bg-white" />
         </span>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src="/suporte-avatar.png"
           alt={t.bubble}
+          width={80}
+          height={78}
           className="w-20 object-contain"
         />
       </button>

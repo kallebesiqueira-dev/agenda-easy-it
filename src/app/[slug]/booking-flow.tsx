@@ -9,6 +9,7 @@
  */
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import type {
   AvailableSlot,
   BookingHoldResult,
@@ -344,12 +345,14 @@ export function BookingFlow({
         {profile.cover_path ? (
           <>
             {/* copertina dell'attività + velo scuro per mantenere il testo leggibile */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={mediaUrl(profile.cover_path)!}
               alt=""
               aria-hidden
-              className="absolute inset-0 size-full object-cover"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
               style={{ objectPosition: `50% ${profile.cover_position}%` }}
             />
             <div
@@ -373,10 +376,11 @@ export function BookingFlow({
         </div>
         <div className="relative mx-auto flex w-full max-w-md flex-col items-center gap-3 text-center sm:max-w-lg lg:max-w-xl">
           {profile.logo_path ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={mediaUrl(profile.logo_path)!}
               alt={profile.name}
+              width={64}
+              height={64}
               className="size-14 shrink-0 rounded-2xl object-cover ring-1 ring-white/25 sm:size-16"
             />
           ) : (
@@ -420,10 +424,11 @@ export function BookingFlow({
                       className="group flex w-full items-center justify-between gap-3 rounded-2xl border border-zinc-200 px-4 py-3.5 text-left transition-all hover:-translate-y-0.5 hover:border-[var(--brand)] hover:shadow-md"
                     >
                       {s.image_path && (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <Image
                           src={mediaUrl(s.image_path)!}
                           alt=""
+                          width={56}
+                          height={56}
                           className="size-14 shrink-0 rounded-xl object-cover"
                         />
                       )}
@@ -779,10 +784,11 @@ function ChoiceButton({
       className="flex w-full items-center gap-3 rounded-2xl border border-zinc-200 px-4 py-3.5 text-left transition-all hover:-translate-y-0.5 hover:border-[var(--brand)] hover:shadow-md"
     >
       {imageUrl && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
           src={imageUrl}
           alt=""
+          width={44}
+          height={44}
           className="size-11 shrink-0 rounded-full object-cover"
         />
       )}

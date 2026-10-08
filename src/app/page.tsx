@@ -6,6 +6,7 @@
  * prezzo/prova cambia in src/lib/billing, questa pagina si aggiorna da sola.
  */
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Fraunces, Instrument_Sans } from "next/font/google";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -318,11 +319,14 @@ export default async function LandingPage() {
       {/* ---------------- Hero ---------------- */}
       <section className="relative mx-auto grid w-full max-w-6xl gap-12 px-5 pb-20 pt-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:pt-16">
         <div>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src="/home.png"
             alt={t.heroAlt}
-            className="landing-rise w-full"
+            width={1200}
+            height={800}
+            priority
+            sizes="(max-width: 1024px) 100vw, 55vw"
+            className="landing-rise h-auto w-full"
           />
           <div
             className="landing-rise mt-8 flex flex-wrap items-center gap-4"
