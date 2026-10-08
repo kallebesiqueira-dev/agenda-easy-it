@@ -433,7 +433,9 @@ export function BookingFlow({
                         />
                       )}
                       <span className="flex-1">
-                        <span className="block font-medium">{s.name}</span>
+                        <span className="block text-lg font-semibold text-zinc-900">
+                          {s.name}
+                        </span>
                         <span className="block text-sm text-zinc-500">
                           {s.duration_minutes} min
                           {s.description ? ` · ${s.description}` : ""}

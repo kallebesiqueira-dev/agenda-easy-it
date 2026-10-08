@@ -162,7 +162,7 @@ export function ServicesManager({
                 </div>
               )}
               <div className="flex-1">
-                <p className="font-medium">
+                <p className="text-base font-semibold text-zinc-900">
                   {s.name}
                   {!s.active && (
                     <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
