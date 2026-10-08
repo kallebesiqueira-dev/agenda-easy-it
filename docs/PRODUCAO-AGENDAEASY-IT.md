@@ -47,22 +47,29 @@ Siga esta ordem para colocar no ar em **https://agendaeasy.it**.
 A assinatura do SaaS é cobrada via **Stripe** (Checkout em modo subscription,
 EUR, mensal, com os dias restantes do trial convertidos em `trial_period_days`).
 
-1. Crie a conta Stripe (ou sandbox: `stripe sandbox create` com a CLI).
-2. Crie uma **restricted key** (`rk_...`) com permissões de escrita em
-   Customers, Checkout Sessions, Subscriptions e Billing Portal →
-   `STRIPE_SECRET_KEY`.
-3. (Recomendado) Crie no Dashboard o produto **Piano Unico** com um Price
-   recorrente de **9,90 EUR/mês** e aponte `STRIPE_PRICE_ID` para ele.
-   Sem essa variável, o preço é criado inline a partir de `PLAN.priceMinor`.
-4. Webhook: Dashboard > Developers > Webhooks > endpoint
+A conta usada é a **GALLO CRM** (`acct_1TWXUwRwC9AqUh7F`). Já estão criados
+em LIVE (prontos para produção):
+
+- Produto: **Piano Unico** → `prod_VP84sIeUofzbFg`
+- Price recorrente 9,90 EUR/mês → `STRIPE_PRICE_ID=price_1UOJoaRwC9AqUh7FGZ7ljhSg`
+- Customer Portal configurado → `bpc_1UOJovRwC9AqUh7FwpIcb8j8`
+
+Falta apenas (no deploy):
+
+1. **Chave live**: Dashboard em modo LIVE (GALLO CRM) >
+   https://dashboard.stripe.com/apikeys > "Create restricted key" com
+   permissões de ESCRITA em Customers, Checkout Sessions, Subscriptions e
+   Billing Portal → `STRIPE_SECRET_KEY=rk_live_...` (na Vercel, NUNCA no
+   .env.local — chave live cobra cartões reais).
+2. **Webhook live**: Dashboard > Developers > Webhooks > Add endpoint
    `https://agendaeasy.it/api/webhooks/stripe`, eventos:
    `checkout.session.completed`, `customer.subscription.created`,
    `customer.subscription.updated`, `customer.subscription.deleted`,
    `invoice.paid`, `invoice.payment_failed`. O signing secret vai em
-   `STRIPE_WEBHOOK_SECRET`.
-5. Ative o **Customer Portal** (Settings > Billing > Customer portal) — o
-   botão "Gestisci abbonamento e fatture" do painel usa esse portal
-   (trocar cartão, baixar fatturas, disdire).
+   `STRIPE_WEBHOOK_SECRET` (Vercel). Criar só quando o domínio estiver no
+   ar (endpoints com falhas prolongadas são desativados pela Stripe).
+3. **Ativação da conta live** (se ainda não estiver): dados da empresa em
+   Settings > Business — sem isso a Stripe não processa cobranças reais.
 6. Teste local: `stripe listen --forward-to localhost:7778/api/webhooks/stripe`.
 7. IVA: se quiser que a Stripe calcule a IVA italiana automaticamente, ative
    o **Stripe Tax** e registre a empresa (Registrations) ANTES de ligar
