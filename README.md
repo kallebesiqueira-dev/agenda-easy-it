@@ -1,145 +1,235 @@
-# Agenda Easy
+# Agenda Easy 🇮🇹
 
-**SaaS de agendamento online para qualquer serviço com hora marcada** — salões, barbearias, clínicas, personal trainers, professores, estúdios e o que mais atender com agenda. Cada negócio ganha uma página pública de reservas; o cliente escolhe serviço, profissional e horário e paga um **sinal de 50% via Pix** — a agenda só bloqueia para quem pagou.
+> **Agenda piena, WhatsApp in pace.** SaaS di prenotazioni online con acconto del 50% per qualsiasi attività su appuntamento — barberie, saloni, estetiste, tatuatori, fisioterapisti e altro.
 
-🔗 **Produção:** [agenda-easy.vercel.app](https://agenda-easy.vercel.app)
+![Next.js](https://img.shields.io/badge/Next.js_16-000000?logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React_19-087EA4?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=white)
+![Stripe](https://img.shields.io/badge/Stripe-635BFF?logo=stripe&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind_4-06B6D4?logo=tailwindcss&logoColor=white)
+![License](https://img.shields.io/badge/Licenza-MIT-green)
 
-![Landing page](docs/landing.png)
+Il cliente sceglie servizio, professionista e orario da solo, versa un **acconto del 50%** direttamente all'attività e l'agenda si organizza da sé. Interfaccia **bilingue (italiano/inglese)**, valuta **EUR**, fuso **Europe/Rome**.
 
-## Como funciona
+---
 
-1. **O dono do negócio** cria a conta (e-mail/senha ou **Google**), cadastra serviços (preço, duração, foto), equipe e horários no painel.
-2. **Publica a página** e divulga o link (`agenda-easy.vercel.app/seu-negocio`) no Instagram/WhatsApp.
-3. **O cliente** escolhe serviço → profissional → horário, informa nome/telefone (e e-mail opcional) e recebe a chave Pix para pagar o **sinal de 50%**.
-4. **O dono confirma** o Pix recebido no painel; o horário some da página pública e entra no calendário. Cliente recebe confirmação por e-mail e **lembrete automático 24h antes**.
+## 🎥 Demo
 
-![Página pública de agendamento](docs/booking.png)
+**[▶ Guarda il video demo](docs/media/demo.webm)** — landing, cambio lingua, flusso di prenotazione e onboarding.
 
-## Funcionalidades
-
-### Página pública `/{slug}`
-- Identidade do negócio: logo, cor da marca, endereço e WhatsApp
-- **Capa editável estilo Facebook** com regulagem de enquadramento (prévia ao vivo nas Configurações)
-- Serviços com foto, preço e duração; escolha de profissional (com foto)
-- Grade de horários em slots de 30 min — mostra **apenas horários realmente livres**
-- Reserva com sinal de 50% via Pix + botão de WhatsApp com mensagem pronta
-- **Cancelamento pelo cliente** via link secreto (até 2h antes do horário)
-
-### Painel `/app`
-- **Calendário mensal** com contadores por dia (confirmados × aguardando sinal × dias vagos) + agenda do dia
-- Confirmação de sinal (Pix), conclusão, falta e cancelamento por agendamento
-- Serviços, equipe (turnos criados automaticamente), horários e pausas (gerais ou por profissional)
-- **Relatórios mensais**: receita prevista, sinais recebidos, status e serviços mais agendados
-- Upload de fotos (logo, serviços e profissionais) via Supabase Storage
-
-### Plataforma
-- Login com **Google** ou e-mail/senha, recuperação de senha e mostrar/ocultar senha
-- E-mails transacionais (**Resend**): confirmação de reserva, lembrete 24h (cron diário) e aviso de cancelamento
-- **Chatbot de suporte** flutuante com respostas humanizadas e fallback para WhatsApp
-- Assinatura do SaaS via **Asaas**: Plano Único R$ 49,90/mês, 7 dias grátis, bloqueio automático após o trial, reativação via webhook de pagamento — resiliente à geração assíncrona de faturas e a ids órfãos de sandbox
-- **Instalável como app** (PWA): ícone e nome "AgendaEasy" ao salvar na tela inicial, abre em tela cheia
-- Landing com animações GSAP (scroll), menu sticky, Open Graph e SEO
-- **100% responsivo** — todas as telas auditadas em viewport mobile (0px de overflow; script em `scripts/shots-mobile.mjs`)
-
-## Segurança
-
-Auditada em 2026-10-07 (foco em vazamento de PII) — achados corrigidos e validados em produção:
-
-- **RLS em todas as tabelas** — dados de clientes (nome, telefone, e-mail) visíveis apenas para membros do negócio; acesso anônimo a `businesses` restrito **por coluna** (`pix_key`/`phone` inacessíveis via PostgREST)
-- **Chave Pix nunca exposta** no HTML público — só é entregue na resposta da própria reserva
-- **E-mail do cliente pertence à reserva** (não ao cadastro por telefone) — impede desvio de lembretes/cancelamento por terceiros; reservas não sobrescrevem o nome de clientes existentes
-- Valores de reserva sempre **recalculados no servidor**; sinal aceito somente via Pix também na API
-- Tokens de cancelamento validados **no banco**; webhooks e cron autenticados (fail-closed)
-- Headers de segurança (HSTS, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy)
-- Storage com policies por negócio (só o gestor grava na própria pasta); e-mails com escape de HTML por padrão; logs sem PII
-
-## Stack
-
-| Camada | Tecnologia |
+| Landing (italiano) | Landing (inglese) |
 |---|---|
-| Framework | **Next.js 16** (App Router, Server Components/Actions, Turbopack) |
-| UI | React 19 · Tailwind CSS 4 · GSAP (scroll) · fontes Fraunces/Instrument Sans |
-| Backend | Supabase (Postgres + Auth + RLS + Storage) |
-| Pagamentos | Asaas (assinatura do SaaS) · Pix direto do negócio (sinal das reservas) |
-| E-mails | Resend (domínio verificado) |
-| Infra | Vercel (deploy via GitHub + cron diário de lembretes) |
-| Validação | Zod em todas as entradas |
+| ![Landing IT](docs/media/01-landing-it.png) | ![Landing EN](docs/media/02-landing-en.png) |
 
-## Estrutura
+| Pagina pubblica di prenotazione | Scelta dell'orario |
+|---|---|
+| ![Prenotazione](docs/media/03-prenotazione.png) | ![Orari](docs/media/04-orari.png) |
+
+| Accesso | Onboarding dell'attività |
+|---|---|
+| ![Login](docs/media/05-login.png) | ![Onboarding](docs/media/06-onboarding.png) |
+
+---
+
+## ✨ Funzionalità
+
+- **Pagina pubblica personalizzata** per ogni attività (`agendaeasy.it/tua-attivita`): logo, copertina, colore del brand, servizi con foto
+- **Acconto del 50% contro i no-show**: la prenotazione blocca l'orario solo per un tempo limitato; chi paga, si presenta
+- **Agenda del giorno + calendario mensile** nel pannello, con stati (in attesa di acconto, confermata, completata, annullata, no-show)
+- **Team e turni per professionista**, orari di apertura reali e pause (es. pranzo)
+- **Report mensile**: ricavi previsti, acconti ricevuti, servizi più prenotati
+- **E-mail transazionali** (conferma + promemoria 24h) nella lingua del cliente, con link di annullamento sicuro (fino a 2h prima)
+- **Abbonamento SaaS via Stripe**: Checkout (9,90 €/mese, 7 giorni di prova), webhook del ciclo di vita, Customer Portal
+- **Bilingue it/en** con selettore 🇮🇹/🇬🇧 persistente (cookie, 1 anno) su tutte le pagine — e-mail comprese
+- **Accesso con Google** o e-mail/password (Supabase Auth)
+
+## 🧱 Stack
+
+| Livello | Tecnologia |
+|---|---|
+| Frontend + Backend | Next.js 16 (App Router, Server Components, Server Actions, Turbopack) |
+| UI | React 19 · Tailwind CSS 4 · GSAP |
+| Database / Auth / Storage | Supabase (Postgres 17 + RLS, Auth, Storage) |
+| Pagamenti | Stripe (Checkout subscription, Webhooks, Customer Portal) |
+| E-mail | Resend |
+| Validazione | Zod (ogni mutazione validata sul server) |
+| Hosting | Vercel (incluso cron giornaliero dei promemoria) |
+
+## 🗺️ Architettura
+
+```mermaid
+flowchart LR
+    C[Cliente finale<br/>browser] -->|prenota| N
+    T[Titolare<br/>pannello /app] -->|gestisce| N
+
+    subgraph Vercel
+        N[Next.js 16<br/>SSR · Server Actions · API routes]
+        CRON[Cron 06:00 UTC<br/>/api/cron/reminders]
+    end
+
+    N -->|RLS + sessione| SB[(Supabase<br/>Postgres · Auth · Storage)]
+    N -->|service role<br/>solo server| SB
+    N -->|Checkout / Portal| ST[Stripe]
+    ST -->|webhook firmato| N
+    N -->|e-mail it/en| RS[Resend]
+    CRON --> SB
+    CRON --> RS
+```
+
+## 📐 UML
+
+### Modello dati (ER)
+
+```mermaid
+erDiagram
+    BUSINESSES ||--o{ BUSINESS_MEMBERS : "ha"
+    BUSINESSES ||--o{ SERVICES : "offre"
+    BUSINESSES ||--o{ PROFESSIONALS : "impiega"
+    BUSINESSES ||--o{ BUSINESS_HOURS : "apre"
+    BUSINESSES ||--o{ BREAKS : "pausa"
+    BUSINESSES ||--o{ CUSTOMERS : "serve"
+    BUSINESSES ||--|| SUBSCRIPTIONS : "abbonamento"
+    PROFESSIONALS ||--o{ PROFESSIONAL_SHIFTS : "turni"
+    CUSTOMERS ||--o{ APPOINTMENTS : "prenota"
+    SERVICES ||--o{ APPOINTMENTS : "oggetto di"
+    PROFESSIONALS ||--o{ APPOINTMENTS : "esegue"
+    APPOINTMENTS ||--o{ PAYMENTS : "registra"
+
+    BUSINESSES {
+        uuid id PK
+        text slug UK
+        text name
+        text timezone "Europe/Rome"
+        text country_code "IT"
+        text pix_key "coordinate acconto"
+        bool published
+    }
+    SERVICES {
+        uuid id PK
+        int price_minor "centesimi"
+        text currency "EUR"
+        int duration_minutes
+        bool active
+    }
+    APPOINTMENTS {
+        uuid id PK
+        timestamptz starts_at "UTC"
+        text status "awaiting_deposit, confirmed, completed..."
+        int deposit_due_minor "50% arrotondato su"
+        uuid cancel_token "link annullamento"
+        text lang "it|en"
+    }
+    SUBSCRIPTIONS {
+        uuid business_id PK
+        text stripe_customer_id
+        text stripe_subscription_id
+        text status "trialing|active|past_due|canceled"
+        timestamptz trial_ends_at
+    }
+    PAYMENTS {
+        uuid id PK
+        int amount_minor
+        text purpose "deposit|balance|full"
+        text method
+    }
+```
+
+### Sequenza: prenotazione pubblica
+
+```mermaid
+sequenceDiagram
+    actor C as Cliente
+    participant P as Pagina /[slug]
+    participant A as POST /api/public/bookings
+    participant DB as Supabase (RPC atomica)
+    participant R as Resend
+
+    C->>P: sceglie servizio, professionista, data e orario
+    P->>A: richiesta di prenotazione (Zod valida)
+    A->>DB: ricalcola disponibilità ADESSO
+    A->>DB: create_booking_hold() — exclusion constraint decide le gare
+    DB-->>A: appointment (awaiting_deposit) + cancel_token
+    A->>R: e-mail di conferma nella lingua del cliente
+    A-->>C: istruzioni acconto 50% + scadenza + link annullamento
+    Note over C,DB: il titolare conferma l'acconto dal pannello → confirmed
+```
+
+### Sequenza: abbonamento Stripe
+
+```mermaid
+sequenceDiagram
+    actor T as Titolare
+    participant B as /app/billing (Server Action)
+    participant S as Stripe
+    participant W as /api/webhooks/stripe
+    participant DB as Supabase
+
+    T->>B: "Abbonati ora"
+    B->>S: Checkout Session (subscription, trial residuo)
+    S-->>T: pagina di pagamento Stripe
+    T->>S: paga (carta, SEPA, ...)
+    S->>W: checkout.session.completed / invoice.paid (firma verificata)
+    W->>DB: subscriptions.status = active
+    Note over T,DB: rinnovi, insoluti e disdette arrivano via webhook;<br/>la gestione self-service passa dal Customer Portal
+```
+
+## 📂 Struttura del progetto
 
 ```
 src/
 ├── app/
-│   ├── page.tsx               # Landing (estática, GSAP, chatbot)
-│   ├── [slug]/                # Página pública de agendamento
-│   ├── cancelar/[id]/         # Cancelamento pelo cliente (token secreto)
-│   ├── login/ · signup/ · esqueci-senha/ · redefinir-senha/
-│   ├── auth/callback/         # OAuth Google + links de recuperação
-│   ├── termos/ · privacidade/
-│   ├── app/                   # Painel (agenda+calendário, serviços, equipe,
-│   │                          #   horários, relatórios, configurações, billing)
+│   ├── page.tsx              # landing bilingue
+│   ├── [slug]/               # pagina pubblica di prenotazione
+│   ├── annulla/[id]/         # annullamento via cancel_token
+│   ├── app/                  # pannello (agenda, servizi, team, orari, report, impostazioni)
+│   │   └── billing/          # abbonamento Stripe (checkout + portal)
 │   └── api/
-│       ├── public/            # availability + bookings (recalcula tudo no servidor)
-│       ├── webhooks/asaas/    # Ativa/bloqueia assinatura por pagamento
-│       └── cron/reminders/    # Lembrete 24h (Vercel Cron, diário)
-├── components/                # auth-form, support-chat, scroll-bubbles
-├── lib/
-│   ├── availability/          # Motor de slots (horários ∩ turnos − pausas − reservas)
-│   ├── billing/               # Plano, trial e política de acesso
-│   ├── notifications/         # E-mails Resend (escape por padrão)
-│   ├── storage.ts             # Upload/URL de mídia pública
-│   └── asaas/ · supabase/ · money/ · dates/ · validation/
-└── types/database.ts
-supabase/
-├── migrations/                # Schema completo (10 migrations, RLS + Storage)
-├── config.toml                # Auth (Google, SMTP, senha mínima) — aplicar com config push
-└── seed.sql                   # Barbearia demo para desenvolvimento local
-scripts/e2e.mjs                # Teste E2E (Playwright) — local ou produção
+│       ├── public/           # disponibilità + prenotazioni (server = autorità)
+│       ├── webhooks/stripe/  # ciclo di vita dell'abbonamento
+│       └── cron/reminders/   # promemoria 24h (Vercel Cron)
+├── components/               # selettore lingua, chat di supporto, form auth
+└── lib/
+    ├── i18n/                 # it/en via cookie (server + client + messaggi actions)
+    ├── availability/         # motore slot (turni ∩ orari − pause − occupati)
+    ├── billing/              # piano, trial, politica di accesso
+    ├── dates/ money/         # Intl it-IT/en-GB, EUR in centesimi
+    └── supabase/ stripe/     # client tipizzati (session / admin / stripe)
+supabase/migrations/          # schema completo + RLS + hardening (13 migrazioni)
 ```
 
-## Rodando localmente
-
-Pré-requisitos: Node 20+, Docker (Supabase local).
+## 🚀 Avvio locale
 
 ```bash
 npm install
-npx supabase start            # Postgres + Auth locais (migrations + seed)
-cp .env.example .env.local    # preencha com as chaves exibidas pelo supabase start
+cp .env.example .env.local    # compila le chiavi (vedi tabella)
+npx supabase link --project-ref <ref> && npx supabase db push
 npm run dev                   # http://localhost:7778
 ```
 
-Página demo do seed: `http://localhost:7778/barbearia-demo`.
-
-### Variáveis de ambiente
-
-| Variável | Descrição |
+| Variabile | Descrizione |
 |---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Projeto Supabase |
-| `SUPABASE_SECRET_KEY` | Service role — somente servidor |
-| `ASAAS_API_KEY` / `ASAAS_BASE_URL` | Asaas (⚠️ chave começa com `$` → escapar como `\$` no `.env.local`) |
-| `ASAAS_WEBHOOK_TOKEN` | Valida o header `asaas-access-token` do webhook |
-| `RESEND_API_KEY` / `EMAIL_FROM` | E-mails transacionais (remetente de domínio verificado) |
-| `CRON_SECRET` | Autentica o cron de lembretes (obrigatório) |
-| `NEXT_PUBLIC_SITE_URL` | URL canônica (metadados/OG) |
-| `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` / `_SECRET` | Login Google — aplicar com `npx supabase config push` |
+| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | progetto Supabase |
+| `SUPABASE_SECRET_KEY` | service role — solo server |
+| `NEXT_PUBLIC_SITE_URL` | `https://agendaeasy.it` in produzione |
+| `STRIPE_SECRET_KEY` / `STRIPE_PRICE_ID` / `STRIPE_WEBHOOK_SECRET` | abbonamento SaaS |
+| `RESEND_API_KEY` / `EMAIL_FROM` | e-mail transazionali |
+| `CRON_SECRET` | protegge il cron dei promemoria |
 
-## Testes
+Webhook Stripe in locale: `stripe listen --forward-to localhost:7778/api/webhooks/stripe`
 
-```bash
-node scripts/e2e.mjs                                      # contra o dev local
-E2E_BASE=https://agenda-easy.vercel.app E2E_SKIP_BILLING=1 node scripts/e2e.mjs   # produção (sem cobrar)
-node scripts/shots-mobile.mjs                             # auditoria visual mobile (390px)
-```
+## 🔒 Sicurezza
 
-O E2E cobre o fluxo completo: conta → onboarding → serviço → equipe → horários → publicação → reserva pública → confirmação do sinal → agenda → assinatura Asaas → webhook → assinatura ativa. Com `E2E_EMAIL=...` também valida os e-mails transacionais. ⚠️ Em produção use sempre `E2E_SKIP_BILLING=1` — a Asaas real gera cobrança de verdade.
+- **RLS per tenant** su ogni tabella + grant a colonne per `anon` (le coordinate di pagamento e i telefoni non sono mai leggibili pubblicamente)
+- **Il server è l'autorità**: prezzi, durate e disponibilità ricalcolati sempre lato server; prenotazioni concorrenti risolte da un exclusion constraint Postgres
+- **Webhook Stripe** verificato sulla firma del body raw, fail-closed senza secret
+- **Annullamento** autenticato da token segreto per prenotazione, con limite 2h
+- Header di sicurezza (HSTS, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy)
 
-## Deploy
+## 🗺️ Roadmap
 
-1. **Supabase**: `npx supabase link` → `npx supabase db push` → `npx supabase config push`
-2. **Vercel**: conecte o repositório e configure as variáveis acima (o cron de lembretes vem do `vercel.json`)
-3. **Asaas**: cadastre o webhook `https://SEU-DOMINIO/api/webhooks/asaas` com o token e eventos de pagamento
-4. **Google**: OAuth Web com redirect `https://SEU-PROJETO.supabase.co/auth/v1/callback`
+Consulta le [Issues](../../issues) per la roadmap: IVA automatica con Stripe Tax, rate limiting, CSP, test E2E in CI e altro.
 
-## Licença
+## 📄 Licenza
 
-[MIT](LICENSE) © Kallebe Siqueira · Desenvolvido por [Digital Paulo Afonso](https://digitalpauloafonso.com.br)
+[MIT](LICENSE) — Sviluppato da **[Kallebe Gallo](https://github.com/kallebesiqueira-dev)**
