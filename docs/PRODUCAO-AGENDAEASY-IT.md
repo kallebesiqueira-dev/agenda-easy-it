@@ -33,26 +33,27 @@ Siga esta ordem para colocar no ar em **https://agendaeasy.it**.
    - `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` / `SUPABASE_SECRET_KEY`
    - `RESEND_API_KEY` / `EMAIL_FROM` (ver passo 3)
    - `CRON_SECRET` (valor forte qualquer — a Vercel envia sozinha para o cron)
-   - Asaas (ver aviso abaixo)
+   - Stripe: `STRIPE_SECRET_KEY` (live), `STRIPE_PRICE_ID`, `STRIPE_WEBHOOK_SECRET` (ver passo 4)
 4. O cron de lembretes já está no `vercel.json` (`0 6 * * *` UTC = 07h/08h em Roma).
 
 ## 3. E-mails (Resend)
 
 1. Verifique o domínio `agendaeasy.it` no Resend (registros DKIM/SPF no DNS).
 2. `EMAIL_FROM=Agenda Easy <noreply@agendaeasy.it>`.
-3. Todos os templates transacionais do app já estão em italiano.
+3. Os templates transacionais do app são bilíngues (it/en) e seguem o
+   idioma escolhido pelo cliente na reserva.
 
 ## 4. Pagamentos — Stripe 💳
 
 A assinatura do SaaS é cobrada via **Stripe** (Checkout em modo subscription,
 EUR, mensal, com os dias restantes do trial convertidos em `trial_period_days`).
 
-A conta usada é a **GALLO CRM** (`acct_1TWXUwRwC9AqUh7F`). Já estão criados
-em LIVE (prontos para produção):
+Já existem em LIVE na conta Stripe (não versionar IDs reais — anote-os em
+local privado):
 
-- Produto: **Piano Unico** → `prod_VP84sIeUofzbFg`
-- Price recorrente 9,90 EUR/mês → `STRIPE_PRICE_ID=price_1UOJoaRwC9AqUh7FGZ7ljhSg`
-- Customer Portal configurado → `bpc_1UOJovRwC9AqUh7FwpIcb8j8`
+- Produto **Agenda Easy** com price recorrente de 9,90 EUR/mês →
+  `STRIPE_PRICE_ID=price_...` (copie do Dashboard, modo live)
+- Customer Portal configurado
 
 Falta apenas (no deploy):
 
@@ -81,12 +82,11 @@ Observações:
 - Contas cortesia (`comped = true` no banco) têm acesso permanente sem cobrança.
 - O acconto de 50% entre negócio e cliente final NÃO passa pela plataforma
   (o cliente paga direto nas coordenadas — IBAN — do negócio).
-- A integração Asaas (brasileira) ficou como legado e não é usada aqui.
 
 ## 5. Verificação final
 
 - `npm run build` e `npm run lint` passam sem erros.
 - Fluxo completo em produção: cadastro → onboarding → serviços/equipe/horários →
   publicar → reservar em `/{slug}` → e-mail de confirmação → cancelar via link.
-- Interface 100% em italiano, valores em `€` (it-IT), datas DD/MM/AAAA, 24h,
-  fuso Europe/Rome.
+- Interface bilíngue (italiano padrão + inglês via seletor), valores em `€`
+  (it-IT), datas DD/MM/AAAA, 24h, fuso Europe/Rome.

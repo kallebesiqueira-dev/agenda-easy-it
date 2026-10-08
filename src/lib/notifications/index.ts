@@ -30,7 +30,9 @@ export async function sendEmail(input: {
         html: input.html,
       }),
     });
-    if (!res.ok) console.error("sendEmail failed", res.status, await res.text());
+    // Mai loggare il body intero: l'errore di Resend può riecheggiare
+    // destinatario/oggetto/HTML (PII e cancel_token).
+    if (!res.ok) console.error("sendEmail failed", res.status);
   } catch (err) {
     console.error("sendEmail error", err);
   }

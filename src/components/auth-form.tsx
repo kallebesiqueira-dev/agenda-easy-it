@@ -118,7 +118,13 @@ export function AuthForm({
 
     const parsed = signInSchema.safeParse({ email, password });
     if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? t.invalid);
+      // I messaggi degli schemi Zod sono in italiano: per l'inglese usa il
+      // messaggio generico del dizionario.
+      setError(
+        lang === "it"
+          ? parsed.error.issues[0]?.message ?? t.invalid
+          : t.invalid
+      );
       return;
     }
 

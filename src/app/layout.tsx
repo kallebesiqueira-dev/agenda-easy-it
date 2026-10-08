@@ -15,7 +15,9 @@ const geistMono = Geist_Mono({
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:7778");
+  (process.env.NODE_ENV === "production"
+    ? "https://agendaeasy.it"
+    : "http://localhost:7778");
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

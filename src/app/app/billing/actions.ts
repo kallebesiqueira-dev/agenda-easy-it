@@ -186,8 +186,10 @@ export async function openBillingPortal(): Promise<CheckoutResult> {
   const ctx = await getCurrentBusiness();
   if (!ctx) return { error: t.sessionExpired };
 
-  const admin = createSupabaseAdminClient();
-  const { data } = await admin
+  // Client con la sessione del membro: la RLS garantisce l'isolamento del
+  // tenant anche se il filtro esplicito venisse rimosso in futuro.
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase
     .from("subscriptions")
     .select("stripe_customer_id")
     .eq("business_id", ctx.business.id)
