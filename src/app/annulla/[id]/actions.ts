@@ -40,7 +40,7 @@ export async function cancelBookingPublic(
     .update({ status: "cancelled" })
     .eq("id", parsed.data.id)
     .eq("cancel_token", parsed.data.token)
-    .in("status", ["awaiting_deposit", "confirmed"])
+    .eq("status", "confirmed")
     .gt("starts_at", cutoff)
     .select(
       "starts_at, business:businesses(id, name, timezone), service:services(name), customer:customers(name, phone)"

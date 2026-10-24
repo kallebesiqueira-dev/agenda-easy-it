@@ -58,9 +58,6 @@ export const businessTypeSchema = z.enum([
   "other",
 ]);
 
-export const paymentMethodSchema = z.enum(["pix", "cash", "card_in_person"]);
-export const paymentPurposeSchema = z.enum(["deposit", "balance", "full_payment"]);
-
 /** Richiesta pubblica di prenotazione — il server riconvalida la disponibilità e ricalcola gli importi. */
 export const publicBookingSchema = z.object({
   business_slug: slugSchema,
@@ -71,7 +68,6 @@ export const publicBookingSchema = z.object({
   customer_name: z.string().trim().min(2, "Inserisci il tuo nome").max(80),
   customer_phone: phoneSchema,
   customer_email: z.string().trim().email().max(120).nullable(), // opzionale: promemoria 24h
-  deposit_method: z.enum(["pix"]), // valore interno storico: acconto tramite bonifico istantaneo
 });
 export type PublicBookingInput = z.infer<typeof publicBookingSchema>;
 
@@ -91,6 +87,8 @@ export const mediaPathSchema = z
   .max(300)
   .regex(/^[0-9a-f-]{36}\/[a-z]+\/[A-Za-z0-9._-]+$/);
 
+export const itemTypeSchema = z.enum(["service", "product"]);
+
 export const serviceInputSchema = z.object({
   name: z.string().trim().min(2).max(80),
   description: z.string().trim().max(500).nullable(),
@@ -98,8 +96,21 @@ export const serviceInputSchema = z.object({
   duration_minutes: z.number().int().min(5).max(480).multipleOf(5),
   active: z.boolean(),
   image_path: mediaPathSchema.nullable(),
+  item_type: itemTypeSchema,
 });
 export type ServiceInput = z.infer<typeof serviceInputSchema>;
+
+/** Piano/promozione: tutto editabile; il prezzo è opzionale (promo senza importo fisso). */
+export const planInputSchema = z.object({
+  title: z.string().trim().min(2).max(80),
+  description: z.string().trim().max(600).nullable(),
+  price_minor: z.number().int().positive().max(100_000_000).nullable(),
+  price_suffix: z.string().trim().max(30).nullable(),
+  badge: z.string().trim().max(30).nullable(),
+  active: z.boolean(),
+  sort_order: z.number().int().min(0).max(999),
+});
+export type PlanInput = z.infer<typeof planInputSchema>;
 
 export const professionalInputSchema = z.object({
   display_name: z.string().trim().min(2).max(60),
@@ -137,22 +148,12 @@ export const businessSettingsSchema = z.object({
   address: z.string().trim().max(200).nullable(),
   phone: phoneSchema.nullable(),
   whatsapp: phoneSchema.nullable(),
-  pix_key: z.string().trim().max(140).nullable(),
   published: z.boolean(),
   logo_path: mediaPathSchema.nullable(),
   cover_path: mediaPathSchema.nullable(),
   cover_position: z.number().int().min(0).max(100),
 });
 export type BusinessSettingsInput = z.infer<typeof businessSettingsSchema>;
-
-/** Registrazione manuale di un pagamento dal pannello (acconto o saldo). */
-export const recordPaymentSchema = z.object({
-  appointment_id: uuidSchema,
-  purpose: paymentPurposeSchema,
-  method: paymentMethodSchema,
-  amount_minor: z.number().int().positive().max(100_000_000),
-});
-export type RecordPaymentInput = z.infer<typeof recordPaymentSchema>;
 
 export const signInSchema = z.object({
   email: z.string().email("E-mail non valido"),

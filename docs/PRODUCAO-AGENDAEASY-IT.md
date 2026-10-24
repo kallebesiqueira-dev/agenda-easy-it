@@ -80,8 +80,8 @@ Falta apenas (no deploy):
 Observações:
 - O trial de 7 dias funciona sem nenhuma configuração de gateway.
 - Contas cortesia (`comped = true` no banco) têm acesso permanente sem cobrança.
-- O acconto de 50% entre negócio e cliente final NÃO passa pela plataforma
-  (o cliente paga direto nas coordenadas — IBAN — do negócio).
+- Pagamentos entre negócio e cliente final NÃO passam pela plataforma
+  (sem acconto: o cliente paga direto ao negócio, no local).
 
 ## 5. Verificação final
 

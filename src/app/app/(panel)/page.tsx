@@ -24,7 +24,6 @@ const COPY: Record<
     prevMonth: string;
     nextMonth: string;
     confirmed: string;
-    awaiting: string;
     freeDay: string;
     prevDay: string;
     nextDay: string;
@@ -37,7 +36,6 @@ const COPY: Record<
     prevMonth: "Mese precedente",
     nextMonth: "Mese successivo",
     confirmed: "confermate",
-    awaiting: "in attesa di acconto",
     freeDay: "giorno libero",
     prevDay: "Giorno precedente",
     nextDay: "Giorno successivo",
@@ -49,7 +47,6 @@ const COPY: Record<
     prevMonth: "Previous month",
     nextMonth: "Next month",
     confirmed: "confirmed",
-    awaiting: "awaiting deposit",
     freeDay: "free day",
     prevDay: "Previous day",
     nextDay: "Next day",
@@ -74,7 +71,7 @@ export default async function AgendaPage({ searchParams }: Props) {
   const dayStart = zonedTimeToUtc(dateISO, "00:00", business.timezone);
   const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
 
-  // --- Calendário mensal: contagem por dia (confirmados × aguardando sinal) ---
+  // --- Calendário mensal: contagem de confirmados por dia ---
   const [yy, mm] = dateISO.split("-").map(Number);
   const pad = (n: number) => String(n).padStart(2, "0");
   const daysInMonth = new Date(Date.UTC(yy, mm, 0)).getUTCDate();
@@ -94,16 +91,15 @@ export default async function AgendaPage({ searchParams }: Props) {
     await Promise.all([
       supabase
         .from("appointments")
-        .select("starts_at, status, hold_expires_at")
+        .select("starts_at, status")
         .eq("business_id", business.id)
-        .in("status", ["awaiting_deposit", "confirmed"])
+        .eq("status", "confirmed")
         .gte("starts_at", monthStart.toISOString())
         .lt("starts_at", monthEnd.toISOString()),
       supabase
         .from("appointments")
         .select(
-          `id, starts_at, ends_at, status, service_price_minor, deposit_due_minor,
-       deposit_paid_at, hold_expires_at,
+          `id, starts_at, ends_at, status, service_price_minor,
        customer:customers(name, phone),
        service:services(name),
        professional:professionals(display_name)`
@@ -114,26 +110,17 @@ export default async function AgendaPage({ searchParams }: Props) {
         .order("starts_at"),
     ]);
 
-  const nowRef = new Date();
   const dayKeyFmt = new Intl.DateTimeFormat("en-CA", {
     timeZone: business.timezone,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
   });
-  const dayCounts = new Map<string, { confirmed: number; pending: number }>();
+  const dayCounts = new Map<string, { confirmed: number }>();
   for (const a of monthAppointments ?? []) {
-    if (
-      a.status === "awaiting_deposit" &&
-      a.hold_expires_at &&
-      new Date(a.hold_expires_at) < nowRef
-    ) {
-      continue; // retenção vencida não ocupa o dia
-    }
     const key = dayKeyFmt.format(new Date(a.starts_at));
-    const c = dayCounts.get(key) ?? { confirmed: 0, pending: 0 };
-    if (a.status === "confirmed") c.confirmed += 1;
-    else c.pending += 1;
+    const c = dayCounts.get(key) ?? { confirmed: 0 };
+    c.confirmed += 1;
     dayCounts.set(key, c);
   }
 
@@ -143,7 +130,6 @@ export default async function AgendaPage({ searchParams }: Props) {
     timeZone: "UTC",
   }).format(new Date(Date.UTC(yy, mm - 1, 1, 12)));
 
-  const now = new Date();
   const cards: AppointmentCardData[] = (appointments ?? []).map((a) => {
     const rec = a as unknown as {
       id: string;
@@ -151,9 +137,6 @@ export default async function AgendaPage({ searchParams }: Props) {
       ends_at: string;
       status: AppointmentStatus;
       service_price_minor: number;
-      deposit_due_minor: number;
-      deposit_paid_at: string | null;
-      hold_expires_at: string | null;
       customer: { name: string; phone: string } | null;
       service: { name: string } | null;
       professional: { display_name: string } | null;
@@ -166,16 +149,7 @@ export default async function AgendaPage({ searchParams }: Props) {
       serviceName: rec.service?.name ?? "—",
       professionalName: rec.professional?.display_name ?? "—",
       status: rec.status,
-      holdExpired:
-        rec.status === "awaiting_deposit" &&
-        rec.hold_expires_at !== null &&
-        new Date(rec.hold_expires_at) < now,
       priceLabel: formatEUR(rec.service_price_minor),
-      depositDueLabel: formatEUR(rec.deposit_due_minor),
-      depositPaid: rec.deposit_paid_at !== null,
-      holdExpiresLabel: rec.hold_expires_at
-        ? formatTimeInTz(rec.hold_expires_at, business.timezone)
-        : null,
     };
   });
 
@@ -241,30 +215,17 @@ export default async function AgendaPage({ searchParams }: Props) {
                 <span className={counts ? "font-semibold" : "text-zinc-500"}>
                   {i + 1}
                 </span>
-                {counts && (
+                {counts && counts.confirmed > 0 && (
                   <span className="mt-0.5 flex items-center gap-1 text-[10px] leading-none">
-                    {counts.confirmed > 0 && (
-                      <span
-                        className={`rounded-full px-1 py-0.5 font-semibold ${
-                          isSelected
-                            ? "bg-white/20 text-white"
-                            : "bg-emerald-100 text-emerald-700"
-                        }`}
-                      >
-                        {counts.confirmed}
-                      </span>
-                    )}
-                    {counts.pending > 0 && (
-                      <span
-                        className={`rounded-full px-1 py-0.5 font-semibold ${
-                          isSelected
-                            ? "bg-white/20 text-white"
-                            : "bg-amber-100 text-amber-700"
-                        }`}
-                      >
-                        {counts.pending}
-                      </span>
-                    )}
+                    <span
+                      className={`rounded-full px-1 py-0.5 font-semibold ${
+                        isSelected
+                          ? "bg-white/20 text-white"
+                          : "bg-emerald-100 text-emerald-700"
+                      }`}
+                    >
+                      {counts.confirmed}
+                    </span>
                   </span>
                 )}
               </Link>
@@ -274,9 +235,6 @@ export default async function AgendaPage({ searchParams }: Props) {
         <p className="mt-3 flex gap-4 text-xs text-zinc-500">
           <span className="flex items-center gap-1">
             <span className="size-2 rounded-full bg-emerald-500" /> {t.confirmed}
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="size-2 rounded-full bg-amber-500" /> {t.awaiting}
           </span>
           <span className="flex items-center gap-1">
             <span className="size-2 rounded-full bg-zinc-300" /> {t.freeDay}
@@ -317,7 +275,7 @@ export default async function AgendaPage({ searchParams }: Props) {
           {t.empty}
         </p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="grid gap-3 lg:grid-cols-2 lg:items-start">
           {cards.map((card) => (
             <li key={card.id}>
               <AppointmentCard data={card} lang={lang} />

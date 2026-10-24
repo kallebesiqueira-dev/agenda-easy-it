@@ -148,22 +148,17 @@ try {
       .fill(process.env.E2E_EMAIL);
   }
   await pub.getByRole("button", { name: "Reservar horário" }).click();
-  await pub.getByText("Horário reservado!").waitFor({ timeout: 30000 });
+  await pub.getByText("Prenotazione confermata!").waitFor({ timeout: 30000 });
   await pub.screenshot({ path: `${ART}/07-reserva.png` });
-  console.log(`   reserva feita (${slotLabel}) — sinal de 50% exibido`);
+  console.log(`   reserva feita (${slotLabel}) — confirmada na hora, sem sinal`);
   await ctxClient.close();
 
-  log("8. Painel: agendamento aparece na agenda de amanhã");
+  log("8. Painel: agendamento aparece na agenda de amanhã (já confirmado)");
   await page.goto(`${BASE}/app`);
   await page.getByLabel("Próximo dia").click();
   await page.getByText("Cliente E2E").waitFor({ timeout: 15000 });
   await page.screenshot({ path: `${ART}/08-agenda.png` });
   console.log("   agendamento visível no painel");
-
-  log("8b. Confirmando o sinal (Pix recebido)");
-  await page.getByRole("button", { name: "Pix do sinal recebido" }).click();
-  await page.getByText("✓ pago").waitFor({ timeout: 15000 });
-  console.log("   agendamento confirmado");
 
   if (process.env.E2E_SKIP_BILLING) {
     console.log("\n(billing pulado — Asaas em produção cobra de verdade)");

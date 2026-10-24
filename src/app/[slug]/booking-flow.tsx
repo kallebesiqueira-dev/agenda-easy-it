@@ -6,13 +6,16 @@
  *
  * Il server è l'autorità: questa UI raccoglie solo le scelte; disponibilità e
  * importi vengono sempre ricalcolati in /api/public/*.
+ *
+ * Oltre ai servizi prenotabili, la pagina mostra i piani/promozioni e i
+ * prodotti in vetrina (non prenotabili: si richiedono su WhatsApp o sul posto).
  */
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import type {
   AvailableSlot,
-  BookingHoldResult,
+  BookingResult,
   PublicBusinessProfile,
   PublicService,
 } from "@/types/database";
@@ -78,33 +81,25 @@ interface BookingCopy {
   emailLabel: string;
   emailOpt: string;
   emailPh: string;
-  depositNotice: [string, string, string];
+  payOnSite: string;
   bookCta: string;
   bookingCta: string;
-  reservedTitle: string;
-  confirmDeposit: (amount: string) => string;
-  deadline: (when: string) => string;
-  afterDeadline: string;
-  payCoords: string;
-  copyBtn: string;
-  sendReceiptHint: string;
-  arrangeHint: string;
-  waMessage: (args: {
-    name: string;
-    service: string;
-    when: string;
-    amount: string;
-    hasKey: boolean;
-  }) => string;
-  waSend: string;
-  waArrange: string;
+  bookedTitle: string;
+  bookedHint: string;
+  waMessage: (args: { name: string; service: string; when: string }) => string;
+  waContact: string;
   unexpected: string;
   cancelThis: string;
   upTo2h: string;
   poweredBy: string;
   backAria: string;
   totalLabel: string;
-  depositToConfirm: string;
+  plansTitle: string;
+  plansAsk: string;
+  waPlanMessage: (title: string) => string;
+  productsTitle: string;
+  productsHint: string;
+  waProductMessage: (name: string) => string;
 }
 
 const COPY: Record<Lang, BookingCopy> = {
@@ -135,37 +130,29 @@ const COPY: Record<Lang, BookingCopy> = {
     emailLabel: "E-mail",
     emailOpt: "(opzionale)",
     emailPh: "Per ricevere il promemoria dell'appuntamento",
-    depositNotice: [
-      "L'acconto del 50% si paga con ",
-      "bonifico istantaneo",
-      " per confermare la prenotazione. Il resto lo paghi sul posto, in contanti o con carta.",
-    ],
+    payOnSite:
+      "Nessun pagamento anticipato: paghi direttamente sul posto, in contanti o con carta.",
     bookCta: "Prenota l'orario",
     bookingCta: "Prenotazione…",
-    reservedTitle: "Orario riservato!",
-    confirmDeposit: (amount) => `Conferma pagando l'acconto di ${amount}`,
-    deadline: (when) => `Scadenza: entro ${when}.`,
-    afterDeadline:
-      "Dopo la scadenza, la prenotazione viene liberata per altri clienti.",
-    payCoords: "Coordinate di pagamento:",
-    copyBtn: "Copia",
-    sendReceiptHint: "Invia la ricevuta su WhatsApp per confermare più in fretta.",
-    arrangeHint:
-      "Concorda il pagamento dell'acconto direttamente con l'attività su WhatsApp.",
-    waMessage: ({ name, service, when, amount, hasKey }) =>
-      `Ciao! Sono ${name}. Ho appena prenotato ${service} per ${when}.` +
-      (hasKey
-        ? ` Ti invio la ricevuta dell'acconto di ${amount}.`
-        : ` Come pago l'acconto di ${amount}?`),
-    waSend: "Invia la ricevuta su WhatsApp",
-    waArrange: "Concorda l'acconto su WhatsApp",
+    bookedTitle: "Prenotazione confermata!",
+    bookedHint: "Ti aspettiamo. Il pagamento avviene sul posto.",
+    waMessage: ({ name, service, when }) =>
+      `Ciao! Sono ${name}. Ho appena prenotato ${service} per ${when}.`,
+    waContact: "Scrivi all'attività su WhatsApp",
     unexpected: "Imprevisto?",
     cancelThis: "Annulla questa prenotazione",
     upTo2h: "(fino a 2h prima dell'orario).",
     poweredBy: "Prenotazioni con Agenda Easy",
     backAria: "Indietro",
     totalLabel: "Totale:",
-    depositToConfirm: "· Acconto del 50% per confermare",
+    plansTitle: "Piani e promozioni",
+    plansAsk: "Richiedi su WhatsApp",
+    waPlanMessage: (title) =>
+      `Ciao! Ho visto "${title}" sulla vostra pagina e vorrei saperne di più.`,
+    productsTitle: "Prodotti",
+    productsHint: "Disponibili in negozio — chiedi al tuo appuntamento.",
+    waProductMessage: (name) =>
+      `Ciao! Ho visto "${name}" sulla vostra pagina e vorrei acquistarlo.`,
   },
   en: {
     errors: {
@@ -194,36 +181,29 @@ const COPY: Record<Lang, BookingCopy> = {
     emailLabel: "E-mail",
     emailOpt: "(optional)",
     emailPh: "To receive an appointment reminder",
-    depositNotice: [
-      "A 50% deposit is paid by ",
-      "instant bank transfer",
-      " to confirm the booking. You pay the rest on site, in cash or by card.",
-    ],
+    payOnSite:
+      "No upfront payment: you pay on site, in cash or by card.",
     bookCta: "Book this slot",
     bookingCta: "Booking…",
-    reservedTitle: "Slot reserved!",
-    confirmDeposit: (amount) => `Confirm by paying the ${amount} deposit`,
-    deadline: (when) => `Deadline: by ${when}.`,
-    afterDeadline: "After the deadline, the slot is released to other clients.",
-    payCoords: "Payment details:",
-    copyBtn: "Copy",
-    sendReceiptHint: "Send the receipt on WhatsApp to confirm faster.",
-    arrangeHint:
-      "Arrange the deposit payment directly with the business on WhatsApp.",
-    waMessage: ({ name, service, when, amount, hasKey }) =>
-      `Hi! I'm ${name}. I've just booked ${service} for ${when}.` +
-      (hasKey
-        ? ` I'll send the receipt for the ${amount} deposit.`
-        : ` How do I pay the ${amount} deposit?`),
-    waSend: "Send the receipt on WhatsApp",
-    waArrange: "Arrange the deposit on WhatsApp",
+    bookedTitle: "Booking confirmed!",
+    bookedHint: "See you there. Payment happens on site.",
+    waMessage: ({ name, service, when }) =>
+      `Hi! I'm ${name}. I've just booked ${service} for ${when}.`,
+    waContact: "Message the business on WhatsApp",
     unexpected: "Change of plans?",
     cancelThis: "Cancel this booking",
     upTo2h: "(up to 2h before the appointment).",
     poweredBy: "Bookings by Agenda Easy",
     backAria: "Back",
     totalLabel: "Total:",
-    depositToConfirm: "· 50% deposit to confirm",
+    plansTitle: "Plans & promotions",
+    plansAsk: "Ask on WhatsApp",
+    waPlanMessage: (title) =>
+      `Hi! I saw "${title}" on your page and I'd like to know more.`,
+    productsTitle: "Products",
+    productsHint: "Available in store — ask at your appointment.",
+    waProductMessage: (name) =>
+      `Hi! I saw "${name}" on your page and I'd like to buy it.`,
   },
 };
 
@@ -246,11 +226,9 @@ export function BookingFlow({
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  // Decisione di prodotto: l'acconto del 50% è sempre tramite bonifico
-  // istantaneo; il resto il cliente lo paga sul posto (contanti o carta).
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<BookingHoldResult | null>(null);
+  const [result, setResult] = useState<BookingResult | null>(null);
 
   const dayOptions = useMemo(
     () => buildDayOptions(profile.timezone, intlLocale(lang)),
@@ -315,7 +293,6 @@ export function BookingFlow({
           customer_name: name,
           customer_phone: phone,
           customer_email: email.trim() || null,
-          deposit_method: "pix",
         }),
       });
       const json = await res.json();
@@ -338,6 +315,9 @@ export function BookingFlow({
   }
 
   const brandStyle = { "--brand": profile.brand_primary } as React.CSSProperties;
+  const waNumber = profile.whatsapp
+    ? `39${profile.whatsapp.replace(/\D/g, "")}`
+    : null;
 
   return (
     <div style={brandStyle} className="min-h-dvh bg-zinc-100 text-zinc-900">
@@ -452,6 +432,109 @@ export function BookingFlow({
                 <p className="py-6 text-center text-sm text-zinc-500">
                   {t.noServices}
                 </p>
+              )}
+
+              {profile.plans.length > 0 && (
+                <section className="mt-6">
+                  <h3 className="mb-2.5 font-semibold">{t.plansTitle}</h3>
+                  <ul className="space-y-2.5">
+                    {profile.plans.map((p) => (
+                      <li
+                        key={p.id}
+                        className="rounded-2xl border border-zinc-200 bg-zinc-50/60 px-4 py-3.5"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            {p.badge && (
+                              <span className="mb-1 inline-block rounded-full bg-[var(--brand)] px-2.5 py-0.5 text-xs font-semibold text-white">
+                                {p.badge}
+                              </span>
+                            )}
+                            <p className="font-semibold text-zinc-900">{p.title}</p>
+                          </div>
+                          {p.price_minor !== null && (
+                            <p className="shrink-0 text-right font-semibold">
+                              {formatEUR(p.price_minor)}
+                              {p.price_suffix && (
+                                <span className="text-sm font-normal text-zinc-500">
+                                  {" "}
+                                  {p.price_suffix}
+                                </span>
+                              )}
+                            </p>
+                          )}
+                        </div>
+                        {p.description && (
+                          <p className="mt-1 text-sm text-zinc-600">{p.description}</p>
+                        )}
+                        {waNumber && (
+                          <a
+                            href={`https://wa.me/${waNumber}?text=${encodeURIComponent(
+                              t.waPlanMessage(p.title)
+                            )}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-2 inline-block text-sm font-semibold text-[var(--brand)] underline"
+                          >
+                            {t.plansAsk}
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+
+              {profile.products.length > 0 && (
+                <section className="mt-6">
+                  <h3 className="mb-1 font-semibold">{t.productsTitle}</h3>
+                  <p className="mb-2.5 text-xs text-zinc-500">{t.productsHint}</p>
+                  <ul className="grid gap-2.5 sm:grid-cols-2">
+                    {profile.products.map((p) => (
+                      <li
+                        key={p.id}
+                        className="rounded-2xl border border-zinc-200 px-4 py-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          {p.image_path && (
+                            <Image
+                              src={mediaUrl(p.image_path)!}
+                              alt=""
+                              width={48}
+                              height={48}
+                              className="size-12 shrink-0 rounded-xl object-cover"
+                            />
+                          )}
+                          <span className="min-w-0 flex-1">
+                            <span className="block font-medium text-zinc-900">
+                              {p.name}
+                            </span>
+                            {p.description && (
+                              <span className="block text-sm text-zinc-500">
+                                {p.description}
+                              </span>
+                            )}
+                          </span>
+                          <span className="shrink-0 rounded-full bg-zinc-100 px-3 py-1.5 text-sm font-semibold">
+                            {formatEUR(p.price_minor)}
+                          </span>
+                        </div>
+                        {waNumber && (
+                          <a
+                            href={`https://wa.me/${waNumber}?text=${encodeURIComponent(
+                              t.waProductMessage(p.name)
+                            )}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-2 inline-block text-sm font-semibold text-[var(--brand)] underline"
+                          >
+                            {t.plansAsk}
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
               )}
             </StepShell>
           )}
@@ -623,9 +706,7 @@ export function BookingFlow({
                 </label>
 
                 <p className="rounded-xl bg-zinc-50 px-3 py-2.5 text-sm text-zinc-600">
-                  {t.depositNotice[0]}
-                  <strong>{t.depositNotice[1]}</strong>
-                  {t.depositNotice[2]}
+                  {t.payOnSite}
                 </p>
 
                 {error && (
@@ -647,8 +728,8 @@ export function BookingFlow({
 
           {step === "done" && service && result && (
             <div className="py-2 text-center">
-              <p className="text-3xl">⏳</p>
-              <h2 className="mt-2 text-lg font-bold">{t.reservedTitle}</h2>
+              <p className="text-3xl">✅</p>
+              <h2 className="mt-2 text-lg font-bold">{t.bookedTitle}</h2>
               <p className="mt-1 text-sm text-zinc-600">
                 {service.name} ·{" "}
                 {formatDateTimeInTz(result.starts_at, profile.timezone, lang)}
@@ -656,43 +737,14 @@ export function BookingFlow({
 
               <div className="mt-4 rounded-xl bg-zinc-50 p-4 text-left text-sm">
                 <p className="font-semibold">
-                  {t.confirmDeposit(formatEUR(result.deposit_due_minor))}
+                  {t.totalLabel} {formatEUR(result.service_price_minor)}
                 </p>
-                <p className="mt-1 text-zinc-600">
-                  {t.deadline(
-                    formatDateTimeInTz(
-                      result.hold_expires_at,
-                      profile.timezone,
-                      lang
-                    )
-                  )}{" "}
-                  {t.afterDeadline}
-                </p>
-                {result.pix_key ? (
-                  <div className="mt-3">
-                    <p className="text-zinc-600">{t.payCoords}</p>
-                    <div className="mt-1 flex items-center gap-2">
-                      <code className="flex-1 truncate rounded-lg bg-white px-3 py-2">
-                        {result.pix_key}
-                      </code>
-                      <button
-                        type="button"
-                        onClick={() => navigator.clipboard.writeText(result.pix_key!)}
-                        className="shrink-0 rounded-lg bg-[var(--brand)] px-3 py-2 font-medium text-white"
-                      >
-                        {t.copyBtn}
-                      </button>
-                    </div>
-                    <p className="mt-2 text-zinc-600">{t.sendReceiptHint}</p>
-                  </div>
-                ) : (
-                  <p className="mt-2 text-zinc-600">{t.arrangeHint}</p>
-                )}
+                <p className="mt-1 text-zinc-600">{t.bookedHint}</p>
               </div>
 
-              {profile.whatsapp && (
+              {waNumber && (
                 <a
-                  href={`https://wa.me/39${profile.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
+                  href={`https://wa.me/${waNumber}?text=${encodeURIComponent(
                     t.waMessage({
                       name,
                       service: service.name,
@@ -701,15 +753,13 @@ export function BookingFlow({
                         profile.timezone,
                         lang
                       ),
-                      amount: formatEUR(result.deposit_due_minor),
-                      hasKey: Boolean(result.pix_key),
                     })
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-4 block w-full rounded-xl bg-[#25D366] py-3 font-semibold text-white"
                 >
-                  {result.pix_key ? t.waSend : t.waArrange}
+                  {t.waContact}
                 </a>
               )}
 
@@ -820,8 +870,7 @@ function Summary({
       <p className="font-medium">{serviceName}</p>
       <p className="text-zinc-600">{when}</p>
       <p className="mt-1 text-zinc-600">
-        {t.totalLabel} <strong>{formatEUR(priceMinor)}</strong>{" "}
-        {t.depositToConfirm}
+        {t.totalLabel} <strong>{formatEUR(priceMinor)}</strong>
       </p>
     </div>
   );

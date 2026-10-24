@@ -101,9 +101,9 @@ export async function getDayAvailability(
       const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
       return supabase
         .from("appointments")
-        .select("professional_id, starts_at, ends_at, status, hold_expires_at")
+        .select("professional_id, starts_at, ends_at, status")
         .in("professional_id", professionalIds)
-        .in("status", ["awaiting_deposit", "confirmed"])
+        .eq("status", "confirmed")
         .lt("starts_at", dayEnd.toISOString())
         .gt("ends_at", dayStart.toISOString());
     })(),
@@ -145,7 +145,7 @@ export async function getDayAvailability(
       .filter(
         (a) =>
           a.professional_id === professionalId &&
-          appointmentBlocksSlot(a, nowUtc)
+          appointmentBlocksSlot({ status: a.status })
       )
       .map((a) => {
         const start = hhmmToMinutes(

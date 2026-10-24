@@ -1,9 +1,10 @@
 /**
  * Landing pubblica di Agenda Easy — bilingue (it/en, cookie `lang`).
  *
- * Tutta la copy riflette il prodotto reale: pagina pubblica /{slug}, acconto del 50%,
- * Piano Unico (PLAN) e prova gratuita (TRIAL_DAYS). Se la politica di
- * prezzo/prova cambia in src/lib/billing, questa pagina si aggiorna da sola.
+ * Tutta la copy riflette il prodotto reale: pagina pubblica /{slug} con
+ * servizi, prodotti e piani/promozioni editabili, Piano Unico (PLAN) e prova
+ * gratuita (TRIAL_DAYS). Se la politica di prezzo/prova cambia in
+ * src/lib/billing, questa pagina si aggiorna da sola.
  */
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -75,7 +76,7 @@ const COPY: Record<Lang, LandingCopy> = {
         ["Manicure", "45min", "25,00 €"],
       ],
       tomorrow: "Orari di domani",
-      reserve: "Prenota con acconto di 22,50 €",
+      reserve: "Prenota l'orario delle 14:00",
     },
     segments: [
       "Saloni di bellezza",
@@ -103,8 +104,8 @@ const COPY: Record<Lang, LandingCopy> = {
         body: "Ottieni una pagina pubblica con l'indirizzo della tua attività. Incollala su Instagram, su WhatsApp, ovunque siano i tuoi clienti. Scelgono servizio, professionista e orario da soli.",
       },
       {
-        title: "Ricevi l'acconto, conferma l'appuntamento",
-        body: "Per prenotare, il cliente versa un acconto del 50% del servizio. Chi ha pagato, si presenta. L'agenda del giorno resta organizzata nel pannello, senza scambi infiniti di messaggi.",
+        title: "L'agenda si organizza da sola",
+        body: "Ogni prenotazione arriva già confermata nel pannello, con conferma e promemoria via e-mail per il cliente. Tu apri l'agenda del giorno e lavori — senza scambi infiniti di messaggi.",
       },
     ],
     features: { line1: "Tutto quello che fa la reception,", em: "senza bisogno della reception." },
@@ -114,20 +115,20 @@ const COPY: Record<Lang, LandingCopy> = {
         body: "Nome, descrizione e servizi con foto in un link pubblico tutto tuo. Il cliente prenota senza scaricare app e senza creare un account.",
       },
       {
-        title: "Acconto del 50% contro i no-show",
-        body: "La prenotazione vale solo dopo che il cliente ha pagato metà del valore del servizio. Basta bloccare orari per chi poi non si presenta.",
+        title: "Piani e promozioni editabili",
+        body: "Abbonamento mensile, sconto nei giorni tranquilli, “porta 3 amici”, pacchetti: crei qualsiasi offerta dal pannello e appare subito nella tua pagina. Funziona per ogni tipo di attività.",
       },
       {
         title: "Agenda del giorno nel pannello",
-        body: "Vedi chi arriva oggi, a che ora, quale servizio e quanto è già stato versato di acconto — tutto in un'unica schermata.",
+        body: "Vedi chi arriva oggi, a che ora e per quale servizio — tutto in un'unica schermata, con il report mensile dei ricavi.",
       },
       {
         title: "Team e orari per professionista",
         body: "Registra ogni professionista del tuo team e lascia che il cliente scelga da chi farsi seguire.",
       },
       {
-        title: "Servizi a modo tuo",
-        body: "Prezzo, durata e foto di ogni servizio. La durata di ogni appuntamento viene rispettata automaticamente nella griglia degli orari.",
+        title: "Servizi e prodotti a modo tuo",
+        body: "Prezzo, durata e foto di ogni servizio; i prodotti che vendi compaiono in vetrina nella stessa pagina. La durata viene rispettata automaticamente nella griglia degli orari.",
       },
       {
         title: "Orari di apertura reali",
@@ -138,12 +139,12 @@ const COPY: Record<Lang, LandingCopy> = {
       line1: "Un solo piano.",
       em: "Tutto incluso.",
       blurb:
-        "Niente scalini di piano, niente funzioni bloccate, niente sorprese in fattura. Un solo acconto del 50% in più al mese ripaga già l'abbonamento.",
+        "Niente scalini di piano, niente funzioni bloccate, niente sorprese in fattura. Una sola prenotazione in più al mese ripaga già l'abbonamento.",
       perMonth: "/mese",
       bullets: [
         "Pagina pubblica di prenotazione",
-        "Prenotazioni e acconti del 50% illimitati",
-        "Servizi, team e orari senza limiti",
+        "Prenotazioni illimitate",
+        "Servizi, prodotti, piani e team senza limiti",
         `${TRIAL_DAYS} giorni gratis, senza carta di credito`,
         "Disdici quando vuoi",
       ],
@@ -176,7 +177,7 @@ const COPY: Record<Lang, LandingCopy> = {
         ["Manicure", "45min", "€25.00"],
       ],
       tomorrow: "Tomorrow's slots",
-      reserve: "Book with a €22.50 deposit",
+      reserve: "Book the 2:00 PM slot",
     },
     segments: [
       "Beauty salons",
@@ -204,8 +205,8 @@ const COPY: Record<Lang, LandingCopy> = {
         body: "You get a public page with your business address. Paste it on Instagram, on WhatsApp, wherever your clients are. They pick the service, professional and time on their own.",
       },
       {
-        title: "Get the deposit, confirm the appointment",
-        body: "To book, the client pays a 50% deposit for the service. Whoever pays, shows up. Your daily agenda stays organised in the dashboard, with no endless message threads.",
+        title: "Your agenda organises itself",
+        body: "Every booking lands in the dashboard already confirmed, with a confirmation and reminder e-mail for the client. You open the daily agenda and work — no endless message threads.",
       },
     ],
     features: { line1: "Everything the front desk does,", em: "without needing a front desk." },
@@ -215,20 +216,20 @@ const COPY: Record<Lang, LandingCopy> = {
         body: "Name, description and services with photos in a public link of your own. Clients book without downloading an app or creating an account.",
       },
       {
-        title: "50% deposit against no-shows",
-        body: "A booking only counts after the client has paid half the value of the service. No more blocking slots for people who never show up.",
+        title: "Editable plans & promotions",
+        body: "Monthly subscription, quiet-day discounts, “bring 3 friends”, bundles: create any offer from the dashboard and it appears on your page instantly. Works for every kind of business.",
       },
       {
         title: "Daily agenda in the dashboard",
-        body: "See who's coming today, at what time, which service and how much deposit has already been paid — all on one screen.",
+        body: "See who's coming today, at what time and for which service — all on one screen, with a monthly revenue report.",
       },
       {
         title: "Team and schedules per professional",
         body: "Add every professional on your team and let clients choose who they want to be served by.",
       },
       {
-        title: "Services your way",
-        body: "Price, duration and photo for each service. Each appointment's duration is respected automatically in the time grid.",
+        title: "Services and products your way",
+        body: "Price, duration and photo for each service; the products you sell get a showcase on the same page. Each appointment's duration is respected automatically in the time grid.",
       },
       {
         title: "Real opening hours",
@@ -239,12 +240,12 @@ const COPY: Record<Lang, LandingCopy> = {
       line1: "One plan.",
       em: "Everything included.",
       blurb:
-        "No plan tiers, no locked features, no surprises on the invoice. A single extra 50% deposit per month already pays for the subscription.",
+        "No plan tiers, no locked features, no surprises on the invoice. A single extra booking per month already pays for the subscription.",
       perMonth: "/month",
       bullets: [
         "Public booking page",
-        "Unlimited bookings and 50% deposits",
-        "Unlimited services, team and schedules",
+        "Unlimited bookings",
+        "Unlimited services, products, plans and team",
         `${TRIAL_DAYS} days free, no credit card`,
         "Cancel anytime",
       ],

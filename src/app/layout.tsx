@@ -21,14 +21,14 @@ const SITE_URL =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Agenda Easy — Prenotazioni online con acconto",
+  title: "Agenda Easy — Prenotazioni online per la tua attività",
   description:
-    "Pagina di prenotazione online per qualsiasi servizio su appuntamento. I tuoi clienti prenotano e versano un acconto del 50% — tu confermi solo chi si presenterà davvero.",
+    "Pagina di prenotazione online per qualsiasi servizio su appuntamento. I tuoi clienti prenotano da soli; tu gestisci agenda, servizi, prodotti e promozioni da un unico pannello.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "Agenda Easy — Agenda piena, WhatsApp in pace",
     description:
-      "Prenotazioni online con acconto del 50% per qualsiasi servizio su appuntamento.",
+      "Prenotazioni online, prodotti in vetrina e piani/promozioni editabili per qualsiasi servizio su appuntamento.",
     type: "website",
     locale: "it_IT",
   },

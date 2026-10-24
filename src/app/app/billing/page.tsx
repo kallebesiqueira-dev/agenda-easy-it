@@ -22,7 +22,7 @@ export default async function BillingPage() {
           bullets: [
             "✓ Full access, no limits",
             "✓ Online booking page",
-            "✓ 50% deposit with slot hold",
+            "✓ Products and editable plans & promotions",
             `✓ ${TRIAL_DAYS}-day free trial`,
           ],
           back: "← Back to the dashboard",
@@ -33,7 +33,7 @@ export default async function BillingPage() {
           bullets: [
             "✓ Accesso completo, senza limiti",
             "✓ Pagina di prenotazione online",
-            "✓ Acconto del 50% con blocco dell'orario",
+            "✓ Prodotti e piani/promozioni editabili",
             `✓ Prova gratuita di ${TRIAL_DAYS} giorni`,
           ],
           back: "← Torna al pannello",

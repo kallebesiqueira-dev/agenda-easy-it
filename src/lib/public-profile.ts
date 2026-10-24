@@ -24,8 +24,7 @@ export const getPublicBusinessProfile = cache(
     const { data: business } = await supabase
       .from("businesses")
       .select(
-        // SEC-003: pix_key NÃO entra no perfil público — só chega ao cliente
-        // na resposta da própria reserva (create_booking_hold).
+        // SEC-003: só colunas públicas — phone e dados sensíveis ficam fora.
         "id, slug, name, business_type, custom_professional_label, logo_path, cover_path, cover_position, brand_primary, address, whatsapp, timezone, comped, created_at"
       )
       .eq("slug", slug)
@@ -33,16 +32,24 @@ export const getPublicBusinessProfile = cache(
       .maybeSingle();
     if (!business) return null;
 
-    // Verifica dell'abbonamento IN PARALLELO con servizi/professionisti:
+    // Verifica dell'abbonamento IN PARALLELO con servizi/prodotti/piani/professionisti:
     // un round-trip in meno verso il database per ogni visita pubblica.
-    const [allowed, servicesRes, professionalsRes] = await Promise.all([
+    const [allowed, servicesRes, plansRes, professionalsRes] = await Promise.all([
       isPublicBusinessAllowed(business),
       supabase
         .from("services")
-        .select("id, name, description, price_minor, duration_minutes, image_path")
+        .select(
+          "id, name, description, price_minor, duration_minutes, image_path, item_type"
+        )
         .eq("business_id", business.id)
         .eq("active", true)
         .order("price_minor"),
+      supabase
+        .from("plans")
+        .select("id, title, description, price_minor, price_suffix, badge")
+        .eq("business_id", business.id)
+        .eq("active", true)
+        .order("sort_order"),
       supabase
         .from("professionals")
         .select("id, display_name, image_path")
@@ -53,6 +60,8 @@ export const getPublicBusinessProfile = cache(
 
     // Abbonamento scaduto toglie la pagina dal web (tranne account cortesia)
     if (!allowed) return null;
+
+    const items = servicesRes.data ?? [];
 
     return {
       slug: business.slug,
@@ -68,7 +77,27 @@ export const getPublicBusinessProfile = cache(
       address: business.address,
       whatsapp: business.whatsapp,
       timezone: business.timezone,
-      services: servicesRes.data ?? [],
+      // services e products vivono nella stessa tabella; solo i servizi sono prenotabili
+      services: items
+        .filter((s) => s.item_type === "service")
+        .map((s) => ({
+          id: s.id,
+          name: s.name,
+          description: s.description,
+          price_minor: s.price_minor,
+          duration_minutes: s.duration_minutes,
+          image_path: s.image_path,
+        })),
+      products: items
+        .filter((s) => s.item_type === "product")
+        .map((s) => ({
+          id: s.id,
+          name: s.name,
+          description: s.description,
+          price_minor: s.price_minor,
+          image_path: s.image_path,
+        })),
+      plans: plansRes.data ?? [],
       professionals: professionalsRes.data ?? [],
     };
   }

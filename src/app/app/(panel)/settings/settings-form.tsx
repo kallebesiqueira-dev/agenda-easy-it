@@ -33,10 +33,6 @@ const COPY: Record<
     phonePh: string;
     whatsapp: string;
     whatsappPh: string;
-    depositPayment: string;
-    payCoords: string;
-    payCoordsPh: string;
-    payCoordsHint: string;
     published: string;
     publishedHint: (slug: string) => [string, string];
     saving: string;
@@ -54,7 +50,7 @@ const COPY: Record<
     noCover: "Senza copertina — la pagina usa il colore del brand",
     removeCover: "Rimuovi copertina",
     coverHint:
-      "Dimensione esatta: 1600×500 px. Usa una foto del tuo spazio o del tuo lavoro, senza bordi bianchi.",
+      "Usa una foto del tuo spazio o del tuo lavoro — dimensione esatta: 2146×534 px.",
     framing: "Regola l'inquadratura (↑ alto · ↓ basso)",
     name: "Nome",
     type: "Tipo di attività",
@@ -67,11 +63,6 @@ const COPY: Record<
     phonePh: "06 1234 5678",
     whatsapp: "WhatsApp (opzionale)",
     whatsappPh: "333 123 4567",
-    depositPayment: "Pagamento dell'acconto",
-    payCoords: "Coordinate di pagamento (opzionale)",
-    payCoordsPh: "IBAN, PayPal o altro riferimento per il bonifico",
-    payCoordsHint:
-      "Mostrate al cliente alla conferma della prenotazione per pagare l'acconto del 50%. Senza coordinate, l'acconto viene concordato di persona.",
     published: "Pagina pubblicata",
     publishedHint: () => [
       "Quando attiva, la tua pagina è online su ",
@@ -91,7 +82,7 @@ const COPY: Record<
     noCover: "No cover — the page uses the brand colour",
     removeCover: "Remove cover",
     coverHint:
-      "Exact size: 1600×500 px. Use a photo of your space or your work, without white borders.",
+      "Use a photo of your space or your work — exact size: 2146×534 px.",
     framing: "Adjust framing (↑ top · ↓ bottom)",
     name: "Name",
     type: "Business type",
@@ -104,11 +95,6 @@ const COPY: Record<
     phonePh: "06 1234 5678",
     whatsapp: "WhatsApp (optional)",
     whatsappPh: "333 123 4567",
-    depositPayment: "Deposit payment",
-    payCoords: "Payment details (optional)",
-    payCoordsPh: "IBAN, PayPal or another transfer reference",
-    payCoordsHint:
-      "Shown to the client at booking confirmation to pay the 50% deposit. Without details, the deposit is arranged in person.",
     published: "Page published",
     publishedHint: () => [
       "When active, your page is live at ",
@@ -173,7 +159,6 @@ export function SettingsForm({
         address: orNull(form.address ?? ""),
         phone: orNull(form.phone ?? ""),
         whatsapp: orNull(form.whatsapp ?? ""),
-        pix_key: orNull(form.pix_key ?? ""),
       });
       if (result.error) setError(result.error);
       else {
@@ -308,7 +293,7 @@ export function SettingsForm({
           />
         </label>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <label className="block flex-1">
             <span className="mb-1 block text-sm font-medium">{t.type}</span>
             <select
@@ -362,7 +347,7 @@ export function SettingsForm({
           />
         </label>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <label className="block flex-1">
             <span className="mb-1 block text-sm font-medium">
               {t.phone}
@@ -388,23 +373,6 @@ export function SettingsForm({
             />
           </label>
         </div>
-      </section>
-
-      <section className="space-y-3 rounded-2xl bg-white p-4 shadow-sm">
-        <h2 className="font-semibold">{t.depositPayment}</h2>
-        <label className="block">
-          <span className="mb-1 block text-sm font-medium">{t.payCoords}</span>
-          <input
-            maxLength={140}
-            value={form.pix_key ?? ""}
-            onChange={(e) => set("pix_key", e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
-            placeholder={t.payCoordsPh}
-          />
-          <span className="mt-1 block text-xs text-zinc-400">
-            {t.payCoordsHint}
-          </span>
-        </label>
       </section>
 
       <section className="rounded-2xl bg-white p-4 shadow-sm">

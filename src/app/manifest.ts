@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "AgendaEasy",
     short_name: "AgendaEasy",
     description:
-      "Prenotazioni online con acconto per qualsiasi servizio su appuntamento.",
+      "Prenotazioni online per qualsiasi servizio su appuntamento.",
     start_url: "/",
     display: "standalone",
     background_color: "#f6f1e7",

@@ -13,9 +13,6 @@ export interface ActionMessages {
   imageInvalid: string;
   updateFailed: string;
   // agenda
-  confirmFailed: string;
-  apptNotFound: string;
-  apptNotAwaiting: string;
   statusChanged: string;
   // team / turni
   professionalNotFound: string;
@@ -47,9 +44,6 @@ const IT: ActionMessages = {
   saveFailed: "Salvataggio non riuscito. Riprova.",
   imageInvalid: "Immagine non valida.",
   updateFailed: "Aggiornamento non riuscito. Riprova.",
-  confirmFailed: "Conferma non riuscita. Riprova.",
-  apptNotFound: "Prenotazione non trovata.",
-  apptNotAwaiting: "Questa prenotazione non è più in attesa di acconto.",
   statusChanged: "Lo stato di questa prenotazione è cambiato. Ricarica la pagina.",
   professionalNotFound: "Professionista non trovato.",
   professionalInvalid: "Professionista non valido.",
@@ -78,9 +72,6 @@ const EN: ActionMessages = {
   saveFailed: "Couldn't save. Please try again.",
   imageInvalid: "Invalid image.",
   updateFailed: "Couldn't update. Please try again.",
-  confirmFailed: "Couldn't confirm. Please try again.",
-  apptNotFound: "Booking not found.",
-  apptNotAwaiting: "This booking is no longer awaiting a deposit.",
   statusChanged: "This booking's status has changed. Reload the page.",
   professionalNotFound: "Professional not found.",
   professionalInvalid: "Invalid professional.",

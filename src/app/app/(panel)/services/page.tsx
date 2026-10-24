@@ -10,7 +10,9 @@ export default async function ServicesPage() {
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase
     .from("services")
-    .select("id, name, description, price_minor, duration_minutes, active, image_path")
+    .select(
+      "id, name, description, price_minor, duration_minutes, active, image_path, item_type"
+    )
     .eq("business_id", ctx.business.id)
     .order("name");
 
@@ -27,6 +29,7 @@ export default async function ServicesPage() {
         | "duration_minutes"
         | "active"
         | "image_path"
+        | "item_type"
       >[]}
     />
   );

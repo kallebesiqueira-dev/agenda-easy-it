@@ -1,6 +1,8 @@
 # Agenda Easy 🇮🇹
 
-> **Agenda piena, WhatsApp in pace.** SaaS di prenotazioni online con acconto del 50% per qualsiasi attività su appuntamento — barberie, saloni, estetiste, tatuatori, fisioterapisti e altro.
+> **Agenda piena, WhatsApp in pace.** SaaS di prenotazioni online per qualsiasi attività su appuntamento — barberie, saloni, estetiste, tatuatori, fisioterapisti e altro — con prodotti in vetrina e piani/promozioni editabili.
+
+🇬🇧 **[English version](README.en.md)**
 
 ![Next.js](https://img.shields.io/badge/Next.js_16-000000?logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React_19-087EA4?logo=react&logoColor=white)
@@ -10,7 +12,7 @@
 ![Tailwind](https://img.shields.io/badge/Tailwind_4-06B6D4?logo=tailwindcss&logoColor=white)
 ![License](https://img.shields.io/badge/Licenza-MIT-green)
 
-Il cliente sceglie servizio, professionista e orario da solo, versa un **acconto del 50%** direttamente all'attività e l'agenda si organizza da sé. Interfaccia **bilingue (italiano/inglese)**, valuta **EUR**, fuso **Europe/Rome**.
+Il cliente sceglie servizio, professionista e orario da solo e la prenotazione arriva **già confermata** nell'agenda — il pagamento avviene sul posto. L'attività mette in vetrina anche i **prodotti** che vende e crea **piani e promozioni su misura** (abbonamento mensile, sconto nei giorni tranquilli, "porta 3 amici", pacchetti…), tutto editabile per qualsiasi nicho. Interfaccia **bilingue (italiano/inglese)**, valuta **EUR**, fuso **Europe/Rome**.
 
 ---
 
@@ -35,10 +37,12 @@ Il cliente sceglie servizio, professionista e orario da solo, versa un **acconto
 ## ✨ Funzionalità
 
 - **Pagina pubblica personalizzata** per ogni attività (`agendaeasy.it/tua-attivita`): logo, copertina, colore del brand, servizi con foto
-- **Acconto del 50% contro i no-show**: la prenotazione blocca l'orario solo per un tempo limitato; chi paga, si presenta
-- **Agenda del giorno + calendario mensile** nel pannello, con stati (in attesa di acconto, confermata, completata, annullata, no-show)
+- **Prenotazione confermata all'istante**: nessun pagamento anticipato, il cliente paga sul posto; annullamento self-service fino a 2h prima
+- **Prodotti in vetrina**: oltre ai servizi prenotabili, l'attività espone i prodotti che vende (foto, prezzo, descrizione)
+- **Piani e promozioni editabili**: abbonamento mensile, sconto infrasettimanale, "porta 3 amici", pacchetti — modelli rapidi precompilati, ogni campo personalizzabile, per qualsiasi nicho
+- **Agenda del giorno + calendario mensile** nel pannello, con stati (confermata, completata, annullata, no-show)
 - **Team e turni per professionista**, orari di apertura reali e pause (es. pranzo)
-- **Report mensile**: ricavi previsti, acconti ricevuti, servizi più prenotati
+- **Report mensile**: ricavi previsti, servizi più prenotati
 - **E-mail transazionali** (conferma + promemoria 24h) nella lingua del cliente, con link di annullamento sicuro (fino a 2h prima)
 - **Abbonamento SaaS via Stripe**: Checkout (9,90 €/mese, 7 giorni di prova), webhook del ciclo di vita, Customer Portal
 - **Bilingue it/en** con selettore 🇮🇹/🇬🇧 persistente (cookie, 1 anno) su tutte le pagine — e-mail comprese
@@ -85,6 +89,7 @@ flowchart LR
 erDiagram
     BUSINESSES ||--o{ BUSINESS_MEMBERS : "ha"
     BUSINESSES ||--o{ SERVICES : "offre"
+    BUSINESSES ||--o{ PLANS : "promuove"
     BUSINESSES ||--o{ PROFESSIONALS : "impiega"
     BUSINESSES ||--o{ BUSINESS_HOURS : "apre"
     BUSINESSES ||--o{ BREAKS : "pausa"
@@ -94,7 +99,6 @@ erDiagram
     CUSTOMERS ||--o{ APPOINTMENTS : "prenota"
     SERVICES ||--o{ APPOINTMENTS : "oggetto di"
     PROFESSIONALS ||--o{ APPOINTMENTS : "esegue"
-    APPOINTMENTS ||--o{ PAYMENTS : "registra"
 
     BUSINESSES {
         uuid id PK
@@ -102,21 +106,31 @@ erDiagram
         text name
         text timezone "Europe/Rome"
         text country_code "IT"
-        text pix_key "coordinate acconto"
         bool published
     }
     SERVICES {
         uuid id PK
+        text item_type "service|product"
         int price_minor "centesimi"
         text currency "EUR"
-        int duration_minutes
+        int duration_minutes "solo servizi"
         bool active
+    }
+    PLANS {
+        uuid id PK
+        text title
+        text description
+        int price_minor "opzionale"
+        text price_suffix "es. /mese"
+        text badge "es. Promo"
+        bool active
+        int sort_order
     }
     APPOINTMENTS {
         uuid id PK
         timestamptz starts_at "UTC"
-        text status "awaiting_deposit, confirmed, completed..."
-        int deposit_due_minor "50% arrotondato su"
+        text status "confirmed, completed, cancelled, no_show"
+        int service_price_minor "snapshot"
         uuid cancel_token "link annullamento"
         text lang "it|en"
     }
@@ -126,12 +140,6 @@ erDiagram
         text stripe_subscription_id
         text status "trialing|active|past_due|canceled"
         timestamptz trial_ends_at
-    }
-    PAYMENTS {
-        uuid id PK
-        int amount_minor
-        text purpose "deposit|balance|full"
-        text method
     }
 ```
 
@@ -148,11 +156,11 @@ sequenceDiagram
     C->>P: sceglie servizio, professionista, data e orario
     P->>A: richiesta di prenotazione (Zod valida)
     A->>DB: ricalcola disponibilità ADESSO
-    A->>DB: create_booking_hold() — exclusion constraint decide le gare
-    DB-->>A: appointment (awaiting_deposit) + cancel_token
+    A->>DB: create_booking() — exclusion constraint decide le gare
+    DB-->>A: appointment (confirmed) + cancel_token
     A->>R: e-mail di conferma nella lingua del cliente
-    A-->>C: istruzioni acconto 50% + scadenza + link annullamento
-    Note over C,DB: il titolare conferma l'acconto dal pannello → confirmed
+    A-->>C: prenotazione confermata + link annullamento (fino a 2h prima)
+    Note over C,DB: nessun acconto — il pagamento avviene sul posto
 ```
 
 ### Sequenza: abbonamento Stripe
@@ -180,9 +188,9 @@ sequenceDiagram
 src/
 ├── app/
 │   ├── page.tsx              # landing bilingue
-│   ├── [slug]/               # pagina pubblica di prenotazione
+│   ├── [slug]/               # pagina pubblica: prenotazione + piani + prodotti
 │   ├── annulla/[id]/         # annullamento via cancel_token
-│   ├── app/                  # pannello (agenda, servizi, team, orari, report, impostazioni)
+│   ├── app/                  # pannello (agenda, servizi/prodotti, piani, team, orari, report, impostazioni)
 │   │   └── billing/          # abbonamento Stripe (checkout + portal)
 │   └── api/
 │       ├── public/           # disponibilità + prenotazioni (server = autorità)
@@ -195,7 +203,7 @@ src/
     ├── billing/              # piano, trial, politica di accesso
     ├── dates/ money/         # Intl it-IT/en-GB, EUR in centesimi
     └── supabase/ stripe/     # client tipizzati (session / admin / stripe)
-supabase/migrations/          # schema completo + RLS + hardening (13 migrazioni)
+supabase/migrations/          # schema completo + RLS + hardening (14 migrazioni)
 ```
 
 ## 🚀 Avvio locale
@@ -220,7 +228,7 @@ Webhook Stripe in locale: `stripe listen --forward-to localhost:7778/api/webhook
 
 ## 🔒 Sicurezza
 
-- **RLS per tenant** su ogni tabella + grant a colonne per `anon` (le coordinate di pagamento e i telefoni non sono mai leggibili pubblicamente)
+- **RLS per tenant** su ogni tabella + grant a colonne per `anon` (i telefoni e i dati dei clienti non sono mai leggibili pubblicamente)
 - **Il server è l'autorità**: prezzi, durate e disponibilità ricalcolati sempre lato server; prenotazioni concorrenti risolte da un exclusion constraint Postgres
 - **Webhook Stripe** verificato sulla firma del body raw, fail-closed senza secret
 - **Annullamento** autenticato da token segreto per prenotazione, con limite 2h

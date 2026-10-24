@@ -22,6 +22,13 @@ const norm = (s: string) =>
   s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 
 const FAQ_IT: { match: RegExp; reply: string; whatsapp?: boolean }[] = [
+  // Prima del prezzo: "piani" non deve cadere nella risposta del "piano unico".
+  // (niente "abbonament": "disdire abbonamento" deve arrivare alla sua risposta)
+  {
+    match: /(piani|promozion|pacchett|sconto|prodott|vetrina|fedelt)/,
+    reply:
+      'Dalla scheda "Piani" crei abbonamenti, sconti e promozioni (es. "porta 3 amici"), tutto editabile. E in "Servizi e prodotti" metti in vetrina anche i prodotti che vendi: compaiono nella tua pagina pubblica. ✨',
+  },
   {
     match: /(prezzo|quanto costa|costo|mensile|piano|caro|tariffa)/,
     reply:
@@ -35,12 +42,12 @@ const FAQ_IT: { match: RegExp; reply: string; whatsapp?: boolean }[] = [
   {
     match: /(creare account|registr|iniziare|come funziona|cominciare)/,
     reply:
-      "È rapidissimo: 1) crea l'account, 2) inserisci servizi, team e orari, 3) pubblica dalle Impostazioni e condividi il tuo link. I tuoi clienti prenotano da soli e versano l'acconto con bonifico istantaneo. 🚀",
+      "È rapidissimo: 1) crea l'account, 2) inserisci servizi, team e orari, 3) pubblica dalle Impostazioni e condividi il tuo link. I tuoi clienti prenotano da soli e la prenotazione arriva già confermata nella tua agenda. 🚀",
   },
   {
     match: /(acconto|bonifico|ricev|pagamento|addebito|deposito|caparra)/,
     reply:
-      "Il cliente versa un acconto del 50% direttamente sulle TUE coordinate (inserite nelle Impostazioni) per confermare l'appuntamento. Il resto lo paga sul posto, in contanti o con carta. Non passa nulla da noi — i soldi arrivano direttamente a te. 💰",
+      "Nessun pagamento anticipato: il cliente prenota online e paga direttamente a te, sul posto, in contanti o con carta. Non passa nulla da noi — i soldi arrivano direttamente a te. 💰",
   },
   {
     match: /(link|pagina|condivid|pubblicare|instagram|non e pubblic|non è pubblic|404)/,
@@ -91,6 +98,13 @@ const FAQ_IT: { match: RegExp; reply: string; whatsapp?: boolean }[] = [
 ];
 
 const FAQ_EN: { match: RegExp; reply: string; whatsapp?: boolean }[] = [
+  // Before pricing: "plans" must not fall into the "single plan" answer.
+  // (no "subscription": "cancel subscription" must reach its own answer)
+  {
+    match: /(plans|promotion|bundle|discount|product|showcase|loyalty)/,
+    reply:
+      'From the "Plans" tab you create subscriptions, discounts and promotions (e.g. "bring 3 friends"), all editable. And in "Services & products" you can showcase the products you sell: they appear on your public page. ✨',
+  },
   {
     match: /(price|how much|cost|monthly|plan|expensive|fee)/,
     reply:
@@ -104,12 +118,12 @@ const FAQ_EN: { match: RegExp; reply: string; whatsapp?: boolean }[] = [
   {
     match: /(create account|sign ?up|register|get started|how does it work|start)/,
     reply:
-      "It's quick: 1) create your account, 2) add services, team and hours, 3) publish from Settings and share your link. Your clients book on their own and pay the deposit by instant bank transfer. 🚀",
+      "It's quick: 1) create your account, 2) add services, team and hours, 3) publish from Settings and share your link. Your clients book on their own and the booking lands in your agenda already confirmed. 🚀",
   },
   {
     match: /(deposit|transfer|receive|payment|charge|down ?payment)/,
     reply:
-      "The client pays a 50% deposit straight to YOUR payment details (set in Settings) to confirm the appointment. The rest is paid on site, in cash or by card. Nothing goes through us — the money goes directly to you. 💰",
+      "No upfront payment: the client books online and pays you directly, on site, in cash or by card. Nothing goes through us — the money goes directly to you. 💰",
   },
   {
     match: /(link|page|share|publish|instagram|not public|404)/,
@@ -186,7 +200,7 @@ const UI: Record<
     quick: [
       "Quanto costa?",
       "Come funziona la prova gratuita?",
-      "Come ricevo l'acconto?",
+      "Come creo piani e promozioni?",
       "Parlare con una persona",
     ],
     fallback:
@@ -210,7 +224,7 @@ const UI: Record<
     quick: [
       "How much does it cost?",
       "How does the free trial work?",
-      "How do I receive the deposit?",
+      "How do I create plans and promotions?",
       "Talk to a person",
     ],
     fallback:

@@ -18,15 +18,17 @@ const COPY: Record<
     currentMonth: string;
     nextMonth: string;
     revenue: string;
-    deposits: string;
     completed: string;
     confirmed: string;
-    awaiting: string;
     cancelled: string;
     noShows: string;
     totalBookings: string;
     topServices: string;
     noBookings: string;
+    products: string;
+    productsHint: string;
+    noProducts: string;
+    inactive: string;
   }
 > = {
   it: {
@@ -35,15 +37,17 @@ const COPY: Record<
     currentMonth: "Mese corrente",
     nextMonth: "Mese successivo",
     revenue: "Ricavi previsti (confermate + completate)",
-    deposits: "Acconti ricevuti",
     completed: "Completate",
     confirmed: "Confermate",
-    awaiting: "In attesa di acconto",
     cancelled: "Annullate",
     noShows: "Non presentati",
     totalBookings: "Totale prenotazioni",
     topServices: "Servizi più prenotati",
     noBookings: "Nessuna prenotazione in questo mese.",
+    products: "Prodotti in vetrina",
+    productsHint: "I prodotti attivi compaiono nella tua pagina pubblica.",
+    noProducts: "Nessun prodotto ancora. Aggiungili in Servizi e prodotti.",
+    inactive: "non attivo",
   },
   en: {
     heading: "Report",
@@ -51,15 +55,17 @@ const COPY: Record<
     currentMonth: "Current month",
     nextMonth: "Next month",
     revenue: "Expected revenue (confirmed + completed)",
-    deposits: "Deposits received",
     completed: "Completed",
     confirmed: "Confirmed",
-    awaiting: "Awaiting deposit",
     cancelled: "Cancelled",
     noShows: "No-shows",
     totalBookings: "Total bookings",
     topServices: "Most booked services",
     noBookings: "No bookings this month.",
+    products: "Products on display",
+    productsHint: "Active products appear on your public page.",
+    noProducts: "No products yet. Add them in Services & products.",
+    inactive: "inactive",
   },
 };
 
@@ -82,45 +88,42 @@ export default async function ReportsPage({ searchParams }: Props) {
   const monthEnd = zonedTimeToUtc(`${nextM}-01`, "00:00", business.timezone);
 
   const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
-    .from("appointments")
-    .select(
-      "status, service_price_minor, deposit_due_minor, deposit_paid_at, hold_expires_at, service:services(name)"
-    )
-    .eq("business_id", business.id)
-    .gte("starts_at", monthStart.toISOString())
-    .lt("starts_at", monthEnd.toISOString());
+  // Prenotazioni del mese + prodotti in vetrina: query indipendenti, in parallelo.
+  const [{ data }, { data: productsData }] = await Promise.all([
+    supabase
+      .from("appointments")
+      .select("status, service_price_minor, service:services(name)")
+      .eq("business_id", business.id)
+      .gte("starts_at", monthStart.toISOString())
+      .lt("starts_at", monthEnd.toISOString()),
+    supabase
+      .from("services")
+      .select("id, name, price_minor, active")
+      .eq("business_id", business.id)
+      .eq("item_type", "product")
+      .order("name"),
+  ]);
+
+  const products = (productsData ?? []) as {
+    id: string;
+    name: string;
+    price_minor: number;
+    active: boolean;
+  }[];
 
   const rows = (data ?? []) as unknown as {
     status: string;
     service_price_minor: number;
-    deposit_due_minor: number;
-    deposit_paid_at: string | null;
-    hold_expires_at: string | null;
     service: { name: string } | null;
   }[];
 
   const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
-  const nowRef = new Date();
-  // La prenotazione trattenuta scaduta non conta come "in attesa di acconto" — l'orario è tornato libero.
-  const byStatus = (s: string) =>
-    rows.filter(
-      (r) =>
-        r.status === s &&
-        !(
-          s === "awaiting_deposit" &&
-          r.hold_expires_at &&
-          new Date(r.hold_expires_at) < nowRef
-        )
-    );
+  const byStatus = (s: string) => rows.filter((r) => r.status === s);
 
   const receita = sum(
     rows
       .filter((r) => r.status === "confirmed" || r.status === "completed")
       .map((r) => r.service_price_minor)
-  );
-  const sinais = sum(
-    rows.filter((r) => r.deposit_paid_at !== null).map((r) => r.deposit_due_minor)
   );
 
   const topServices = [
@@ -143,10 +146,8 @@ export default async function ReportsPage({ searchParams }: Props) {
 
   const stats = [
     { label: t.revenue, value: formatEUR(receita) },
-    { label: t.deposits, value: formatEUR(sinais) },
     { label: t.completed, value: String(byStatus("completed").length) },
     { label: t.confirmed, value: String(byStatus("confirmed").length) },
-    { label: t.awaiting, value: String(byStatus("awaiting_deposit").length) },
     { label: t.cancelled, value: String(byStatus("cancelled").length) },
     { label: t.noShows, value: String(byStatus("no_show").length) },
     { label: t.totalBookings, value: String(rows.length) },
@@ -182,7 +183,7 @@ export default async function ReportsPage({ searchParams }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {stats.map((s) => (
           <div key={s.label} className="rounded-2xl bg-white p-4 shadow-sm">
             <p className="text-lg font-bold">{s.value}</p>
@@ -191,21 +192,47 @@ export default async function ReportsPage({ searchParams }: Props) {
         ))}
       </div>
 
-      <section className="mt-5 rounded-2xl bg-white p-4 shadow-sm">
-        <h3 className="mb-3 font-semibold">{t.topServices}</h3>
-        {topServices.length === 0 ? (
-          <p className="text-sm text-zinc-500">{t.noBookings}</p>
-        ) : (
-          <ul className="space-y-2 text-sm">
-            {topServices.map(([name, count]) => (
-              <li key={name} className="flex items-center justify-between">
-                <span>{name}</span>
-                <span className="font-semibold">{count}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <div className="mt-5 grid gap-5 lg:grid-cols-2 lg:items-start">
+        <section className="rounded-2xl bg-white p-4 shadow-sm">
+          <h3 className="mb-3 font-semibold">{t.topServices}</h3>
+          {topServices.length === 0 ? (
+            <p className="text-sm text-zinc-500">{t.noBookings}</p>
+          ) : (
+            <ul className="space-y-2 text-sm">
+              {topServices.map(([name, count]) => (
+                <li key={name} className="flex items-center justify-between">
+                  <span>{name}</span>
+                  <span className="font-semibold">{count}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section className="rounded-2xl bg-white p-4 shadow-sm">
+          <h3 className="mb-1 font-semibold">{t.products}</h3>
+          <p className="mb-3 text-xs text-zinc-500">{t.productsHint}</p>
+          {products.length === 0 ? (
+            <p className="text-sm text-zinc-500">{t.noProducts}</p>
+          ) : (
+            <ul className="space-y-2 text-sm">
+              {products.map((p) => (
+                <li key={p.id} className="flex items-center justify-between gap-2">
+                  <span className={p.active ? "" : "text-zinc-400"}>
+                    {p.name}
+                    {!p.active && (
+                      <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
+                        {t.inactive}
+                      </span>
+                    )}
+                  </span>
+                  <span className="font-semibold">{formatEUR(p.price_minor)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
     </div>
   );
 }

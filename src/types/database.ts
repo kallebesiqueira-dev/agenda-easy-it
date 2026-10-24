@@ -10,8 +10,12 @@ export type MemberRole = "owner" | "manager" | "professional";
 
 export type MemberInviteStatus = "pending" | "accepted" | "revoked";
 
+/**
+ * La prenotazione nasce già confermata. Il valore storico "awaiting_deposit"
+ * esiste ancora nell'enum del database ma nessuna riga lo usa più (migrazione
+ * 20261024000014) e il codice non lo crea.
+ */
 export type AppointmentStatus =
-  | "awaiting_deposit"
   | "confirmed"
   | "cancelled"
   | "completed"
@@ -45,7 +49,7 @@ export interface Business {
   whatsapp: string | null;
   timezone: string; // IANA, es. "Europe/Rome"
   country_code: "BR" | "IT";
-  pix_key: string | null;
+  pix_key: string | null; // legacy: coordinate dell'acconto, non più usate
   published: boolean;
   comped: boolean; // cortesia: isento de assinatura
   created_at: string;
@@ -94,6 +98,9 @@ export interface Break {
   ends_at: string;
 }
 
+/** 'service' è prenotabile; 'product' è solo vetrina sulla pagina pubblica. */
+export type ItemType = "service" | "product";
+
 export interface Service {
   id: string;
   business_id: string;
@@ -101,9 +108,28 @@ export interface Service {
   description: string | null;
   price_minor: number; // centavos
   currency: "BRL" | "EUR";
-  duration_minutes: number;
+  duration_minutes: number; // irrilevante per i prodotti (valore di default)
   image_path: string | null;
   active: boolean;
+  item_type: ItemType;
+}
+
+/**
+ * Piano/promozione liberamente editabile (abbonamento mensile, sconto
+ * infrasettimanale, "porta un amico", pacchetti...). Il prezzo è opzionale:
+ * molte promo non hanno un importo fisso.
+ */
+export interface Plan {
+  id: string;
+  business_id: string;
+  title: string;
+  description: string | null;
+  price_minor: number | null; // centavos; null = promo senza prezzo fisso
+  price_suffix: string | null; // es. "/mese", "a seduta"
+  badge: string | null; // es. "Promo", "Più scelto"
+  active: boolean;
+  sort_order: number;
+  created_at: string;
 }
 
 export interface Customer {
@@ -125,9 +151,9 @@ export interface Appointment {
   ends_at: string; // UTC
   status: AppointmentStatus;
   service_price_minor: number; // snapshot congelado na reserva
-  deposit_due_minor: number; // 50% arredondado p/ cima, congelado
-  deposit_paid_at: string | null;
-  hold_expires_at: string | null; // prazo da retenção awaiting_deposit
+  deposit_due_minor: number | null; // legacy: solo prenotazioni pre-acconto
+  deposit_paid_at: string | null; // legacy
+  hold_expires_at: string | null; // legacy
   notes: string | null;
   lang: "it" | "en"; // lingua scelta dal cliente alla prenotazione
   created_at: string;
@@ -181,6 +207,8 @@ export interface PublicBusinessProfile {
   whatsapp: string | null;
   timezone: string;
   services: PublicService[];
+  products: PublicProduct[];
+  plans: PublicPlan[];
   professionals: PublicProfessional[];
 }
 
@@ -191,6 +219,24 @@ export interface PublicService {
   price_minor: number;
   duration_minutes: number;
   image_path: string | null;
+}
+
+/** Prodotto in vetrina: niente durata, niente prenotazione. */
+export interface PublicProduct {
+  id: string;
+  name: string;
+  description: string | null;
+  price_minor: number;
+  image_path: string | null;
+}
+
+export interface PublicPlan {
+  id: string;
+  title: string;
+  description: string | null;
+  price_minor: number | null;
+  price_suffix: string | null;
+  badge: string | null;
 }
 
 export interface PublicProfessional {
@@ -206,16 +252,13 @@ export interface AvailableSlot {
   ends_at: string; // UTC
 }
 
-/** Resultado da criação de reserva pública (retenção aguardando sinal). */
-export interface BookingHoldResult {
+/** Risultato della prenotazione pubblica — già confermata, senza acconto. */
+export interface BookingResult {
   appointment_id: string;
-  status: "awaiting_deposit";
+  status: "confirmed";
   starts_at: string;
   ends_at: string;
   service_price_minor: number;
-  deposit_due_minor: number;
-  hold_expires_at: string;
-  pix_key: string | null;
   /** Token secreto para o cliente cancelar a própria reserva. */
   cancel_token: string;
 }

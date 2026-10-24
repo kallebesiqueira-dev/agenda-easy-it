@@ -2,14 +2,14 @@
 
 /**
  * Card della prenotazione nell'agenda del giorno. Riceve dati già formattati
- * dal server (stringhe pronte); qui solo interazione: confermare l'acconto,
- * completare, annullare, non presentato.
+ * dal server (stringhe pronte); qui solo interazione: completare, annullare,
+ * non presentato.
  */
 
 import { useState, useTransition } from "react";
 import type { Lang } from "@/lib/i18n";
 import type { AppointmentStatus } from "@/types/database";
-import { confirmDeposit, setAppointmentStatus } from "./actions";
+import { setAppointmentStatus } from "./actions";
 
 export interface AppointmentCardData {
   id: string;
@@ -19,15 +19,10 @@ export interface AppointmentCardData {
   serviceName: string;
   professionalName: string;
   status: AppointmentStatus;
-  holdExpired: boolean;
   priceLabel: string;
-  depositDueLabel: string;
-  depositPaid: boolean;
-  holdExpiresLabel: string | null;
 }
 
 const STATUS_CLASSES: Record<AppointmentStatus, string> = {
-  awaiting_deposit: "bg-amber-100 text-amber-800",
   confirmed: "bg-emerald-100 text-emerald-800",
   cancelled: "bg-zinc-100 text-zinc-500",
   completed: "bg-blue-100 text-blue-800",
@@ -38,12 +33,7 @@ const COPY: Record<
   Lang,
   {
     status: Record<AppointmentStatus, string>;
-    holdExpired: string;
     total: string;
-    deposit: string;
-    by: (time: string) => string;
-    paid: string;
-    depositReceived: string;
     cancel: string;
     complete: string;
     noShow: string;
@@ -51,36 +41,24 @@ const COPY: Record<
 > = {
   it: {
     status: {
-      awaiting_deposit: "In attesa di acconto",
       confirmed: "Confermata",
       cancelled: "Annullata",
       completed: "Completata",
       no_show: "Non presentato",
     },
-    holdExpired: "Acconto scaduto",
     total: "Totale",
-    deposit: "Acconto",
-    by: (time) => ` (entro le ${time})`,
-    paid: " ✓ pagato",
-    depositReceived: "Acconto ricevuto",
     cancel: "Annulla",
     complete: "Completa",
     noShow: "Non presentato",
   },
   en: {
     status: {
-      awaiting_deposit: "Awaiting deposit",
       confirmed: "Confirmed",
       cancelled: "Cancelled",
       completed: "Completed",
       no_show: "No-show",
     },
-    holdExpired: "Deposit expired",
     total: "Total",
-    deposit: "Deposit",
-    by: (time) => ` (by ${time})`,
-    paid: " ✓ paid",
-    depositReceived: "Deposit received",
     cancel: "Cancel",
     complete: "Complete",
     noShow: "No-show",
@@ -98,9 +76,10 @@ export function AppointmentCard({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  const badge = data.holdExpired
-    ? { label: t.holdExpired, className: "bg-zinc-100 text-zinc-500" }
-    : { label: t.status[data.status], className: STATUS_CLASSES[data.status] };
+  const badge = {
+    label: t.status[data.status],
+    className: STATUS_CLASSES[data.status],
+  };
 
   function run(action: () => Promise<{ error?: string }>) {
     setError(null);
@@ -147,36 +126,13 @@ export function AppointmentCard({
       </div>
 
       <p className="mt-2 text-sm text-zinc-600">
-        {t.total} {data.priceLabel} · {t.deposit} {data.depositDueLabel}
-        {data.status === "awaiting_deposit" &&
-          !data.holdExpired &&
-          data.holdExpiresLabel &&
-          t.by(data.holdExpiresLabel)}
-        {data.depositPaid && t.paid}
+        {t.total} {data.priceLabel}
       </p>
 
       {error && (
         <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
           {error}
         </p>
-      )}
-
-      {data.status === "awaiting_deposit" && (
-        <div className="mt-3 flex flex-wrap gap-2">
-          <ActionButton
-            primary
-            disabled={pending}
-            onClick={() => run(() => confirmDeposit(data.id, "pix"))}
-          >
-            {t.depositReceived}
-          </ActionButton>
-          <ActionButton
-            disabled={pending}
-            onClick={() => run(() => setAppointmentStatus(data.id, "cancelled"))}
-          >
-            {t.cancel}
-          </ActionButton>
-        </div>
       )}
 
       {data.status === "confirmed" && (

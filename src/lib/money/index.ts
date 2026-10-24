@@ -3,14 +3,6 @@
  * MVP limitato a EUR/Italia.
  */
 
-/** Acconto obbligatorio: 50% del prezzo corrente, arrotondato PER ECCESSO al centesimo. */
-export function depositDueMinor(priceMinor: number): number {
-  if (!Number.isInteger(priceMinor) || priceMinor <= 0) {
-    throw new Error("Prezzo non valido: atteso intero positivo in centesimi.");
-  }
-  return Math.ceil(priceMinor / 2);
-}
-
 const eur = new Intl.NumberFormat("it-IT", {
   style: "currency",
   currency: "EUR",

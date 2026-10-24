@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Agenda Easy — Prenotazioni online con acconto";
+export const alt = "Agenda Easy — Prenotazioni online";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -40,7 +40,7 @@ export default function OgImage() {
           </span>
         </div>
         <div style={{ display: "flex", fontSize: 30, color: "#5c554b" }}>
-          Prenotazioni online con acconto del 50% · per qualsiasi servizio su appuntamento
+          Prenotazioni online, prodotti e promozioni · per qualsiasi servizio su appuntamento
         </div>
       </div>
     ),

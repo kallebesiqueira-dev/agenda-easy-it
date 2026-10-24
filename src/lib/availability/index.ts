@@ -4,7 +4,7 @@
  * Pipeline para um profissional em uma data:
  *   1. Janela de trabalho = turnos do dia ∩ horário de funcionamento do negócio
  *   2. Subtrai pausas (do profissional e gerais)
- *   3. Subtrai agendamentos ocupados (awaiting_deposit não expirado + confirmed)
+ *   3. Subtrai agendamentos ocupados (confirmed)
  *   4. Fatia o que sobrou em slots do tamanho do serviço, respeitando a
  *      política de passo e antecedência mínima (bookingPolicy)
  *
@@ -83,7 +83,7 @@ export function subtract(
  *
  *   minLeadMinutes — antecedência mínima para reservar (contada de "agora").
  *     • 0 permite reservar um slot que começa em 2 minutos — o dono pode nem
- *       ver a notificação, e o sinal via Pix não chega a tempo.
+ *       ver a notificação.
  *     • Muito alto (ex.: 24h) mata o caso "encaixe de última hora", que é
  *       receita real para barbearia.
  *
@@ -91,8 +91,8 @@ export function subtract(
  * do serviço (pode ignorá-la se optar por passo fixo).
  *
  * Decisão (2026-10-03): grade fixa de 30min — horários previsíveis para o
- * cliente; antecedência mínima de 60min para dar tempo do sinal via Pix
- * chegar antes do atendimento.
+ * cliente; antecedência mínima de 60min para o dono ver a reserva chegar
+ * antes do atendimento.
  */
 export function bookingPolicy(_serviceDurationMinutes: number): {
   stepMinutes: number;
@@ -165,17 +165,9 @@ export function computeDaySlotStarts(input: DayScheduleInput): number[] {
   return starts;
 }
 
-/**
- * Um agendamento bloqueia o horário se está confirmado, ou se é uma retenção
- * de sinal (awaiting_deposit) ainda dentro do prazo.
- */
+/** Um agendamento bloqueia o horário se está confirmado. */
 export function appointmentBlocksSlot(
-  a: Pick<Appointment, "status" | "hold_expires_at">,
-  nowUtc: Date
+  a: Pick<Appointment, "status">
 ): boolean {
-  if (a.status === "confirmed") return true;
-  if (a.status === "awaiting_deposit") {
-    return a.hold_expires_at !== null && new Date(a.hold_expires_at) > nowUtc;
-  }
-  return false;
+  return a.status === "confirmed";
 }

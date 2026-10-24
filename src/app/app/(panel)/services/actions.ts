@@ -1,9 +1,9 @@
 "use server";
 
 /**
- * CRUD dei servizi. L'eliminazione non esiste: le prenotazioni passate
- * referenziano il servizio (FK restrict) — disattivarlo lo toglie dalla
- * pagina pubblica e preserva lo storico.
+ * CRUD di servizi e prodotti (stessa tabella, item_type distingue).
+ * L'eliminazione non esiste: le prenotazioni passate referenziano il servizio
+ * (FK restrict) — disattivarlo lo toglie dalla pagina pubblica e preserva lo storico.
  */
 
 import { revalidatePath } from "next/cache";
@@ -21,6 +21,7 @@ export interface SaveServiceInput {
   duration_minutes: number;
   active: boolean;
   image_path: string | null;
+  item_type: "service" | "product";
 }
 
 export async function saveService(

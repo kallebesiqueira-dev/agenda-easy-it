@@ -11,47 +11,16 @@ import { z } from "zod";
 import type { AppointmentStatus } from "@/types/database";
 import { actionMessages } from "@/lib/i18n/messages";
 import { getLang } from "@/lib/i18n/server";
-import { paymentMethodSchema, uuidSchema } from "@/lib/validation";
+import { uuidSchema } from "@/lib/validation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export interface ActionResult {
   error?: string;
 }
 
-export async function confirmDeposit(
-  appointmentId: string,
-  method: string
-): Promise<ActionResult> {
-  const t = actionMessages(await getLang());
-  const parsed = z
-    .object({ id: uuidSchema, method: paymentMethodSchema })
-    .safeParse({ id: appointmentId, method });
-  if (!parsed.success) return { error: t.invalidData };
-
-  const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.rpc("confirm_deposit", {
-    p_appointment_id: parsed.data.id,
-    p_method: parsed.data.method,
-  });
-
-  if (error) {
-    if (error.message.includes("invalid_status")) {
-      return { error: t.apptNotAwaiting };
-    }
-    if (error.message.includes("appointment_not_found")) {
-      return { error: t.apptNotFound };
-    }
-    console.error("confirm_deposit error", error);
-    return { error: t.confirmFailed };
-  }
-
-  revalidatePath("/app");
-  return {};
-}
-
 /** Transizioni consentite per stato attuale — qualsiasi altra viene rifiutata. */
 const ALLOWED_FROM: Record<string, AppointmentStatus[]> = {
-  cancelled: ["awaiting_deposit", "confirmed"],
+  cancelled: ["confirmed"],
   completed: ["confirmed"],
   no_show: ["confirmed"],
 };

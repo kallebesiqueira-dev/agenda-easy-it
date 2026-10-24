@@ -22,7 +22,6 @@ export default async function SettingsPage() {
         address: b.address,
         phone: b.phone,
         whatsapp: b.whatsapp,
-        pix_key: b.pix_key,
         published: b.published,
       }}
       slug={b.slug}

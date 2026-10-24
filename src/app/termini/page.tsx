@@ -22,7 +22,7 @@ const COPY: Record<
     sections: [
       {
         h: "1. Il servizio",
-        p: "Agenda Easy è una piattaforma di prenotazione online per piccole attività. L'attività abbonata inserisce servizi, team e orari e riceve una pagina pubblica dove i suoi clienti prenotano appuntamenti, previo pagamento di un acconto pari al 50% del valore del servizio.",
+        p: "Agenda Easy è una piattaforma di prenotazione online per piccole attività. L'attività abbonata inserisce servizi, prodotti, piani/promozioni, team e orari e riceve una pagina pubblica dove i suoi clienti prenotano appuntamenti direttamente, senza pagamenti anticipati.",
       },
       {
         h: "2. Abbonamento e prova gratuita",
@@ -30,7 +30,7 @@ const COPY: Record<
       },
       {
         h: "3. Pagamenti tra attività e cliente finale",
-        p: "L'acconto del 50% viene concordato e ricevuto direttamente tra l'attività e il suo cliente (es.: bonifico sul conto dell'attività stessa). Agenda Easy non intermedia, trattiene o garantisce tali importi, né risponde di eventuali rimborsi tra le parti.",
+        p: "Il pagamento di servizi, prodotti e piani avviene direttamente tra l'attività e il suo cliente (es.: in contanti o con carta, sul posto). Agenda Easy non intermedia, trattiene o garantisce tali importi, né risponde di eventuali rimborsi tra le parti.",
       },
       {
         h: "4. Responsabilità",
@@ -51,7 +51,7 @@ const COPY: Record<
     sections: [
       {
         h: "1. The service",
-        p: "Agenda Easy is an online booking platform for small businesses. The subscribing business adds services, team and hours and gets a public page where its clients book appointments, upon payment of a deposit equal to 50% of the service value.",
+        p: "Agenda Easy is an online booking platform for small businesses. The subscribing business adds services, products, plans/promotions, team and hours and gets a public page where its clients book appointments directly, with no upfront payment.",
       },
       {
         h: "2. Subscription and free trial",
@@ -59,7 +59,7 @@ const COPY: Record<
       },
       {
         h: "3. Payments between business and end client",
-        p: "The 50% deposit is arranged and received directly between the business and its client (e.g. a transfer to the business's own account). Agenda Easy does not intermediate, hold or guarantee these amounts, nor is it responsible for refunds between the parties.",
+        p: "Payment for services, products and plans happens directly between the business and its client (e.g. in cash or by card, on site). Agenda Easy does not intermediate, hold or guarantee these amounts, nor is it responsible for refunds between the parties.",
       },
       {
         h: "4. Responsibilities",
