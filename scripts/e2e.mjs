@@ -1,7 +1,12 @@
 /**
- * E2E completo contra o dev server (http://localhost:7778) + Supabase cloud + Asaas sandbox.
+ * E2E completo contra o dev server (http://localhost:7778) + Supabase cloud.
  * Fluxo: signup(admin) → login → onboarding → serviço → profissional+turnos →
- * horários → reserva pública → agenda do painel → assinatura Asaas → webhook → ativa.
+ * horários → publicação → reserva pública (confirmada na hora, sem acconto) →
+ * agenda do painel → página de billing (Stripe, somente leitura).
+ *
+ * A UI é verificada em italiano (lingua default — cookie `lang` ausente).
+ * Billing: produção usa chaves Stripe reais, então o teste NÃO abre o checkout;
+ * apenas confirma que a página carrega com o botão de assinatura.
  *
  * Uso: node scripts/e2e.mjs
  */
@@ -21,14 +26,12 @@ const env = Object.fromEntries(
 );
 const SUPA = env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE = env.SUPABASE_SECRET_KEY;
-const WEBHOOK_TOKEN = env.ASAAS_WEBHOOK_TOKEN;
 
 const ts = Date.now();
 const EMAIL = `e2e.${ts}@teste.agendaeasy.dev`;
 const PASSWORD = "SenhaForte123!";
 const BIZ_NAME = `Studio E2E ${ts}`;
 const SLUG = `studio-e2e-${ts}`;
-const CPF = "52998224725";
 
 let step = "";
 function log(msg) {
@@ -68,37 +71,46 @@ try {
 
   log("2. Login pela UI");
   await page.goto(`${BASE}/login`);
-  await page.getByPlaceholder("voce@exemplo.com").fill(EMAIL);
-  await page.getByPlaceholder("Mínimo de 8 caracteres").fill(PASSWORD);
-  await page.getByRole("button", { name: "Entrar" }).click();
+  await page.getByPlaceholder("tu@esempio.com").fill(EMAIL);
+  await page.getByPlaceholder("Minimo 8 caratteri").fill(PASSWORD);
+  await page.getByRole("button", { name: "Accedi" }).click();
   await page.waitForURL(/\/app/, { timeout: 30000 });
   console.log("   →", page.url());
 
   log("3. Onboarding: criando negócio");
   if (!page.url().includes("onboarding")) await page.goto(`${BASE}/app/onboarding`);
-  await page.getByPlaceholder("Barbearia do Zé").fill(BIZ_NAME);
+  await page.getByPlaceholder("Barberia da Pino").fill(BIZ_NAME);
   await page.getByPlaceholder("barberia-da-pino").fill(SLUG);
-  await page.getByRole("button", { name: "Criar e ir para o painel" }).click();
+  await page.getByRole("button", { name: "Crea e vai al pannello" }).click();
   await page.waitForURL(/\/app(?!\/onboarding)/, { timeout: 30000 });
   console.log("   negócio criado →", page.url());
 
   log("4. Cadastrando serviço");
   await page.goto(`${BASE}/app/services`);
-  await page.getByRole("button", { name: "Novo serviço" }).click();
-  await page.getByPlaceholder("Corte masculino").fill("Corte E2E");
+  await page.getByRole("button", { name: "Nuovo servizio" }).click();
+  await page.getByPlaceholder("Taglio uomo").fill("Taglio E2E");
   await page.getByPlaceholder("45,00").fill("80,00");
-  await page.getByRole("button", { name: "Salvar", exact: true }).click();
-  await page.getByText("R$ 80,00 · 30 min").waitFor();
+  await page.getByRole("button", { name: "Salva", exact: true }).click();
+  await page.getByText(/80,00\s*€\s*·\s*30 min/).waitFor();
   console.log("   serviço ok");
+
+  log("4b. Cadastrando produto (vetrina)");
+  await page.getByRole("button", { name: "Prodotti" }).click();
+  await page.getByRole("button", { name: "Nuovo prodotto" }).click();
+  await page.getByPlaceholder("Pomata modellante").fill("Pomata E2E");
+  await page.locator('input[placeholder="45,00"]').fill("15,00");
+  await page.getByRole("button", { name: "Salva", exact: true }).click();
+  await page.getByText("Pomata E2E").waitFor();
+  console.log("   produto ok");
 
   log("5. Cadastrando profissional (turnos nascem automáticos)");
   await page.goto(`${BASE}/app/professionals`);
-  await page.getByRole("button", { name: "Adicionar" }).first().click();
-  await page.locator('input[placeholder^="Nome do"]').fill("Pro E2E");
-  await page.getByRole("button", { name: "Salvar", exact: true }).click();
+  await page.getByRole("button", { name: "Aggiungi" }).first().click();
+  await page.locator('input[placeholder^="Nome del"]').fill("Pro E2E");
+  await page.getByRole("button", { name: "Salva", exact: true }).click();
   await page.getByText("Pro E2E").waitFor();
   const turnos = await page
-    .getByRole("button", { name: /Turnos \(\d+\)/ })
+    .getByRole("button", { name: /Turni \(\d+\)/ })
     .innerText();
   if (turnos.includes("(0)")) throw new Error("profissional sem turnos automáticos");
   console.log(`   profissional ok — ${turnos}`);
@@ -106,7 +118,7 @@ try {
   log("6. Horários de funcionamento: abrindo todos os dias");
   await page.goto(`${BASE}/app/hours`);
   const dayRows = page
-    .locator("section", { hasText: "Horário de funcionamento" })
+    .locator("section", { hasText: "Orari di apertura" })
     .first()
     .locator("li");
   const n = await dayRows.count();
@@ -114,15 +126,23 @@ try {
     const cb = dayRows.nth(i).locator('input[type="checkbox"]');
     if (!(await cb.isChecked())) await cb.check();
   }
-  await page.getByRole("button", { name: "Salvar horários" }).click();
+  await page.getByRole("button", { name: "Salva orari" }).click();
   await page.waitForTimeout(1500);
   console.log("   horários salvos");
 
-  log("6b. Configurações: publicando a página");
+  log("6b. Cadastrando piano/promozione");
+  await page.goto(`${BASE}/app/plans`);
+  await page.getByRole("button", { name: "Nuovo piano" }).click();
+  await page.getByPlaceholder("Es.: Abbonamento mensile").fill("Promo E2E");
+  await page.getByRole("button", { name: "Salva", exact: true }).click();
+  await page.getByText("Promo E2E").waitFor();
+  console.log("   piano ok");
+
+  log("6c. Configurações: publicando a página");
   await page.goto(`${BASE}/app/settings`);
   const pubCb = page.locator('input[type="checkbox"]');
   if (!(await pubCb.isChecked())) await pubCb.check();
-  await page.getByRole("button", { name: "Salvar configurações" }).click();
+  await page.getByRole("button", { name: "Salva impostazioni" }).click();
   await page.waitForTimeout(1500);
   console.log("   publicado");
 
@@ -131,23 +151,27 @@ try {
   const pub = await ctxClient.newPage();
   pub.setDefaultTimeout(20000);
   await pub.goto(`${BASE}/${SLUG}`);
-  await pub.getByText("Corte E2E").click();
+  // vitrine: piano e produto visíveis antes de escolher o serviço
+  await pub.getByText("Promo E2E").waitFor();
+  await pub.getByText("Pomata E2E").waitFor();
+  console.log("   piano e produto visíveis na página pública");
+  await pub.getByText("Taglio E2E").click();
   // único profissional → vai direto para data/horário
-  await pub.getByText("Escolha data e horário").waitFor();
+  await pub.getByText("Scegli data e orario").waitFor();
   // amanhã = 2º chip de dia
   await pub.locator("button:has(span.font-semibold)").nth(1).click();
   const slot = pub.locator("div.grid button").first();
   await slot.waitFor({ timeout: 30000 });
   const slotLabel = await slot.innerText();
   await slot.click();
-  await pub.getByPlaceholder("Seu nome").fill("Cliente E2E");
-  await pub.getByPlaceholder("(11) 99999-9999").fill("11999990000");
+  await pub.getByPlaceholder("Il tuo nome").fill("Cliente E2E");
+  await pub.getByPlaceholder("333 123 4567").fill("3331234567");
   if (process.env.E2E_EMAIL) {
     await pub
-      .getByPlaceholder("Para receber lembrete do horário")
+      .getByPlaceholder("Per ricevere il promemoria dell'appuntamento")
       .fill(process.env.E2E_EMAIL);
   }
-  await pub.getByRole("button", { name: "Reservar horário" }).click();
+  await pub.getByRole("button", { name: "Prenota l'orario" }).click();
   await pub.getByText("Prenotazione confermata!").waitFor({ timeout: 30000 });
   await pub.screenshot({ path: `${ART}/07-reserva.png` });
   console.log(`   reserva feita (${slotLabel}) — confirmada na hora, sem sinal`);
@@ -155,55 +179,18 @@ try {
 
   log("8. Painel: agendamento aparece na agenda de amanhã (já confirmado)");
   await page.goto(`${BASE}/app`);
-  await page.getByLabel("Próximo dia").click();
+  await page.getByLabel("Giorno successivo").click();
   await page.getByText("Cliente E2E").waitFor({ timeout: 15000 });
   await page.screenshot({ path: `${ART}/08-agenda.png` });
   console.log("   agendamento visível no painel");
 
-  if (process.env.E2E_SKIP_BILLING) {
-    console.log("\n(billing pulado — Asaas em produção cobra de verdade)");
-    console.log("\n✅ E2E (sem billing) — todos os passos passaram.");
-    console.log(`   negócio: ${BASE}/${SLUG} | login: ${EMAIL}`);
-    await browser.close();
-    process.exit(0);
-  }
-
-  log("9. Billing: assinando o Plano Único (Asaas sandbox)");
+  log("9. Billing: página Stripe carrega (somente leitura — sem checkout)");
   await page.goto(`${BASE}/app/billing`);
-  await page.getByPlaceholder("000.000.000-00").fill(CPF);
-  await page.getByRole("button", { name: "Assinar agora" }).click();
-  await page.waitForURL(/asaas/, { timeout: 60000 });
-  console.log("   fatura Asaas aberta →", page.url().slice(0, 80));
-  await page.screenshot({ path: `${ART}/09-fatura-asaas.png` });
+  await page.getByRole("button", { name: "Abbonati ora" }).waitFor({ timeout: 15000 });
+  await page.screenshot({ path: `${ART}/09-billing.png` });
+  console.log("   botão 'Abbonati ora' visível (checkout não aberto: Stripe em produção cobra de verdade)");
 
-  log("10. Webhook: simulando pagamento confirmado");
-  const subRow = await supaAdmin(
-    `/rest/v1/subscriptions?select=asaas_subscription_id,status&order=created_at.desc&limit=1`
-  );
-  const asaasSubId = subRow.json?.[0]?.asaas_subscription_id;
-  if (!asaasSubId) throw new Error(`subscription row: ${subRow.text}`);
-  console.log("   asaas_subscription_id:", asaasSubId, "| status:", subRow.json[0].status);
-  const wh = await fetch(`${BASE}/api/webhooks/asaas`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "asaas-access-token": WEBHOOK_TOKEN },
-    body: JSON.stringify({
-      event: "PAYMENT_RECEIVED",
-      payment: { id: "pay_e2e", subscription: asaasSubId, status: "RECEIVED", dueDate: "2026-10-06" },
-    }),
-  });
-  if (!wh.ok) throw new Error(`webhook: ${wh.status} ${await wh.text()}`);
-  const after = await supaAdmin(
-    `/rest/v1/subscriptions?select=status&asaas_subscription_id=eq.${asaasSubId}`
-  );
-  if (after.json?.[0]?.status !== "active") throw new Error(`status pós-webhook: ${after.text}`);
-  console.log("   assinatura ATIVA ✅");
-
-  log("11. Billing na UI mostra assinatura ativa");
-  await page.goto(`${BASE}/app/billing`);
-  await page.getByText("Assinatura ativa").waitFor({ timeout: 15000 });
-  await page.screenshot({ path: `${ART}/11-assinatura-ativa.png` });
-
-  console.log("\n✅ E2E COMPLETO — todos os passos passaram.");
+  console.log("\n✅ E2E — todos os passos passaram.");
   console.log(`   negócio: ${BASE}/${SLUG} | login: ${EMAIL}`);
 } catch (err) {
   console.error(`\n❌ FALHOU no passo: ${step}`);
