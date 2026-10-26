@@ -48,6 +48,7 @@ interface LandingCopy {
   segments: string[];
   how: { line1: string; line2: string; em: string };
   steps: { title: string; body: string }[];
+  video: { line1: string; em: string; body: string };
   features: { line1: string; em: string };
   featureItems: { title: string; body: string }[];
   price: {
@@ -108,6 +109,11 @@ const COPY: Record<Lang, LandingCopy> = {
         body: "Ogni prenotazione arriva già confermata nel pannello, con conferma e promemoria via e-mail per il cliente. Tu apri l'agenda del giorno e lavori — senza scambi infiniti di messaggi.",
       },
     ],
+    video: {
+      line1: "Guarda come funziona,",
+      em: "dal vivo.",
+      body: "Il tour completo in quattro minuti: la pagina pubblica di prenotazione, i piani e le promozioni, e il pannello con l'agenda che si riempie da sola.",
+    },
     features: { line1: "Tutto quello che fa la reception,", em: "senza bisogno della reception." },
     featureItems: [
       {
@@ -209,6 +215,11 @@ const COPY: Record<Lang, LandingCopy> = {
         body: "Every booking lands in the dashboard already confirmed, with a confirmation and reminder e-mail for the client. You open the daily agenda and work — no endless message threads.",
       },
     ],
+    video: {
+      line1: "See how it works,",
+      em: "live.",
+      body: "The full tour in four minutes: the public booking page, plans and promotions, and the dashboard with an agenda that fills itself. (Audio in Italian.)",
+    },
     features: { line1: "Everything the front desk does,", em: "without needing a front desk." },
     featureItems: [
       {
@@ -443,6 +454,35 @@ export default async function LandingPage() {
               </p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ---------------- Video demo ---------------- */}
+      <section id="video" className="relative mx-auto w-full max-w-5xl px-5 pb-24">
+        <h2
+          data-bubble
+          className="text-center font-[family-name:var(--font-landing-display)] text-4xl font-semibold tracking-tight sm:text-5xl"
+        >
+          {t.video.line1} <em className="text-[#17493b]">{t.video.em}</em>
+        </h2>
+        <p
+          data-bubble
+          className="mx-auto mt-4 max-w-2xl text-center text-lg leading-relaxed text-[#221c15]/70"
+        >
+          {t.video.body}
+        </p>
+        <div data-bubble className="relative mt-10">
+          <div className="absolute -inset-4 rounded-[2rem] bg-[#e4572e]/10 [transform:rotate(-1.2deg)] sm:-inset-6" />
+          {/* preload=metadata + faststart: parte subito e non pesa sulla pagina */}
+          <video
+            controls
+            playsInline
+            preload="metadata"
+            poster="/demo-it-poster.jpg"
+            className="relative w-full rounded-3xl border border-[#221c15]/10 bg-black shadow-[0_24px_60px_-24px_rgba(34,28,21,0.4)]"
+          >
+            <source src="/demo-it.mp4" type="video/mp4" />
+          </video>
         </div>
       </section>
 
