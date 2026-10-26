@@ -342,68 +342,92 @@ export function BookingFlow({
 
   return (
     <div style={brandStyle} className="min-h-dvh bg-zinc-100 text-zinc-900">
-      {/* Header in stile profilo: banner pulito, avatar a cavallo del bordo,
-          nome e indirizzo su fondo bianco (niente testo sopra la foto). */}
-      <header className="bg-white shadow-sm">
-        <div className="relative h-36 overflow-hidden bg-[var(--brand)] sm:h-48">
-          {profile.cover_path ? (
-            <Image
-              src={mediaUrl(profile.cover_path)!}
-              alt=""
-              aria-hidden
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-              style={{ objectPosition: `50% ${profile.cover_position}%` }}
-            />
-          ) : (
-            // bagliore decorativo sopra il colore del brand
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  "radial-gradient(60% 120% at 85% -20%, rgba(255,255,255,0.25), transparent 60%), radial-gradient(40% 80% at 0% 100%, rgba(0,0,0,0.18), transparent 60%)",
-              }}
-            />
-          )}
-          <div className="absolute right-4 top-4 z-10">
-            <LanguageSwitcher current={lang} variant="dark" />
-          </div>
-        </div>
-
-        <div className="mx-auto w-full max-w-md px-4 pb-5 sm:max-w-lg lg:max-w-xl">
-          <div className="-mt-10 flex items-end justify-between gap-3 sm:-mt-12">
-            {profile.logo_path ? (
+      {/* Header in stile LinkedIn (stesso modello della versione BR): card con
+          copertina in proporzione fissa su ogni viewport, avatar che scavalca
+          il bordo e blocco identità separato dalla foto. */}
+      <header className="mx-auto w-full max-w-md px-4 pt-4 sm:max-w-lg sm:pt-6 lg:max-w-xl">
+        <div className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-black/5">
+          <div className="relative aspect-[5/2] w-full bg-[var(--brand)] sm:aspect-[3/1]">
+            {profile.cover_path ? (
               <Image
-                src={mediaUrl(profile.logo_path)!}
-                alt={profile.name}
-                width={96}
-                height={96}
-                className="size-20 shrink-0 rounded-full border-4 border-white bg-white object-cover shadow-md sm:size-24"
+                src={mediaUrl(profile.cover_path)!}
+                alt=""
+                aria-hidden
+                fill
+                priority
+                quality={90}
+                sizes="(max-width: 640px) 100vw, 576px"
+                className="object-cover"
+                style={{ objectPosition: `50% ${profile.cover_position}%` }}
               />
             ) : (
-              <div className="flex size-20 shrink-0 items-center justify-center rounded-full border-4 border-white bg-[var(--brand)] text-3xl font-bold text-[var(--brand-ink)] shadow-md sm:size-24">
-                {profile.name.charAt(0).toUpperCase()}
-              </div>
+              // bagliore decorativo sopra il colore del brand
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    "radial-gradient(60% 120% at 85% -20%, rgba(255,255,255,0.25), transparent 60%), radial-gradient(40% 80% at 0% 100%, rgba(0,0,0,0.18), transparent 60%)",
+                }}
+              />
             )}
-            {/* pill solido: deve restare leggibile anche sopra la foto di copertina */}
-            <span className="rounded-full bg-[var(--brand)] px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--brand-ink)] shadow-sm">
-              {t.onlineBooking}
-            </span>
+            <div className="absolute right-3 top-3 z-10">
+              <LanguageSwitcher current={lang} variant="dark" />
+            </div>
           </div>
-          <h1 className="mt-3 truncate text-2xl font-bold sm:text-3xl">
-            {profile.name}
-          </h1>
-          {profile.address && (
-            <p className="mt-1 truncate text-sm text-zinc-500">{profile.address}</p>
-          )}
+          {/* filo con il colore del brand che separa copertina e identità */}
+          <div
+            aria-hidden
+            className="h-1 bg-gradient-to-r from-[var(--brand)] via-[var(--brand)]/35 to-transparent"
+          />
+          {/* relative: senza, l'<Image fill> della copertina (assoluto) copre
+              l'avatar che scavalca il bordo — il logo appariva tagliato */}
+          <div className="relative px-5 pb-5 sm:px-6">
+            <div className="flex items-end justify-between gap-3">
+              {profile.logo_path ? (
+                <Image
+                  src={mediaUrl(profile.logo_path)!}
+                  alt={profile.name}
+                  width={96}
+                  height={96}
+                  quality={90}
+                  className="-mt-10 size-20 shrink-0 rounded-2xl bg-white object-contain p-1 shadow-md ring-4 ring-white sm:-mt-12 sm:size-24"
+                />
+              ) : (
+                <div className="-mt-10 flex size-20 shrink-0 items-center justify-center rounded-2xl bg-[var(--brand)] text-3xl font-bold text-[var(--brand-ink)] shadow-md ring-4 ring-white sm:-mt-12 sm:size-24">
+                  {profile.name.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <span className="mb-1 whitespace-nowrap rounded-full bg-[var(--brand)]/10 px-3 py-1 text-xs font-medium text-[var(--brand)]">
+                {t.onlineBooking}
+              </span>
+            </div>
+            <h1 className="mt-3 truncate text-2xl font-bold sm:text-3xl">
+              {profile.name}
+            </h1>
+            {profile.address && (
+              <p className="mt-1.5 flex items-center gap-1.5 text-sm text-zinc-500">
+                <svg
+                  aria-hidden
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="size-4 shrink-0 text-[var(--brand)]"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M9.69 18.933l.003.001a.75.75 0 00.614 0l.003-.001.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9.5a7 7 0 10-14 0c0 2.992 1.698 5.488 3.355 7.087a15.1 15.1 0 002.273 1.765 11.842 11.842 0 001.062.573l.018.008zM10 11.25a1.75 1.75 0 100-3.5 1.75 1.75 0 000 3.5z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="truncate">{profile.address}</span>
+              </p>
+            )}
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-md px-4 pb-16 pt-5 sm:max-w-lg lg:max-w-xl">
-        <div className="rounded-3xl bg-white p-5 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.35)] ring-1 ring-black/5 sm:p-7">
+      <main className="mx-auto w-full max-w-md px-4 pb-16 pt-4 sm:max-w-lg lg:max-w-xl">
+        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 sm:p-7">
           {step === "service" && (
             <StepShell title={t.chooseService}>
               <ul className="space-y-2.5">
