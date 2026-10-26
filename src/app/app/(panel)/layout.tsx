@@ -86,7 +86,7 @@ export default async function PanelLayout({
   return (
     <div className="min-h-dvh bg-zinc-100 text-zinc-900">
       <header className="bg-white shadow-sm">
-        <div className="mx-auto flex w-full max-w-3xl lg:max-w-5xl items-center justify-between px-4 py-3">
+        <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 py-3">
           <div>
             <h1 className="font-bold">{ctx.business.name}</h1>
             <Link
@@ -103,7 +103,7 @@ export default async function PanelLayout({
             <SignOutButton />
           </div>
         </div>
-        <nav className="mx-auto flex w-full max-w-3xl lg:max-w-5xl flex-wrap gap-1 px-4 pb-2">
+        <nav className="mx-auto flex w-full max-w-3xl gap-1 overflow-x-auto px-4 pb-2">
           {t.nav.map((item) => (
             <Link
               key={item.href}
@@ -117,7 +117,7 @@ export default async function PanelLayout({
       </header>
       {!ctx.business.published && (
         <div className="bg-sky-50 text-sky-900">
-          <p className="mx-auto w-full max-w-3xl lg:max-w-5xl px-4 py-2 text-sm">
+          <p className="mx-auto w-full max-w-3xl px-4 py-2 text-sm">
             {t.lockedBanner[0]}
             <strong>{t.lockedBanner[1]}</strong>
             {t.lockedBanner[2]}
@@ -130,7 +130,7 @@ export default async function PanelLayout({
       )}
       {access.status === "trialing" && (
         <div className="bg-amber-50 text-amber-800">
-          <p className="mx-auto w-full max-w-3xl lg:max-w-5xl px-4 py-2 text-sm">
+          <p className="mx-auto w-full max-w-3xl px-4 py-2 text-sm">
             {t.trial(access.trialDaysLeft)}
             <Link href="/app/billing" className="font-medium underline">
               {t.subscribeNow}
@@ -140,7 +140,7 @@ export default async function PanelLayout({
       )}
       {access.status === "past_due" && (
         <div className="bg-red-50 text-red-700">
-          <p className="mx-auto w-full max-w-3xl lg:max-w-5xl px-4 py-2 text-sm">
+          <p className="mx-auto w-full max-w-3xl px-4 py-2 text-sm">
             {t.pastDue}
             <Link href="/app/billing" className="font-medium underline">
               {t.payNow}
@@ -148,7 +148,7 @@ export default async function PanelLayout({
           </p>
         </div>
       )}
-      <main className="mx-auto w-full max-w-3xl lg:max-w-5xl px-4 py-6">{children}</main>
+      <main className="mx-auto w-full max-w-3xl px-4 py-6">{children}</main>
       <SupportChat />
     </div>
   );

@@ -183,7 +183,7 @@ export default async function ReportsPage({ searchParams }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {stats.map((s) => (
           <div key={s.label} className="rounded-2xl bg-white p-4 shadow-sm">
             <p className="text-lg font-bold">{s.value}</p>
@@ -192,7 +192,7 @@ export default async function ReportsPage({ searchParams }: Props) {
         ))}
       </div>
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-2 lg:items-start">
+      <div className="mt-5 grid gap-4 sm:grid-cols-2 sm:items-start">
         <section className="rounded-2xl bg-white p-4 shadow-sm">
           <h3 className="mb-3 font-semibold">{t.topServices}</h3>
           {topServices.length === 0 ? (

@@ -275,7 +275,7 @@ export default async function AgendaPage({ searchParams }: Props) {
           {t.empty}
         </p>
       ) : (
-        <ul className="grid gap-3 lg:grid-cols-2 lg:items-start">
+        <ul className="space-y-3">
           {cards.map((card) => (
             <li key={card.id}>
               <AppointmentCard data={card} lang={lang} />
