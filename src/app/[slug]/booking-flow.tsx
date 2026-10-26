@@ -28,6 +28,24 @@ import { mediaUrl } from "@/lib/storage";
 /** Finestra massima di prenotazione futura. Decisione di prodotto: 30 giorni. */
 const MAX_ADVANCE_DAYS = 30;
 
+/**
+ * Colore del testo sopra il colore del brand: bianco sulle tinte scure, quasi
+ * nero su quelle chiare (oro, giallo…). Sceglie il candidato con il contrasto
+ * WCAG maggiore rispetto alla luminanza relativa del brand.
+ */
+function brandInk(hex: string): string {
+  const raw = hex.replace("#", "").trim();
+  const full =
+    raw.length === 3 ? [...raw].map((c) => c + c).join("") : raw;
+  if (!/^[0-9a-f]{6}$/i.test(full)) return "#ffffff";
+  const [r, g, b] = [0, 2, 4].map((i) => {
+    const c = parseInt(full.slice(i, i + 2), 16) / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return luminance > 0.179 ? "#18181b" : "#ffffff";
+}
+
 type Step = "service" | "professional" | "datetime" | "details" | "done";
 
 interface DayOption {
@@ -314,17 +332,21 @@ export function BookingFlow({
     }
   }
 
-  const brandStyle = { "--brand": profile.brand_primary } as React.CSSProperties;
+  const brandStyle = {
+    "--brand": profile.brand_primary,
+    "--brand-ink": brandInk(profile.brand_primary),
+  } as React.CSSProperties;
   const waNumber = profile.whatsapp
     ? `39${profile.whatsapp.replace(/\D/g, "")}`
     : null;
 
   return (
     <div style={brandStyle} className="min-h-dvh bg-zinc-100 text-zinc-900">
-      <header className="relative overflow-hidden bg-[var(--brand)] px-4 pb-20 pt-10 text-white sm:pt-14">
-        {profile.cover_path ? (
-          <>
-            {/* copertina dell'attività + velo scuro per mantenere il testo leggibile */}
+      {/* Header in stile profilo: banner pulito, avatar a cavallo del bordo,
+          nome e indirizzo su fondo bianco (niente testo sopra la foto). */}
+      <header className="bg-white shadow-sm">
+        <div className="relative h-36 overflow-hidden bg-[var(--brand)] sm:h-48">
+          {profile.cover_path ? (
             <Image
               src={mediaUrl(profile.cover_path)!}
               alt=""
@@ -335,55 +357,53 @@ export function BookingFlow({
               className="object-cover"
               style={{ objectPosition: `50% ${profile.cover_position}%` }}
             />
+          ) : (
+            // bagliore decorativo sopra il colore del brand
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/35 to-black/20"
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(60% 120% at 85% -20%, rgba(255,255,255,0.25), transparent 60%), radial-gradient(40% 80% at 0% 100%, rgba(0,0,0,0.18), transparent 60%)",
+              }}
             />
-          </>
-        ) : (
-          // bagliore decorativo sopra il colore del brand
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(60% 120% at 85% -20%, rgba(255,255,255,0.25), transparent 60%), radial-gradient(40% 80% at 0% 100%, rgba(0,0,0,0.18), transparent 60%)",
-            }}
-          />
-        )}
-        <div className="absolute right-4 top-4 z-10">
-          <LanguageSwitcher current={lang} variant="dark" />
-        </div>
-        <div className="relative mx-auto flex w-full max-w-md flex-col items-center gap-3 text-center sm:max-w-lg lg:max-w-xl">
-          {profile.logo_path ? (
-            <Image
-              src={mediaUrl(profile.logo_path)!}
-              alt={profile.name}
-              width={64}
-              height={64}
-              className="size-14 shrink-0 rounded-2xl object-cover ring-1 ring-white/25 sm:size-16"
-            />
-          ) : (
-            <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-2xl font-bold ring-1 ring-white/25 backdrop-blur-sm sm:size-16">
-              {profile.name.charAt(0).toUpperCase()}
-            </div>
           )}
-          <div className="min-w-0 max-w-full">
-            <p className="text-xs/none uppercase tracking-[0.14em] opacity-80">
-              {t.onlineBooking}
-            </p>
-            <h1 className="mt-1.5 truncate text-2xl font-bold sm:text-3xl">
-              {profile.name}
-            </h1>
-            {profile.address && (
-              <p className="mt-1 truncate text-sm opacity-80">{profile.address}</p>
-            )}
+          <div className="absolute right-4 top-4 z-10">
+            <LanguageSwitcher current={lang} variant="dark" />
           </div>
+        </div>
+
+        <div className="mx-auto w-full max-w-md px-4 pb-5 sm:max-w-lg lg:max-w-xl">
+          <div className="-mt-10 flex items-end justify-between gap-3 sm:-mt-12">
+            {profile.logo_path ? (
+              <Image
+                src={mediaUrl(profile.logo_path)!}
+                alt={profile.name}
+                width={96}
+                height={96}
+                className="size-20 shrink-0 rounded-full border-4 border-white bg-white object-cover shadow-md sm:size-24"
+              />
+            ) : (
+              <div className="flex size-20 shrink-0 items-center justify-center rounded-full border-4 border-white bg-[var(--brand)] text-3xl font-bold text-[var(--brand-ink)] shadow-md sm:size-24">
+                {profile.name.charAt(0).toUpperCase()}
+              </div>
+            )}
+            {/* pill solido: deve restare leggibile anche sopra la foto di copertina */}
+            <span className="rounded-full bg-[var(--brand)] px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--brand-ink)] shadow-sm">
+              {t.onlineBooking}
+            </span>
+          </div>
+          <h1 className="mt-3 truncate text-2xl font-bold sm:text-3xl">
+            {profile.name}
+          </h1>
+          {profile.address && (
+            <p className="mt-1 truncate text-sm text-zinc-500">{profile.address}</p>
+          )}
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-md px-4 pb-16 sm:max-w-lg lg:max-w-xl">
-        <div className="relative -mt-12 rounded-3xl bg-white p-5 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.35)] ring-1 ring-black/5 sm:p-7">
+      <main className="mx-auto w-full max-w-md px-4 pb-16 pt-5 sm:max-w-lg lg:max-w-xl">
+        <div className="rounded-3xl bg-white p-5 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.35)] ring-1 ring-black/5 sm:p-7">
           {step === "service" && (
             <StepShell title={t.chooseService}>
               <ul className="space-y-2.5">
@@ -421,7 +441,7 @@ export function BookingFlow({
                           {s.description ? ` · ${s.description}` : ""}
                         </span>
                       </span>
-                      <span className="shrink-0 rounded-full bg-zinc-100 px-3 py-1.5 text-sm font-semibold transition-colors group-hover:bg-[var(--brand)] group-hover:text-white">
+                      <span className="shrink-0 rounded-full bg-zinc-100 px-3 py-1.5 text-sm font-semibold transition-colors group-hover:bg-[var(--brand)] group-hover:text-[var(--brand-ink)]">
                         {formatEUR(s.price_minor)}
                       </span>
                     </button>
@@ -446,7 +466,7 @@ export function BookingFlow({
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
                             {p.badge && (
-                              <span className="mb-1 inline-block rounded-full bg-[var(--brand)] px-2.5 py-0.5 text-xs font-semibold text-white">
+                              <span className="mb-1 inline-block rounded-full bg-[var(--brand)] px-2.5 py-0.5 text-xs font-semibold text-[var(--brand-ink)]">
                                 {p.badge}
                               </span>
                             )}
@@ -593,7 +613,7 @@ export function BookingFlow({
                     }}
                     className={`flex w-14 shrink-0 flex-col items-center rounded-2xl border py-2.5 text-sm transition-all sm:w-16 ${
                       dateISO === d.dateISO
-                        ? "border-transparent bg-[var(--brand)] text-white shadow-md"
+                        ? "border-transparent bg-[var(--brand)] text-[var(--brand-ink)] shadow-md"
                         : "border-zinc-200 bg-white text-zinc-700 hover:border-[var(--brand)]"
                     }`}
                   >
@@ -718,7 +738,7 @@ export function BookingFlow({
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full rounded-xl bg-[var(--brand)] py-3 font-semibold text-white disabled:opacity-60"
+                  className="w-full rounded-xl bg-[var(--brand)] py-3 font-semibold text-[var(--brand-ink)] disabled:opacity-60"
                 >
                   {submitting ? t.bookingCta : t.bookCta}
                 </button>
