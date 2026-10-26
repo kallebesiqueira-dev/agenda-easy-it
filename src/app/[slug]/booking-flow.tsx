@@ -46,6 +46,68 @@ function brandInk(hex: string): string {
   return luminance > 0.179 ? "#18181b" : "#ffffff";
 }
 
+/**
+ * Variante del brand leggibile come testo su fondo bianco: le tinte chiare
+ * (oro, giallo…) vengono scurite in HSL — stessa tonalità — finché il
+ * contrasto WCAG con il bianco raggiunge 4.5:1; quelle scure restano uguali.
+ */
+function brandText(hex: string): string {
+  const raw = hex.replace("#", "").trim();
+  const full = raw.length === 3 ? [...raw].map((c) => c + c).join("") : raw;
+  if (!/^[0-9a-f]{6}$/i.test(full)) return "#18181b";
+  const rgb = [0, 2, 4].map(
+    (i) => parseInt(full.slice(i, i + 2), 16) / 255,
+  ) as [number, number, number];
+
+  const contrastWithWhite = ([r, g, b]: [number, number, number]) => {
+    const lin = (c: number) =>
+      c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    return 1.05 / (0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b) + 0.05);
+  };
+  if (contrastWithWhite(rgb) >= 4.5) return hex;
+
+  // RGB → HSL, per poter abbassare solo la luminosità
+  const [r, g, b] = rgb;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const d = max - min;
+  let h = 0;
+  if (d > 0) {
+    if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+    else if (max === g) h = ((b - r) / d + 2) / 6;
+    else h = ((r - g) / d + 4) / 6;
+  }
+  let l = (max + min) / 2;
+  const s = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
+
+  const hslToRgb = (): [number, number, number] => {
+    const c = (1 - Math.abs(2 * l - 1)) * s;
+    const x = c * (1 - Math.abs(((h * 6) % 2) - 1));
+    const m = l - c / 2;
+    const seg = Math.min(Math.floor(h * 6), 5);
+    const [r1, g1, b1] = [
+      [c, x, 0],
+      [x, c, 0],
+      [0, c, x],
+      [0, x, c],
+      [x, 0, c],
+      [c, 0, x],
+    ][seg];
+    return [r1 + m, g1 + m, b1 + m];
+  };
+
+  let out = rgb;
+  while (l > 0.05 && contrastWithWhite(out) < 4.5) {
+    l -= 0.03;
+    out = hslToRgb();
+  }
+  const toHex = (c: number) =>
+    Math.round(Math.max(0, Math.min(1, c)) * 255)
+      .toString(16)
+      .padStart(2, "0");
+  return `#${out.map(toHex).join("")}`;
+}
+
 type Step = "service" | "professional" | "datetime" | "details" | "done";
 
 interface DayOption {
@@ -335,6 +397,7 @@ export function BookingFlow({
   const brandStyle = {
     "--brand": profile.brand_primary,
     "--brand-ink": brandInk(profile.brand_primary),
+    "--brand-text": brandText(profile.brand_primary),
   } as React.CSSProperties;
   const waNumber = profile.whatsapp
     ? `39${profile.whatsapp.replace(/\D/g, "")}`
@@ -398,7 +461,7 @@ export function BookingFlow({
                   {profile.name.charAt(0).toUpperCase()}
                 </div>
               )}
-              <span className="mb-1 whitespace-nowrap rounded-full bg-[var(--brand)]/10 px-3 py-1 text-xs font-medium text-[var(--brand)]">
+              <span className="mb-1 whitespace-nowrap rounded-full bg-[var(--brand)]/10 px-3 py-1 text-xs font-medium text-[var(--brand-text)]">
                 {t.onlineBooking}
               </span>
             </div>
@@ -411,7 +474,7 @@ export function BookingFlow({
                   aria-hidden
                   viewBox="0 0 20 20"
                   fill="currentColor"
-                  className="size-4 shrink-0 text-[var(--brand)]"
+                  className="size-4 shrink-0 text-[var(--brand-text)]"
                 >
                   <path
                     fillRule="evenodd"
@@ -518,7 +581,7 @@ export function BookingFlow({
                             )}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="mt-2 inline-block text-sm font-semibold text-[var(--brand)] underline"
+                            className="mt-2 inline-block text-sm font-semibold text-[var(--brand-text)] underline"
                           >
                             {t.plansAsk}
                           </a>
@@ -570,7 +633,7 @@ export function BookingFlow({
                             )}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="mt-2 inline-block text-sm font-semibold text-[var(--brand)] underline"
+                            className="mt-2 inline-block text-sm font-semibold text-[var(--brand-text)] underline"
                           >
                             {t.plansAsk}
                           </a>
@@ -672,7 +735,7 @@ export function BookingFlow({
                         setSelectedSlot(slot);
                         setStep("details");
                       }}
-                      className="rounded-xl border border-zinc-200 py-2.5 text-sm font-medium transition-all hover:-translate-y-0.5 hover:border-[var(--brand)] hover:text-[var(--brand)] hover:shadow-sm"
+                      className="rounded-xl border border-zinc-200 py-2.5 text-sm font-medium transition-all hover:-translate-y-0.5 hover:border-[var(--brand)] hover:text-[var(--brand-text)] hover:shadow-sm"
                     >
                       {formatTimeInTz(slot.starts_at, profile.timezone)}
                     </button>
