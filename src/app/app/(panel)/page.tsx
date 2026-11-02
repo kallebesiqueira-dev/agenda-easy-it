@@ -1,3 +1,4 @@
+import { IconCalendarEmpty, IconChevronLeft, IconChevronRight } from "@/components/icons";
 import Link from "next/link";
 import type { AppointmentStatus } from "@/types/database";
 import {
@@ -160,33 +161,29 @@ export default async function AgendaPage({ searchParams }: Props) {
     timeZone: business.timezone,
   }).format(zonedTimeToUtc(dateISO, "12:00", business.timezone));
 
+  const confirmedToday = cards.filter((c) => c.status === "confirmed").length;
+
   return (
-    <div>
+    <div className="space-y-8">
       {/* Calendário mensal */}
-      <section className="mb-5 rounded-2xl bg-white p-4 shadow-sm">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-semibold capitalize">{monthLabel}</h2>
-          <div className="flex items-center gap-1 text-sm">
-            <Link
-              href={`/app?date=${prevMonthISO}`}
-              className="rounded-lg px-2 py-1 hover:bg-zinc-100"
-              aria-label={t.prevMonth}
-            >
-              ←
+      <section className="rounded-3xl border border-zinc-900/[0.06] bg-white p-4 shadow-sm sm:p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold capitalize">
+            {monthLabel}
+          </h2>
+          <div className="flex items-center gap-1">
+            <Link href={`/app?date=${prevMonthISO}`} className="ui-press grid size-11 place-items-center rounded-full text-zinc-600 hover:bg-zinc-900/5 hover:text-zinc-900" aria-label={t.prevMonth}>
+              <IconChevronLeft />
             </Link>
-            <Link
-              href={`/app?date=${nextMonthISO}`}
-              className="rounded-lg px-2 py-1 hover:bg-zinc-100"
-              aria-label={t.nextMonth}
-            >
-              →
+            <Link href={`/app?date=${nextMonthISO}`} className="ui-press grid size-11 place-items-center rounded-full text-zinc-600 hover:bg-zinc-900/5 hover:text-zinc-900" aria-label={t.nextMonth}>
+              <IconChevronRight />
             </Link>
           </div>
         </div>
 
-        <div className="grid grid-cols-7 gap-1 text-center text-xs text-zinc-400">
+        <div className="grid grid-cols-7 gap-1 text-center text-[0.7rem] font-semibold tracking-[0.12em] text-zinc-400 uppercase">
           {t.weekdays.map((d) => (
-            <span key={d} className="py-1">
+            <span key={d} className="py-1.5">
               {d}
             </span>
           ))}
@@ -204,85 +201,90 @@ export default async function AgendaPage({ searchParams }: Props) {
               <Link
                 key={dISO}
                 href={`/app?date=${dISO}`}
-                className={`flex min-h-12 flex-col items-center rounded-lg border p-1 text-sm transition-colors ${
+                aria-current={isSelected ? "date" : undefined}
+                className={`ui-press relative flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl text-sm tabular-nums sm:min-h-14 ${
                   isSelected
-                    ? "border-zinc-900 bg-zinc-900 text-white"
+                    ? "bg-zinc-900 text-[#f6f1e7] shadow-md"
                     : isToday
-                      ? "border-zinc-900/40 bg-white hover:bg-zinc-50"
-                      : "border-transparent bg-white hover:bg-zinc-50"
+                      ? "bg-[#fdeee7] text-[#a63a1b] ring-1 ring-[#e4572e]/30 hover:bg-[#fbe2d6]"
+                      : "hover:bg-zinc-100"
                 }`}
               >
-                <span className={counts ? "font-semibold" : "text-zinc-500"}>
+                <span className={counts || isSelected || isToday ? "font-semibold" : "text-zinc-500"}>
                   {i + 1}
                 </span>
-                {counts && counts.confirmed > 0 && (
-                  <span className="mt-0.5 flex items-center gap-1 text-[10px] leading-none">
-                    <span
-                      className={`rounded-full px-1 py-0.5 font-semibold ${
-                        isSelected
-                          ? "bg-white/20 text-white"
-                          : "bg-emerald-100 text-emerald-700"
-                      }`}
-                    >
-                      {counts.confirmed}
-                    </span>
+                {counts && counts.confirmed > 0 ? (
+                  <span
+                    className={`min-w-4 rounded-full px-1 text-[10px] leading-4 font-bold ${
+                      isSelected
+                        ? "bg-[#e4572e] text-white"
+                        : "bg-emerald-100 text-emerald-700"
+                    }`}
+                  >
+                    {counts.confirmed}
                   </span>
+                ) : (
+                  <span className="h-4" aria-hidden />
                 )}
               </Link>
             );
           })}
         </div>
-        <p className="mt-3 flex gap-4 text-xs text-zinc-500">
-          <span className="flex items-center gap-1">
+        <p className="mt-4 flex gap-5 border-t border-zinc-100 pt-4 text-xs text-zinc-500">
+          <span className="flex items-center gap-1.5">
             <span className="size-2 rounded-full bg-emerald-500" /> {t.confirmed}
           </span>
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1.5">
             <span className="size-2 rounded-full bg-zinc-300" /> {t.freeDay}
           </span>
         </p>
       </section>
 
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold capitalize">{dateLabel}</h2>
-        <div className="flex items-center gap-1 text-sm">
-          <Link
-            href={`/app?date=${shiftDateISO(dateISO, -1)}`}
-            className="rounded-lg px-2 py-1 hover:bg-zinc-200"
-            aria-label={t.prevDay}
-          >
-            ←
-          </Link>
-          {dateISO !== todayISO && (
-            <Link
-              href="/app"
-              className="rounded-lg px-2 py-1 font-medium hover:bg-zinc-200"
-            >
-              {t.today}
+      <section>
+        <div className="mb-4 flex items-end justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold tracking-[0.14em] text-zinc-500 uppercase tabular-nums">
+              {confirmedToday} · {t.confirmed}
+            </p>
+            <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold capitalize sm:text-3xl">
+              {dateLabel}
+            </h2>
+          </div>
+          <div className="flex items-center gap-1 rounded-full border border-zinc-900/[0.06] bg-white p-1 shadow-sm">
+            <Link href={`/app?date=${shiftDateISO(dateISO, -1)}`} className="ui-press grid size-11 place-items-center rounded-full text-zinc-600 hover:bg-zinc-900/5 hover:text-zinc-900 size-10" aria-label={t.prevDay}>
+              <IconChevronLeft size={18} />
             </Link>
-          )}
-          <Link
-            href={`/app?date=${shiftDateISO(dateISO, 1)}`}
-            className="rounded-lg px-2 py-1 hover:bg-zinc-200"
-            aria-label={t.nextDay}
-          >
-            →
-          </Link>
+            {dateISO !== todayISO && (
+              <Link
+                href="/app"
+                className="ui-press flex min-h-10 items-center rounded-full px-3 text-sm font-semibold hover:bg-zinc-900/5"
+              >
+                {t.today}
+              </Link>
+            )}
+            <Link href={`/app?date=${shiftDateISO(dateISO, 1)}`} className="ui-press grid size-11 place-items-center rounded-full text-zinc-600 hover:bg-zinc-900/5 hover:text-zinc-900 size-10" aria-label={t.nextDay}>
+              <IconChevronRight size={18} />
+            </Link>
+          </div>
         </div>
-      </div>
 
-      {cards.length === 0 ? (
-        <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm">
-          {t.empty}
-        </p>
-      ) : (
-        <ul className="space-y-3">
-          {cards.map((card) => (
-            <li key={card.id}>
-              <AppointmentCard data={card} lang={lang} />
-            </li>
-          ))}
-        </ul>
-      )}
+        {cards.length === 0 ? (
+          <div className="flex flex-col items-center rounded-3xl border border-dashed border-zinc-200 bg-white/50 px-6 py-12 text-center hover:border-zinc-300">
+            <span className="mb-3 grid size-12 place-items-center rounded-2xl bg-white text-zinc-400 shadow-sm border border-zinc-900/[0.06]">
+              <IconCalendarEmpty size={24} />
+            </span>
+            <p className="max-w-xs text-sm text-zinc-500">{t.empty}</p>
+          </div>
+        ) : (
+          <ul className="relative space-y-3 before:absolute before:top-3 before:bottom-3 before:left-[4.6rem] before:hidden before:w-px before:bg-zinc-200 sm:before:block">
+            {cards.map((card) => (
+              <li key={card.id}>
+                <AppointmentCard data={card} lang={lang} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }

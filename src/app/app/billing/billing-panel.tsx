@@ -113,7 +113,7 @@ export function BillingPanel({
           type="button"
           disabled={pending}
           onClick={() => go(startStripeCheckout)}
-          className="mt-3 w-full rounded-xl bg-zinc-900 py-3 font-semibold text-white disabled:opacity-60"
+          className="mt-3 w-full rounded-full bg-zinc-900 py-3 font-semibold text-[#f6f1e7] disabled:opacity-60 ui-press hover:bg-emerald-700"
         >
           {pending ? t.openingCheckout : t.subscribe}
         </button>

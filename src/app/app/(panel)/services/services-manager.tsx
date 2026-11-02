@@ -6,6 +6,7 @@
  * sulla pagina pubblica (niente durata, nessuna prenotazione).
  */
 
+import { IconBag, IconScissors } from "@/components/icons";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { ItemType, Service } from "@/types/database";
@@ -150,11 +151,11 @@ export function ServicesManager({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold">{t.heading}</h2>
+        <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold sm:text-3xl">{t.heading}</h2>
         <button
           type="button"
           onClick={() => setEditing("new")}
-          className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white"
+          className="rounded-full bg-zinc-900 px-3 py-1.5 text-sm font-medium text-[#f6f1e7] ui-press hover:bg-emerald-700"
         >
           {tab === "service" ? t.newService : t.newProduct}
         </button>
@@ -199,7 +200,7 @@ export function ServicesManager({
       )}
 
       {visible.length === 0 && !editing ? (
-        <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm">
+        <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm border border-zinc-900/[0.06]">
           {tab === "service" ? t.emptyServices : t.emptyProducts}
         </p>
       ) : (
@@ -217,8 +218,8 @@ export function ServicesManager({
                   className="size-12 shrink-0 rounded-xl object-cover"
                 />
               ) : (
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-300">
-                  {s.item_type === "product" ? "🛍️" : "✂️"}
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-400">
+                  {s.item_type === "product" ? <IconBag size={22} /> : <IconScissors size={22} />}
                 </div>
               )}
               <div className="flex-1">
@@ -238,7 +239,7 @@ export function ServicesManager({
               <button
                 type="button"
                 onClick={() => setEditing(s.id)}
-                className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm"
+                className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm hover:border-zinc-300"
               >
                 {t.edit}
               </button>
@@ -321,7 +322,7 @@ function ServiceForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="mb-4 space-y-3 rounded-2xl bg-white p-4 shadow-sm"
+      className="mb-4 space-y-3 rounded-2xl bg-white p-4 shadow-sm border border-zinc-900/[0.06]"
     >
       <p className="font-semibold">{service ? editTitle : newTitle}</p>
       <label className="block">
@@ -331,7 +332,7 @@ function ServiceForm({
           maxLength={80}
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+          className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
           placeholder={isProduct ? t.productNamePh : t.namePh}
         />
       </label>
@@ -343,7 +344,7 @@ function ServiceForm({
           maxLength={500}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+          className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
           placeholder={isProduct ? t.productDescriptionPh : t.descriptionPh}
         />
       </label>
@@ -355,7 +356,7 @@ function ServiceForm({
             inputMode="decimal"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+            className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
             placeholder="45,00"
           />
         </label>
@@ -365,7 +366,7 @@ function ServiceForm({
             <select
               value={duration}
               onChange={(e) => setDuration(Number(e.target.value))}
-              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 outline-none focus:border-zinc-900"
+              className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
             >
               {DURATIONS.map((d) => (
                 <option key={d} value={d}>
@@ -387,8 +388,8 @@ function ServiceForm({
               className="size-16 rounded-xl object-cover"
             />
           ) : (
-            <div className="flex size-16 items-center justify-center rounded-xl bg-zinc-100 text-zinc-300">
-              {isProduct ? "🛍️" : "✂️"}
+            <div className="flex size-16 items-center justify-center rounded-xl bg-zinc-100 text-zinc-400">
+              {isProduct ? <IconBag size={26} /> : <IconScissors size={26} />}
             </div>
           )}
           <div className="space-y-1">
@@ -431,14 +432,14 @@ function ServiceForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+          className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-[#f6f1e7] disabled:opacity-60 ui-press hover:bg-emerald-700"
         >
           {pending ? t.saving : t.save}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg border border-zinc-300 px-4 py-2 text-sm"
+          className="rounded-lg border border-zinc-200 px-4 py-2 text-sm hover:border-zinc-300"
         >
           {t.cancel}
         </button>

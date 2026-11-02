@@ -6,6 +6,7 @@
  * indirizzano al WhatsApp del supporto.
  */
 
+import { IconSend, IconX } from "@/components/icons";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { Lang } from "@/lib/i18n";
@@ -308,7 +309,7 @@ export function SupportChat() {
               aria-label={t.closeChat}
               className="rounded-lg p-1.5 text-white/70 hover:bg-white/10 hover:text-white"
             >
-              ✕
+              <IconX size={18} />
             </button>
           </div>
 
@@ -382,7 +383,7 @@ export function SupportChat() {
               aria-label={t.send}
               className="rounded-xl bg-[#17493b] px-3.5 py-2 font-semibold text-white"
             >
-              ➤
+              <IconSend size={18} />
             </button>
           </form>
         </div>

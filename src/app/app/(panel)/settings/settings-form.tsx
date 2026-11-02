@@ -70,7 +70,7 @@ const COPY: Record<
     ],
     saving: "Salvataggio…",
     save: "Salva impostazioni",
-    saved: "Salvato ✓",
+    saved: "Salvato",
   },
   en: {
     uploadError: "Couldn't upload the image. Please try again.",
@@ -102,7 +102,7 @@ const COPY: Record<
     ],
     saving: "Saving…",
     save: "Save settings",
-    saved: "Saved ✓",
+    saved: "Saved",
   },
 };
 
@@ -173,7 +173,7 @@ export function SettingsForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      <section className="space-y-3 rounded-2xl bg-white p-4 shadow-sm">
+      <section className="space-y-3 rounded-2xl bg-white p-4 shadow-sm border border-zinc-900/[0.06]">
         <h2 className="font-semibold">{t.business}</h2>
 
         <div>
@@ -289,7 +289,7 @@ export function SettingsForm({
             maxLength={80}
             value={form.name}
             onChange={(e) => set("name", e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+            className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
           />
         </label>
 
@@ -301,7 +301,7 @@ export function SettingsForm({
               onChange={(e) =>
                 set("business_type", e.target.value as BusinessType)
               }
-              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 outline-none focus:border-zinc-900"
+              className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
             >
               {businessTypeOptions(lang).map((o) => (
                 <option key={o.value} value={o.value}>
@@ -316,7 +316,7 @@ export function SettingsForm({
               type="color"
               value={form.brand_primary}
               onChange={(e) => set("brand_primary", e.target.value)}
-              className="h-[42px] w-full rounded-lg border border-zinc-300"
+              className="h-[42px] w-full rounded-lg border border-zinc-200 hover:border-zinc-300"
             />
           </label>
         </div>
@@ -329,7 +329,7 @@ export function SettingsForm({
             maxLength={30}
             value={form.custom_professional_label ?? ""}
             onChange={(e) => set("custom_professional_label", e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+            className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
             placeholder={t.teamLabelPh}
           />
         </label>
@@ -342,7 +342,7 @@ export function SettingsForm({
             maxLength={200}
             value={form.address ?? ""}
             onChange={(e) => set("address", e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+            className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
             placeholder={t.addressPh}
           />
         </label>
@@ -356,7 +356,7 @@ export function SettingsForm({
               type="tel"
               value={form.phone ?? ""}
               onChange={(e) => set("phone", e.target.value)}
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+              className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
               placeholder={t.phonePh}
             />
           </label>
@@ -368,14 +368,14 @@ export function SettingsForm({
               type="tel"
               value={form.whatsapp ?? ""}
               onChange={(e) => set("whatsapp", e.target.value)}
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+              className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
               placeholder={t.whatsappPh}
             />
           </label>
         </div>
       </section>
 
-      <section className="rounded-2xl bg-white p-4 shadow-sm">
+      <section className="rounded-2xl bg-white p-4 shadow-sm border border-zinc-900/[0.06]">
         <label className="flex items-start gap-3">
           <input
             type="checkbox"
@@ -404,7 +404,7 @@ export function SettingsForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+          className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-[#f6f1e7] disabled:opacity-60 ui-press hover:bg-emerald-700"
         >
           {pending ? t.saving : t.save}
         </button>

@@ -9,6 +9,7 @@
 import { useState, useTransition } from "react";
 import type { Lang } from "@/lib/i18n";
 import type { AppointmentStatus } from "@/types/database";
+import { IconCheck } from "@/components/icons";
 import { setAppointmentStatus } from "./actions";
 
 export interface AppointmentCardData {
@@ -23,10 +24,17 @@ export interface AppointmentCardData {
 }
 
 const STATUS_CLASSES: Record<AppointmentStatus, string> = {
-  confirmed: "bg-emerald-100 text-emerald-800",
-  cancelled: "bg-zinc-100 text-zinc-500",
-  completed: "bg-blue-100 text-blue-800",
-  no_show: "bg-red-100 text-red-700",
+  confirmed: "bg-emerald-50 text-emerald-700 ring-emerald-700/15",
+  cancelled: "bg-zinc-100 text-zinc-500 ring-zinc-500/15",
+  completed: "bg-blue-50 text-blue-800 ring-blue-800/15",
+  no_show: "bg-red-50 text-red-700 ring-red-700/15",
+};
+
+const STATUS_RAIL: Record<AppointmentStatus, string> = {
+  confirmed: "bg-emerald-500",
+  cancelled: "bg-zinc-300",
+  completed: "bg-blue-800/60",
+  no_show: "bg-red-500",
 };
 
 const COPY: Record<
@@ -91,73 +99,81 @@ export function AppointmentCard({
 
   const inactive = data.status === "cancelled" || data.status === "no_show";
 
+  const [start, end] = data.timeRange.split(" – ");
+
   return (
     <div
-      className={`rounded-2xl bg-white p-4 shadow-sm ${inactive ? "opacity-60" : ""}`}
+      aria-busy={pending}
+      className={`ui-lift relative flex gap-4 overflow-hidden rounded-2xl border border-zinc-900/[0.06] bg-white p-4 shadow-sm sm:p-5 ${inactive ? "opacity-60" : ""} ${pending ? "animate-pulse" : ""}`}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <p className="font-semibold">{data.timeRange}</p>
-          <p className="text-sm">
-            {data.customerName}
-            {data.customerPhone && (
-              <>
-                {" · "}
-                <a
-                  href={`https://wa.me/39${data.customerPhone}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-zinc-500 underline"
-                >
-                  {data.customerPhone}
-                </a>
-              </>
-            )}
-          </p>
-          <p className="text-sm text-zinc-500">
-            {data.serviceName} · {data.professionalName}
-          </p>
-        </div>
-        <span
-          className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${badge.className}`}
-        >
-          {badge.label}
-        </span>
+      <span className={`absolute inset-y-0 left-0 w-1 ${STATUS_RAIL[data.status]}`} aria-hidden />
+      <div className="w-14 shrink-0 pl-1 tabular-nums">
+        <p className="font-[family-name:var(--font-display)] text-xl leading-none font-semibold">
+          {start}
+        </p>
+        {end && <p className="mt-1 text-xs text-zinc-400">{end}</p>}
       </div>
 
-      <p className="mt-2 text-sm text-zinc-600">
-        {t.total} {data.priceLabel}
-      </p>
-
-      {error && (
-        <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-          {error}
-        </p>
-      )}
-
-      {data.status === "confirmed" && (
-        <div className="mt-3 flex flex-wrap gap-2">
-          <ActionButton
-            primary
-            disabled={pending}
-            onClick={() => run(() => setAppointmentStatus(data.id, "completed"))}
+      <div className="min-w-0 flex-1">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className="truncate font-semibold">{data.customerName}</p>
+            <p className="text-sm text-zinc-500">
+              {data.serviceName} · {data.professionalName}
+            </p>
+            {data.customerPhone && (
+              <a
+                href={`https://wa.me/39${data.customerPhone}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-0.5 inline-block font-[family-name:var(--font-mono)] text-xs text-zinc-500 underline decoration-zinc-300 underline-offset-4 hover:text-emerald-700 hover:decoration-emerald-700"
+              >
+                {data.customerPhone}
+              </a>
+            )}
+          </div>
+          <span
+            className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${badge.className}`}
           >
-            {t.complete}
-          </ActionButton>
-          <ActionButton
-            disabled={pending}
-            onClick={() => run(() => setAppointmentStatus(data.id, "no_show"))}
-          >
-            {t.noShow}
-          </ActionButton>
-          <ActionButton
-            disabled={pending}
-            onClick={() => run(() => setAppointmentStatus(data.id, "cancelled"))}
-          >
-            {t.cancel}
-          </ActionButton>
+            {badge.label}
+          </span>
         </div>
-      )}
+
+        <p className="mt-2 text-sm text-zinc-600">
+          {t.total} <span className="font-semibold text-zinc-900 tabular-nums">{data.priceLabel}</span>
+        </p>
+
+        {error && (
+          <p role="alert" className="mt-3 rounded-xl border border-red-700/15 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {error}
+          </p>
+        )}
+
+        {data.status === "confirmed" && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            <ActionButton
+              primary
+              disabled={pending}
+              onClick={() => run(() => setAppointmentStatus(data.id, "completed"))}
+            >
+              <IconCheck size={16} />
+              {t.complete}
+            </ActionButton>
+            <ActionButton
+              disabled={pending}
+              onClick={() => run(() => setAppointmentStatus(data.id, "no_show"))}
+            >
+              {t.noShow}
+            </ActionButton>
+            <ActionButton
+              disabled={pending}
+              onClick={() => run(() => setAppointmentStatus(data.id, "cancelled"))}
+            >
+              {t.cancel}
+            </ActionButton>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -178,10 +194,10 @@ function ActionButton({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`rounded-lg px-3 py-1.5 text-sm font-medium disabled:opacity-60 ${
+      className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 text-sm font-semibold disabled:opacity-60 ${
         primary
-          ? "bg-zinc-900 text-white"
-          : "border border-zinc-300 text-zinc-700"
+          ? "bg-zinc-900 text-[#f6f1e7] hover:bg-emerald-700"
+          : "border border-zinc-200 text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50"
       }`}
     >
       {children}

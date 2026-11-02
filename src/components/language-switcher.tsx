@@ -1,5 +1,7 @@
 "use client";
 
+import { IconCheck } from "@/components/icons";
+
 /**
  * Selettore lingua a tendina: mostra SOLO la bandiera corrente + freccia ▾.
  * Cliccando si apre il menu con le lingue; la scelta scrive il cookie `lang`
@@ -153,9 +155,7 @@ export function LanguageSwitcher({
                 <o.Flag className="h-3.5 w-5 shrink-0 rounded-[3px] ring-1 ring-black/10" />
                 <span className="flex-1">{o.label}</span>
                 {o.value === current && (
-                  <span aria-hidden className="text-emerald-600">
-                    ✓
-                  </span>
+                  <IconCheck size={16} className="text-emerald-700" />
                 )}
               </button>
             </li>

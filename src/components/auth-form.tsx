@@ -6,6 +6,7 @@
  * così il server renderizza già autenticato.
  */
 
+import { IconEye, IconEyeOff } from "@/components/icons";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -169,7 +170,7 @@ export function AuthForm({
         type="button"
         onClick={signInWithGoogle}
         disabled={loading}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-300 py-3 font-medium transition-colors hover:bg-zinc-50 disabled:opacity-60"
+        className="ui-press flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-zinc-200 bg-white py-3 font-medium hover:border-zinc-300 hover:bg-zinc-50 active:scale-[0.98] disabled:opacity-60"
       >
         <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden>
           <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -195,13 +196,13 @@ export function AuthForm({
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+          className="min-h-12 w-full rounded-xl border border-zinc-200 bg-[#fffdf9] px-4 outline-none transition-[border-color,box-shadow] hover:border-zinc-300 focus:border-emerald-700 focus:shadow-[0_0_0_4px_rgb(23_73_59/0.12)]"
           placeholder={t.emailPh}
         />
       </label>
       <label className="block">
         <span className="mb-1 block text-sm font-medium">{t.password}</span>
-        <div className="flex items-center rounded-lg border border-zinc-300 focus-within:border-zinc-900">
+        <div className="flex items-center rounded-xl border border-zinc-200 bg-[#fffdf9] transition-[border-color,box-shadow] hover:border-zinc-300 focus-within:border-emerald-700 focus-within:shadow-[0_0_0_4px_rgb(23_73_59/0.12)]">
           <input
             type={showPassword ? "text" : "password"}
             required
@@ -209,25 +210,25 @@ export function AuthForm({
             autoComplete={mode === "login" ? "current-password" : "new-password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg px-3 py-2 outline-none"
+            className="min-h-12 w-full rounded-xl bg-transparent px-4 outline-none"
             placeholder={t.passwordPh}
           />
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
             aria-label={showPassword ? t.hide : t.show}
-            className="px-3 text-zinc-400 hover:text-zinc-700"
+            className="grid min-h-11 min-w-11 place-items-center text-zinc-400 transition-colors hover:text-zinc-700"
           >
-            {showPassword ? "🙈" : "👁️"}
+            {showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
           </button>
         </div>
       </label>
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
+        <p role="alert" className="rounded-xl border border-red-700/15 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
       )}
       {info && (
-        <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+        <p role="status" className="rounded-xl border border-emerald-700/15 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
           {info}
         </p>
       )}
@@ -235,14 +236,14 @@ export function AuthForm({
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-xl bg-zinc-900 py-3 font-semibold text-white disabled:opacity-60"
+        className="ui-press min-h-12 w-full rounded-full bg-zinc-900 py-3 font-semibold text-[#f6f1e7] shadow-[0_10px_24px_-12px_rgb(34_28_21/0.6)] hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-60"
       >
         {loading ? t.wait : mode === "login" ? t.signIn : t.signUp}
       </button>
 
       {mode === "login" && (
         <p className="text-center text-sm">
-          <Link href="/password-dimenticata" className="text-zinc-500 underline">
+          <Link href="/password-dimenticata" className="text-zinc-500 underline decoration-zinc-300 underline-offset-4 hover:text-zinc-900">
             {t.forgot}
           </Link>
         </p>

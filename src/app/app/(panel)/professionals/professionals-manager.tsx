@@ -1,5 +1,6 @@
 "use client";
 
+import { IconPencil, IconX } from "@/components/icons";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { Weekday } from "@/types/database";
@@ -137,11 +138,11 @@ export function ProfessionalsManager({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold">{t.heading}</h2>
+        <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold sm:text-3xl">{t.heading}</h2>
         <button
           type="button"
           onClick={() => setAdding(true)}
-          className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white"
+          className="rounded-full bg-zinc-900 px-3 py-1.5 text-sm font-medium text-[#f6f1e7] ui-press hover:bg-emerald-700"
         >
           {t.add}
         </button>
@@ -150,27 +151,27 @@ export function ProfessionalsManager({
       {adding && (
         <form
           onSubmit={addProfessional}
-          className="mb-4 flex gap-2 rounded-2xl bg-white p-4 shadow-sm"
+          className="mb-4 flex gap-2 rounded-2xl bg-white p-4 shadow-sm border border-zinc-900/[0.06]"
         >
           <input
             required
             maxLength={60}
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+            className="flex-1 rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
             placeholder={t.namePh(label)}
           />
           <button
             type="submit"
             disabled={pending}
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+            className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-[#f6f1e7] disabled:opacity-60 ui-press hover:bg-emerald-700"
           >
             {t.save}
           </button>
           <button
             type="button"
             onClick={() => setAdding(false)}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-200 px-3 py-2 text-sm hover:border-zinc-300"
           >
             {t.cancel}
           </button>
@@ -184,7 +185,7 @@ export function ProfessionalsManager({
       )}
 
       {professionals.length === 0 && !adding ? (
-        <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm">
+        <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm border border-zinc-900/[0.06]">
           {t.empty(label)}
         </p>
       ) : (
@@ -258,8 +259,8 @@ function ProfessionalCard({
                 {professional.display_name.charAt(0).toUpperCase()}
               </span>
             )}
-            <span className="absolute -bottom-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full bg-zinc-900 text-[9px] text-white">
-              ✎
+            <span className="absolute -bottom-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full bg-zinc-900 text-[#f6f1e7] ui-press hover:bg-emerald-700">
+              <IconPencil size={10} strokeWidth={2.25} />
             </span>
             <input
               type="file"
@@ -306,12 +307,12 @@ function ProfessionalCard({
                 maxLength={60}
                 value={nameDraft}
                 onChange={(e) => setNameDraft(e.target.value)}
-                className="w-36 rounded-lg border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-zinc-900"
+                className="w-36 rounded-lg border border-zinc-200 px-2 py-1 text-sm outline-none focus:border-zinc-900 hover:border-zinc-300"
               />
               <button
                 type="submit"
                 disabled={pending}
-                className="rounded-lg bg-zinc-900 px-2 py-1 text-sm text-white"
+                className="rounded-full bg-zinc-900 px-2 py-1 text-sm text-[#f6f1e7] ui-press hover:bg-emerald-700"
               >
                 OK
               </button>
@@ -326,9 +327,9 @@ function ProfessionalCard({
                   setRenaming(true);
                 }}
                 aria-label={t.rename}
-                className="ml-1.5 text-zinc-400 hover:text-zinc-700"
+                className="ml-1 inline-grid size-11 place-items-center rounded-full align-middle text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
               >
-                ✎
+                <IconPencil size={16} />
               </button>
               {!professional.active && (
                 <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
@@ -351,14 +352,14 @@ function ProfessionalCard({
                 })
               )
             }
-            className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm disabled:opacity-60"
+            className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm disabled:opacity-60 hover:border-zinc-300"
           >
             {professional.active ? t.deactivate : t.reactivate}
           </button>
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm"
+            className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm hover:border-zinc-300"
           >
             {t.shifts} ({shifts.length})
           </button>
@@ -386,10 +387,10 @@ function ProfessionalCard({
                   type="button"
                   disabled={pending}
                   onClick={() => run(() => deleteShift(s.id))}
-                  className="rounded px-2 py-0.5 text-zinc-400 hover:text-red-600"
+                  className="grid size-11 place-items-center rounded-full text-zinc-400 hover:bg-red-50 hover:text-red-600"
                   aria-label={t.removeShift}
                 >
-                  ✕
+                  <IconX size={16} />
                 </button>
               </li>
             ))}
@@ -414,7 +415,7 @@ function ProfessionalCard({
               <select
                 value={weekday}
                 onChange={(e) => setWeekday(Number(e.target.value) as Weekday)}
-                className="rounded-lg border border-zinc-300 bg-white px-2 py-1.5 text-sm"
+                className="rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-sm hover:border-zinc-300"
               >
                 {WEEKDAYS.map((d) => (
                   <option key={d} value={d}>
@@ -430,7 +431,7 @@ function ProfessionalCard({
                 required
                 value={startsAt}
                 onChange={(e) => setStartsAt(e.target.value)}
-                className="rounded-lg border border-zinc-300 px-2 py-1.5 text-sm"
+                className="rounded-lg border border-zinc-200 px-2 py-1.5 text-sm hover:border-zinc-300"
               />
             </label>
             <label className="block">
@@ -440,13 +441,13 @@ function ProfessionalCard({
                 required
                 value={endsAt}
                 onChange={(e) => setEndsAt(e.target.value)}
-                className="rounded-lg border border-zinc-300 px-2 py-1.5 text-sm"
+                className="rounded-lg border border-zinc-200 px-2 py-1.5 text-sm hover:border-zinc-300"
               />
             </label>
             <button
               type="submit"
               disabled={pending}
-              className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-60"
+              className="rounded-full bg-zinc-900 px-3 py-1.5 text-sm font-medium text-[#f6f1e7] disabled:opacity-60 ui-press hover:bg-emerald-700"
             >
               {t.addShift}
             </button>

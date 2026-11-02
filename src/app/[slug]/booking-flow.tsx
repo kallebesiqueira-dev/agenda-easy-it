@@ -11,6 +11,7 @@
  * prodotti in vetrina (non prenotabili: si richiedono su WhatsApp o sul posto).
  */
 
+import { IconCheckCircle } from "@/components/icons";
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import type {
@@ -778,7 +779,7 @@ export function BookingFlow({
                     maxLength={80}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-[var(--brand)]"
+                    className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-[var(--brand)] hover:border-zinc-300"
                     placeholder={t.namePh}
                   />
                 </label>
@@ -792,7 +793,7 @@ export function BookingFlow({
                     inputMode="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-[var(--brand)]"
+                    className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-[var(--brand)] hover:border-zinc-300"
                     placeholder={t.phonePh}
                   />
                 </label>
@@ -807,7 +808,7 @@ export function BookingFlow({
                     maxLength={120}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-[var(--brand)]"
+                    className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-[var(--brand)] hover:border-zinc-300"
                     placeholder={t.emailPh}
                   />
                 </label>
@@ -835,7 +836,9 @@ export function BookingFlow({
 
           {step === "done" && service && result && (
             <div className="py-2 text-center">
-              <p className="text-3xl">✅</p>
+              <span className="mx-auto grid size-16 place-items-center rounded-full bg-emerald-50 text-emerald-700 ring-8 ring-emerald-50/50">
+                <IconCheckCircle size={34} />
+              </span>
               <h2 className="mt-2 text-lg font-bold">{t.bookedTitle}</h2>
               <p className="mt-1 text-sm text-zinc-600">
                 {service.name} ·{" "}

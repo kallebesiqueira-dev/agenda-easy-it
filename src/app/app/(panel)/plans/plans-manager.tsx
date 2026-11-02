@@ -66,7 +66,7 @@ const COPY: Record<
     templatesTitle: "Modelli rapidi (tutti personalizzabili)",
     templates: [
       {
-        label: "📅 Abbonamento mensile",
+        label: "Abbonamento mensile",
         title: "Abbonamento mensile",
         description:
           "Un appuntamento a settimana per tutto il mese, a prezzo fisso. Prenota quando vuoi.",
@@ -75,7 +75,7 @@ const COPY: Record<
         badge: "Più scelto",
       },
       {
-        label: "💸 Promo infrasettimanale",
+        label: "Promo infrasettimanale",
         title: "Promo domenica–mercoledì",
         description:
           "Vieni nei giorni più tranquilli (domenica–mercoledì) e paghi meno dello stesso servizio nel weekend.",
@@ -84,7 +84,7 @@ const COPY: Record<
         badge: "Promo",
       },
       {
-        label: "🤝 Porta un amico",
+        label: "Porta un amico",
         title: "Porta 3 amici",
         description:
           "Fai prenotare 3 amici con il tuo nome e il tuo prossimo servizio è in omaggio.",
@@ -93,7 +93,7 @@ const COPY: Record<
         badge: "Fedeltà",
       },
       {
-        label: "🎟️ Pacchetto",
+        label: "Pacchetto",
         title: "Pacchetto 10 sedute",
         description:
           "Paghi 10 sessioni in anticipo e risparmi rispetto al prezzo singolo. Valido 6 mesi.",
@@ -134,7 +134,7 @@ const COPY: Record<
     templatesTitle: "Quick templates (all customisable)",
     templates: [
       {
-        label: "📅 Monthly subscription",
+        label: "Monthly subscription",
         title: "Monthly subscription",
         description:
           "One appointment a week, all month, at a fixed price. Book whenever you like.",
@@ -143,7 +143,7 @@ const COPY: Record<
         badge: "Most popular",
       },
       {
-        label: "💸 Midweek deal",
+        label: "Midweek deal",
         title: "Sunday–Wednesday deal",
         description:
           "Come on quieter days (Sunday–Wednesday) and pay less than the same service at the weekend.",
@@ -152,7 +152,7 @@ const COPY: Record<
         badge: "Deal",
       },
       {
-        label: "🤝 Refer a friend",
+        label: "Refer a friend",
         title: "Bring 3 friends",
         description:
           "Get 3 friends to book mentioning your name and your next service is on the house.",
@@ -161,7 +161,7 @@ const COPY: Record<
         badge: "Loyalty",
       },
       {
-        label: "🎟️ Bundle",
+        label: "Bundle",
         title: "10-session bundle",
         description:
           "Pay for 10 sessions upfront and save versus the single price. Valid 6 months.",
@@ -225,14 +225,14 @@ export function PlansManager({
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="font-semibold">{t.heading}</h2>
+        <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold sm:text-3xl">{t.heading}</h2>
         <button
           type="button"
           onClick={() => {
             setTemplate(null);
             setEditing("new");
           }}
-          className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white"
+          className="rounded-full bg-zinc-900 px-3 py-1.5 text-sm font-medium text-[#f6f1e7] ui-press hover:bg-emerald-700"
         >
           {t.newPlan}
         </button>
@@ -240,7 +240,7 @@ export function PlansManager({
       <p className="mb-4 text-sm text-zinc-500">{t.intro}</p>
 
       {!editing && (
-        <div className="mb-4 rounded-2xl bg-white p-4 shadow-sm">
+        <div className="mb-4 rounded-2xl bg-white p-4 shadow-sm border border-zinc-900/[0.06]">
           <p className="mb-2 text-sm font-medium text-zinc-700">
             {t.templatesTitle}
           </p>
@@ -253,7 +253,7 @@ export function PlansManager({
                   setTemplate(tpl);
                   setEditing("new");
                 }}
-                className="rounded-full border border-zinc-300 px-3 py-1.5 text-sm hover:border-zinc-900"
+                className="rounded-full border border-zinc-200 px-3 py-1.5 text-sm hover:border-zinc-900"
               >
                 {tpl.label}
               </button>
@@ -282,7 +282,7 @@ export function PlansManager({
       )}
 
       {plans.length === 0 && !editing ? (
-        <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm">
+        <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm border border-zinc-900/[0.06]">
           {t.empty}
         </p>
       ) : (
@@ -296,7 +296,7 @@ export function PlansManager({
                 <div className="min-w-0 flex-1">
                   <p className="text-base font-semibold text-zinc-900">
                     {p.badge && (
-                      <span className="mr-2 rounded-full bg-zinc-900 px-2 py-0.5 text-xs font-semibold text-white">
+                      <span className="mr-2 rounded-full bg-zinc-900 px-2 py-0.5 text-xs font-semibold text-[#f6f1e7] ui-press hover:bg-emerald-700">
                         {p.badge}
                       </span>
                     )}
@@ -328,7 +328,7 @@ export function PlansManager({
                     setTemplate(null);
                     setEditing(p.id);
                   }}
-                  className="shrink-0 rounded-lg border border-zinc-300 px-3 py-1.5 text-sm"
+                  className="shrink-0 rounded-lg border border-zinc-200 px-3 py-1.5 text-sm hover:border-zinc-300"
                 >
                   {t.edit}
                 </button>
@@ -411,7 +411,7 @@ function PlanForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="mb-4 space-y-3 rounded-2xl bg-white p-4 shadow-sm"
+      className="mb-4 space-y-3 rounded-2xl bg-white p-4 shadow-sm border border-zinc-900/[0.06]"
     >
       <p className="font-semibold">{plan ? t.editPlan : t.newPlan}</p>
       <label className="block">
@@ -422,7 +422,7 @@ function PlanForm({
           maxLength={80}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+          className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
           placeholder={t.titlePh}
         />
       </label>
@@ -433,7 +433,7 @@ function PlanForm({
           rows={3}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+          className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
           placeholder={t.descriptionPh}
         />
       </label>
@@ -447,7 +447,7 @@ function PlanForm({
             inputMode="decimal"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+            className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
             placeholder={t.pricePh}
           />
         </label>
@@ -457,7 +457,7 @@ function PlanForm({
             maxLength={30}
             value={priceSuffix}
             onChange={(e) => setPriceSuffix(e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+            className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
             placeholder={t.priceSuffixPh}
           />
         </label>
@@ -469,7 +469,7 @@ function PlanForm({
             maxLength={30}
             value={badge}
             onChange={(e) => setBadge(e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+            className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
             placeholder={t.badgePh}
           />
         </label>
@@ -481,7 +481,7 @@ function PlanForm({
             max={999}
             value={sortOrder}
             onChange={(e) => setSortOrder(Number(e.target.value))}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+            className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
           />
         </label>
       </div>
@@ -503,14 +503,14 @@ function PlanForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+          className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-[#f6f1e7] disabled:opacity-60 ui-press hover:bg-emerald-700"
         >
           {pending ? t.saving : t.save}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg border border-zinc-300 px-4 py-2 text-sm"
+          className="rounded-lg border border-zinc-200 px-4 py-2 text-sm hover:border-zinc-300"
         >
           {t.cancel}
         </button>
