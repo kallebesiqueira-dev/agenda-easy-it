@@ -27,7 +27,7 @@ const price = formatEUR(PLAN.priceMinor);
 
 const COPY = {
   it: {
-    video: { kicker: "Il video", t: "Agenda Easy in 48 secondi.", b: "Prenotazioni online, promemoria automatici e un'agenda sempre in ordine. Guarda come funziona.", label: "Video di presentazione di Agenda Easy", on: "Attiva audio", off: "Disattiva audio" },
+    video: { kicker: "Il video", t: "Agenda Easy in 48 secondi.", b: "Prenotazioni online, promemoria automatici e un'agenda sempre in ordine. Guarda come funziona.", label: "Video di presentazione di Agenda Easy", play: "Guarda il video" },
     nav: { story: "Come funziona", who: "Per chi è", price: "Prezzo", signIn: "Accedi", signUp: "Crea account" },
     hero: ["La tua agenda.", "Finalmente semplice."],
     heroSub: "Una pagina di prenotazione tutta tua, l'agenda che si riempie da sola e promemoria automatici per i clienti. Senza app da scaricare.",
@@ -71,7 +71,7 @@ const COPY = {
     footer: { terms: "Termini", privacy: "Privacy", by: "Sviluppato da" },
   },
   en: {
-    video: { kicker: "The video", t: "Agenda Easy in 48 seconds.", b: "Online bookings, automatic reminders and a calendar that stays in order. See how it works.", label: "Agenda Easy promo video", on: "Sound on", off: "Mute" },
+    video: { kicker: "The video", t: "Agenda Easy in 48 seconds.", b: "Online bookings, automatic reminders and a calendar that stays in order. See how it works.", label: "Agenda Easy promo video", play: "Watch the video" },
     nav: { story: "How it works", who: "Who it's for", price: "Pricing", signIn: "Sign in", signUp: "Create account" },
     hero: ["Your calendar.", "Finally simple."],
     heroSub: "A booking page of your own, a calendar that fills itself and automatic reminders for your clients. No app to download.",
@@ -346,7 +346,7 @@ export default async function LandingPage() {
           <p className="text-[13px] font-semibold tracking-[0.14em] text-[var(--tint)] uppercase">{t.video.kicker}</p>
           <h2 className="lp-h2 mx-auto mt-3 max-w-3xl">{t.video.t}</h2>
           <p className="mx-auto mt-5 max-w-xl text-[18px] leading-[1.5] text-[var(--label-2)]">{t.video.b}</p>
-          <div className="mt-12"><PromoVideo label={t.video.label} soundOn={t.video.on} soundOff={t.video.off} /></div>
+          <div className="mt-12"><PromoVideo label={t.video.label} play={t.video.play} /></div>
         </div>
       </section>
 
