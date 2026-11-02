@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import type { Viewport } from "next";
 import { Inter } from "next/font/google";
+import { SilkBackground } from "@/components/silk-background";
 import { getLang } from "@/lib/i18n/server";
 import "./globals.css";
 
-// Stack di sistema SF Pro; Inter solo come fallback su Android/Windows.
+// Stack di sistema SF Pro ovunque; Inter solo come fallback fuori da Apple.
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -12,10 +13,8 @@ const inter = Inter({
 
 export const viewport: Viewport = {
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f2f2f7" },
-    { media: "(prefers-color-scheme: dark)", color: "#000000" },
-  ],
+  themeColor: "#0b100e",
+  colorScheme: "dark",
 };
 
 const SITE_URL =
@@ -51,7 +50,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       lang={lang}
       className={`${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <SilkBackground />
+        {children}
+      </body>
     </html>
   );
 }

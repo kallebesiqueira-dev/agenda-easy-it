@@ -45,7 +45,7 @@ export default async function CancelBookingPage({ params, searchParams }: Props)
   const when = formatDateTimeInTz(appt.starts_at, appt.business.timezone, lang);
 
   return (
-    <main className="flex ui-panel ui-grain relative min-h-dvh items-center justify-center bg-[var(--bg)] px-4 py-10 text-zinc-900">
+    <main className="flex ui-panel ui-grain relative min-h-dvh items-center justify-center px-4 py-10 text-zinc-900">
       <div className="w-full max-w-sm rounded-3xl border border-zinc-900/[0.06] bg-card p-6 shadow-lg sm:p-8">
         <div className="flex items-start justify-between gap-2">
           <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold">

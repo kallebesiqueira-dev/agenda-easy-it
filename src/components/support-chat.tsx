@@ -393,20 +393,17 @@ export function SupportChat() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? t.closeSupport : t.openSupport}
-        className="group relative flex flex-col items-center transition-transform hover:scale-105"
+        className="glass glass-sheen ui-press flex min-h-11 items-center gap-2.5 rounded-full py-1.5 pr-4 pl-1.5 text-[15px] font-semibold tracking-[-0.01em] text-[var(--label)] active:scale-[0.97]"
       >
-        {/* fumetto "Supporto" sopra la testa */}
-        <span className="relative mb-1 rounded-xl bg-card px-3 py-1 text-xs font-semibold text-[var(--tint)] shadow-md">
-          {t.bubble}
-          <span className="absolute -bottom-1 left-1/2 size-2 -translate-x-1/2 rotate-45 bg-card" />
-        </span>
         <Image
           src="/suporte-avatar.png"
-          alt={t.bubble}
-          width={80}
-          height={78}
-          className="w-20 object-contain"
+          alt=""
+          width={32}
+          height={32}
+          className="size-8 rounded-full bg-[var(--fill)] object-cover"
         />
+        {t.bubble}
+        <span aria-hidden className="text-[var(--label-2)]">›</span>
       </button>
     </div>
   );

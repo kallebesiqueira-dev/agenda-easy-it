@@ -10,7 +10,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import {
   IconCalendar,
@@ -44,8 +44,30 @@ function useActive() {
 
 export function Sidebar({ items }: { items: Item[] }) {
   const isActive = useActive();
+  const nav = useRef<HTMLElement>(null);
+  const [pill, setPill] = useState<{ y: number; h: number } | null>(null);
+  const pathname = usePathname();
+
+  // Pillola attiva che scivola tra le voci (layout animation via transform).
+  useLayoutEffect(() => {
+    const el = nav.current?.querySelector<HTMLElement>('[aria-current="page"]');
+    if (!el) return;
+    const measure = () => setPill({ y: el.offsetTop, h: el.offsetHeight });
+    const id = requestAnimationFrame(measure);
+    return () => cancelAnimationFrame(id);
+  }, [pathname]);
+
   return (
-    <nav className="flex flex-col gap-0.5" aria-label="Menu">
+    <nav ref={nav} className="relative flex flex-col gap-1" aria-label="Menu">
+      {pill && (
+        <span
+          aria-hidden
+          className="glass absolute inset-x-0 top-0 rounded-[14px] transition-[transform,height] duration-[650ms] ease-[var(--spring)] motion-reduce:transition-none"
+          style={{ transform: `translateY(${pill.y}px)`, height: pill.h }}
+        >
+          <span className="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-full bg-[var(--green)] shadow-[0_0_12px_2px_rgb(95_209_151/0.6)]" />
+        </span>
+      )}
       {items.map((item) => {
         const Icon = ICONS[item.href] ?? IconCalendar;
         const active = isActive(item.href);
@@ -54,13 +76,11 @@ export function Sidebar({ items }: { items: Item[] }) {
             key={item.href}
             href={item.href}
             aria-current={active ? "page" : undefined}
-            className={`ui-press flex min-h-11 items-center gap-3 rounded-[12px] px-3 text-[17px] tracking-[-0.024em] ${
-              active
-                ? "bg-tint text-white"
-                : "text-[var(--label)] hover:bg-[var(--fill-2)]"
+            className={`relative flex min-h-11 items-center gap-3.5 rounded-[14px] px-3.5 text-[15px] font-medium tracking-[-0.01em] transition-colors ${
+              active ? "text-[var(--label)]" : "text-[var(--label-2)] hover:bg-[var(--fill-2)] hover:text-[var(--label)]"
             }`}
           >
-            <Icon size={22} className={active ? "text-white" : "text-[var(--tint)]"} />
+            <Icon size={21} className={active ? "text-[var(--green)]" : ""} />
             {item.label}
           </Link>
         );

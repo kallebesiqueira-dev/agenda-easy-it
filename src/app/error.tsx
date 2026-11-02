@@ -18,7 +18,7 @@ export default function GlobalError({ reset }: { error: Error; reset: () => void
         };
 
   return (
-    <main className="flex ui-panel ui-grain relative min-h-dvh flex-col items-center justify-center bg-[var(--bg)] px-4 py-10 text-center text-zinc-900">
+    <main className="flex ui-panel ui-grain relative min-h-dvh flex-col items-center justify-center px-4 py-10 text-center text-zinc-900">
       <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold">{t.title}</h1>
       <p className="mt-1 max-w-sm text-sm text-zinc-500">{t.sub}</p>
       <button

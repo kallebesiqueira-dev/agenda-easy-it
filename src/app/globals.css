@@ -9,45 +9,30 @@
    ========================================================================== */
 
 :root {
-  color-scheme: light dark;
-  --bg: #f2f2f7;               /* systemGroupedBackground */
-  --card: #ffffff;             /* secondarySystemGroupedBackground */
-  --card-2: #f2f2f7;           /* tertiary */
-  --fill: rgb(120 120 128 / 0.12);
-  --fill-2: rgb(120 120 128 / 0.08);
-  --label: #000000;
-  --label-2: rgb(60 60 67 / 0.6);
-  --label-3: rgb(60 60 67 / 0.3);
-  --separator: rgb(60 60 67 / 0.29);
-  --tint: #0a6cff;             /* tint unico: blu zaffiro */
-  --tint-soft: rgb(10 108 255 / 0.12);
-  --green: #34c759;
-  --red: #ff3b30;
-  --orange: #ff9500;
-  --material: rgb(249 249 249 / 0.78);
+  color-scheme: dark;
+  --bg: #0b100e;               /* grafite verde profondo */
+  --card: rgb(255 255 255 / 0.055);   /* vetro */
+  --card-2: rgb(255 255 255 / 0.085);
+  --glass-solid: rgb(22 28 26 / 0.72);
+  --glass-border: rgb(255 255 255 / 0.1);
+  --fill: rgb(255 255 255 / 0.1);
+  --fill-2: rgb(255 255 255 / 0.06);
+  --label: #f2f5f3;
+  --label-2: rgb(226 236 231 / 0.66);
+  --label-3: rgb(226 236 231 / 0.38);
+  --separator: rgb(255 255 255 / 0.1);
+  --tint: #6fbf98;             /* salvia */
+  --tint-deep: #3f8f6b;
+  --tint-soft: rgb(111 191 152 / 0.16);
+  --green: #5fd197;
+  --red: #ff7a70;
+  --orange: #f5b35c;
+  --blue: #8fb6ff;
+  --material: rgb(18 24 22 / 0.62);
   --spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --expo: cubic-bezier(0.16, 1, 0.3, 1);
   --background: var(--bg);
   --foreground: var(--label);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #000000;
-    --card: #1c1c1e;
-    --card-2: #2c2c2e;
-    --fill: rgb(120 120 128 / 0.36);
-    --fill-2: rgb(120 120 128 / 0.24);
-    --label: #ffffff;
-    --label-2: rgb(235 235 245 / 0.6);
-    --label-3: rgb(235 235 245 / 0.3);
-    --separator: rgb(84 84 88 / 0.65);
-    --tint: #3d8bff;
-    --tint-soft: rgb(61 139 255 / 0.2);
-    --green: #30d158;
-    --red: #ff453a;
-    --orange: #ff9f0a;
-    --material: rgb(30 30 30 / 0.72);
-  }
 }
 
 @theme inline {
@@ -79,7 +64,7 @@
   --color-emerald-400: var(--green);
   --color-emerald-500: var(--green);
   --color-emerald-600: var(--green);
-  --color-emerald-700: color-mix(in srgb, var(--green) 70%, var(--label));
+  --color-emerald-700: var(--green);
   --color-emerald-800: color-mix(in srgb, var(--green) 60%, var(--label));
   --color-emerald-900: color-mix(in srgb, var(--green) 50%, var(--label));
 
@@ -91,9 +76,9 @@
   --color-red-700: var(--red);
   --color-red-800: var(--red);
 
-  --color-blue-50: var(--tint-soft);
-  --color-blue-100: var(--tint-soft);
-  --color-blue-800: var(--tint);
+  --color-blue-50: color-mix(in srgb, var(--blue) 14%, transparent);
+  --color-blue-100: color-mix(in srgb, var(--blue) 18%, transparent);
+  --color-blue-800: var(--blue);
   --color-sky-50: var(--tint-soft);
   --color-sky-900: var(--tint);
   --color-amber-50: color-mix(in srgb, var(--orange) 12%, transparent);
@@ -119,20 +104,20 @@ html {
 }
 
 body {
-  background: var(--bg);
+  background: transparent;
   color: var(--label);
   font-family: var(--font-sans);
   font-size: 17px;
   line-height: 1.294;
-  letter-spacing: -0.022em;
+  letter-spacing: -0.011em;
   -webkit-font-smoothing: antialiased;
 }
 
 /* ---- Scala tipografica iOS ---- */
-.ios-large-title { font: 700 34px/41px var(--font-display); letter-spacing: 0.011em; }
-.ios-title1 { font: 700 28px/34px var(--font-display); letter-spacing: 0.013em; }
-.ios-title2 { font: 700 22px/28px var(--font-display); letter-spacing: -0.016em; }
-.ios-title3 { font: 600 20px/25px var(--font-display); letter-spacing: -0.017em; }
+.ios-large-title { font: 700 34px/41px var(--font-display); letter-spacing: -0.028em; }
+.ios-title1 { font: 700 28px/34px var(--font-display); letter-spacing: -0.026em; }
+.ios-title2 { font: 600 22px/28px var(--font-sans); letter-spacing: -0.02em; }
+.ios-title3 { font: 600 20px/25px var(--font-sans); letter-spacing: -0.017em; }
 .ios-headline { font: 600 17px/22px var(--font-sans); letter-spacing: -0.024em; }
 .ios-body { font: 400 17px/22px var(--font-sans); letter-spacing: -0.024em; }
 .ios-callout { font: 400 16px/21px var(--font-sans); letter-spacing: -0.02em; }
@@ -233,7 +218,7 @@ input[type="checkbox"]::after {
   transition: transform 0.45s var(--spring), width 0.2s var(--spring);
 }
 input[type="checkbox"]:active::after { width: 33px; }
-input[type="checkbox"]:checked { background: var(--green); }
+input[type="checkbox"]:checked { background: linear-gradient(180deg, #7fcaa3, var(--tint-deep)); }
 input[type="checkbox"]:checked::after { transform: translateX(20px); }
 input[type="checkbox"]:checked:active::after { transform: translateX(14px); }
 input[type="radio"] { accent-color: var(--tint); width: 20px; height: 20px; }
@@ -361,4 +346,97 @@ input::-ms-clear {
     animation: none;
     opacity: 0.6;
   }
+}
+
+/* ==========================================================================
+   v3 — vetro scuro su seta verde
+   ========================================================================== */
+html { background: var(--bg); }
+.text-white { color: #fff; }
+
+/* Pannelli di vetro: ogni superficie "card" diventa vetro smerigliato */
+.bg-card, .ios-group, .glass {
+  background-color: var(--card);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(140%);
+  box-shadow: inset 0 0 0 1px var(--glass-border), inset 0 1px 0 rgb(255 255 255 / 0.08), 0 20px 50px -24px rgb(0 0 0 / 0.6);
+}
+.ios-group { border-radius: 22px; }
+.ios-group > * { background-color: transparent !important; }
+.ios-material {
+  background: var(--material);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  backdrop-filter: blur(28px) saturate(160%);
+}
+
+/* Pulsanti primari: gradiente salvia → verde profondo */
+.bg-tint {
+  background-color: var(--tint-deep);
+  background-image: linear-gradient(180deg, #86c9a6 0%, #4f9f7a 55%, #3f8f6b 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.28), 0 8px 24px -10px rgb(63 143 107 / 0.7);
+  color: #07130d !important;
+}
+.bg-tint * { color: inherit; }
+
+/* Riflesso di luce al passaggio sul vetro */
+@media (hover: hover) {
+  .bg-card, .ios-group > *, .glass-sheen {
+    background-image: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.06) 50%, transparent 65%);
+    background-size: 250% 100%;
+    background-position: 130% 0;
+    background-repeat: no-repeat;
+    transition: background-position 0.9s var(--expo), box-shadow 0.4s ease;
+  }
+  .bg-card:hover, .ios-group > *:hover, .glass-sheen:hover { background-position: -30% 0; }
+}
+
+/* Ingresso: vetro che appare e si mette a fuoco, a cascata. Solo CSS → nessun mismatch di idratazione */
+@keyframes glass-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); filter: blur(10px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+.ui-reveal > * > *,
+.ui-reveal-self > * { animation: glass-in 0.8s var(--expo) both; }
+.ui-reveal > * > *:nth-child(2), .ui-reveal-self > *:nth-child(2) { animation-delay: 60ms; }
+.ui-reveal > * > *:nth-child(3), .ui-reveal-self > *:nth-child(3) { animation-delay: 120ms; }
+.ui-reveal > * > *:nth-child(4), .ui-reveal-self > *:nth-child(4) { animation-delay: 180ms; }
+.ui-reveal > * > *:nth-child(5), .ui-reveal-self > *:nth-child(5) { animation-delay: 240ms; }
+.ui-reveal > * > *:nth-child(n+6), .ui-reveal-self > *:nth-child(n+6) { animation-delay: 300ms; }
+@keyframes month-in { from { opacity: 0; transform: translateX(var(--dir, 16px)); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+.ui-month { animation: month-in 0.6s var(--expo) both; }
+
+/* Sfondo: seta verde che scorre lentamente (solo transform → GPU) */
+.silk { position: fixed; inset: 0; z-index: -1; overflow: hidden; background: radial-gradient(120% 90% at 80% 0%, #17241f 0%, #0b100e 55%, #070908 100%); pointer-events: none; }
+.silk svg { position: absolute; width: 160%; height: 160%; left: -30%; top: -30%; will-change: transform; }
+.silk .w1 { animation: silk-a 38s ease-in-out infinite alternate; }
+.silk .w2 { animation: silk-b 46s ease-in-out infinite alternate; }
+.silk::after { content: ""; position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 50%, transparent 40%, rgb(4 6 5 / 0.55) 100%); }
+@keyframes silk-a { to { transform: translate3d(-6%, 4%, 0) rotate(-3deg) scale(1.05); } }
+@keyframes silk-b { to { transform: translate3d(5%, -5%, 0) rotate(4deg) scale(1.08); } }
+
+/* File input e color picker */
+input[type="file"] { color: var(--label-2); font-size: 14px; }
+input[type="file"]::file-selector-button {
+  margin-right: 12px; min-height: 36px; padding: 0 16px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--glass-border); background: var(--fill-2); color: var(--label); font: 600 14px var(--font-sans);
+  transition: background-color 0.2s ease;
+}
+input[type="file"]::file-selector-button:hover { background: var(--fill); }
+input[type="color"] { appearance: none; -webkit-appearance: none; border: 0; padding: 4px; border-radius: 12px; background: var(--fill-2); cursor: pointer; box-shadow: inset 0 0 0 1px var(--glass-border); }
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+input[type="color"]::-webkit-color-swatch { border: 0; border-radius: 9px; }
+input[type="color"]::-moz-color-swatch { border: 0; border-radius: 9px; }
+
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]):not([type="range"]), select, textarea) {
+  background-color: rgb(0 0 0 / 0.22);
+  box-shadow: inset 0 0 0 1px var(--glass-border);
+}
+input[type="time"]::-webkit-calendar-picker-indicator, input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+select option { background: #141a18; color: var(--label); }
+
+.wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.035em; }
+.wordmark em { font-style: normal; font-weight: 600; color: var(--tint); }
+
+@media (prefers-reduced-motion: reduce) {
+  .silk svg, .ui-reveal > * > *, .ui-reveal-self > *, .ui-month { animation: none !important; }
 }

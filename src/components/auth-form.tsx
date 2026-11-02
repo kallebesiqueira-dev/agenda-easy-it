@@ -6,7 +6,7 @@
  * così il server renderizza già autenticato.
  */
 
-import { IconEye, IconEyeOff } from "@/components/icons";
+import { IconEye, IconEyeOff, IconLock, IconMail } from "@/components/icons";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -170,7 +170,7 @@ export function AuthForm({
         type="button"
         onClick={signInWithGoogle}
         disabled={loading}
-        className="ui-press flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-zinc-200 bg-card py-3 font-medium hover:border-zinc-300 hover:bg-zinc-50 active:scale-[0.98] disabled:opacity-60"
+        className="ui-press flex min-h-12 w-full items-center justify-center gap-2 glass rounded-full py-3 font-medium hover:bg-[var(--fill)] active:scale-[0.98] disabled:opacity-60"
       >
         <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden>
           <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -190,19 +190,23 @@ export function AuthForm({
       <form onSubmit={onSubmit} className="space-y-3">
       <label className="block">
         <span className="mb-1 block text-sm font-medium">{t.email}</span>
+        <span className="relative block">
+        <IconMail size={18} className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-[var(--label-2)]" />
         <input
           type="email"
           required
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="min-h-12 w-full rounded-xl border border-zinc-200 bg-[var(--card)] px-4 outline-none transition-[border-color,box-shadow] hover:border-zinc-300 focus:border-emerald-700 focus:shadow-[0_0_0_4px_rgb(10_108_255/0.15)]"
+          className="min-h-12 w-full rounded-[14px] pr-4 pl-11 outline-none transition-[border-color,box-shadow] hover:border-zinc-300 focus:border-emerald-700 focus:shadow-[0_0_0_4px_rgb(10_108_255/0.15)]"
           placeholder={t.emailPh}
         />
+        </span>
       </label>
       <label className="block">
         <span className="mb-1 block text-sm font-medium">{t.password}</span>
-        <div className="flex items-center rounded-xl border border-zinc-200 bg-[var(--card)] transition-[border-color,box-shadow] hover:border-zinc-300 focus-within:border-emerald-700 focus-within:shadow-[0_0_0_4px_rgb(10_108_255/0.15)]">
+        <div className="flex items-center rounded-[14px] bg-black/20 shadow-[inset_0_0_0_1px_var(--glass-border)] transition-[border-color,box-shadow] hover:border-zinc-300 focus-within:border-emerald-700 focus-within:shadow-[0_0_0_4px_rgb(10_108_255/0.15)]">
+          <IconLock size={18} className="ml-4 shrink-0 text-[var(--label-2)]" />
           <input
             type={showPassword ? "text" : "password"}
             required
@@ -210,7 +214,7 @@ export function AuthForm({
             autoComplete={mode === "login" ? "current-password" : "new-password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="min-h-12 w-full rounded-xl bg-transparent px-4 outline-none"
+            className="min-h-12 w-full rounded-xl !bg-transparent px-3 !shadow-none outline-none"
             placeholder={t.passwordPh}
           />
           <button

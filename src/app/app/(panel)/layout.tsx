@@ -7,7 +7,6 @@ import { getLang } from "@/lib/i18n/server";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { SupportChat } from "@/components/support-chat";
 import { IconAlert, IconExternal, IconLock, IconSparkle } from "@/components/icons";
-import { Reveal } from "@/components/reveal";
 import { NavBar, Sidebar, TabBar } from "./panel-nav";
 import { SignOutButton } from "./sign-out-button";
 
@@ -93,12 +92,12 @@ export default async function PanelLayout({
 
   const brand = (
     <Link href="/app" className="flex items-center gap-3 rounded-[12px]">
-      <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-tint text-[17px] font-semibold text-white">
+      <span className="grid size-11 shrink-0 place-items-center rounded-[13px] bg-[linear-gradient(160deg,#245a45,#0f2c22)] text-[19px] font-semibold text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12),inset_0_1px_0_rgb(255_255_255/0.15)]">
         {initial}
       </span>
       <span className="min-w-0">
         <span className="ios-headline block truncate">{ctx.business.name}</span>
-        <span className="ios-caption block text-[var(--label-2)]">Agenda Easy</span>
+        <span className="block text-[10.5px] font-semibold tracking-[0.16em] text-[var(--label-2)] uppercase">AgendaEasy</span>
       </span>
     </Link>
   );
@@ -107,11 +106,11 @@ export default async function PanelLayout({
     <Link
       href={`/${ctx.business.slug}`}
       target="_blank"
-      className="ios-row group justify-between rounded-[12px] bg-[var(--card)] text-[15px]"
+      className="glass ios-row group justify-between rounded-full text-[15px]"
     >
       <span className="flex min-w-0 items-center gap-2.5">
         <span
-          className={`size-2 shrink-0 rounded-full ${ctx.business.published ? "bg-[var(--green)]" : "bg-[var(--label-3)]"}`}
+          className={`size-2 shrink-0 rounded-full ${ctx.business.published ? "bg-[var(--green)] shadow-[0_0_10px_var(--green)]" : "bg-[var(--label-3)]"}`}
         />
         <span className="truncate text-[var(--label-2)]">
           /{ctx.business.slug}
@@ -125,11 +124,16 @@ export default async function PanelLayout({
   const banner = "ios-subhead flex items-start gap-3 rounded-[16px] px-4 py-3";
 
   return (
-    <div className="ui-panel min-h-dvh bg-[var(--bg)] text-[var(--label)]">
+    <div className="ui-panel min-h-dvh text-[var(--label)]">
       <div className="flex w-full">
         {/* Sidebar iPadOS (desktop) */}
-        <aside className="sticky top-0 hidden h-dvh w-[300px] shrink-0 flex-col gap-6 bg-[var(--card-2)] px-4 pt-6 pb-5 lg:flex [box-shadow:inset_-0.5px_0_0_var(--separator)]">
-          <div className="px-2">{brand}</div>
+        <aside className="glass sticky top-4 m-4 mr-0 hidden h-[calc(100dvh-2rem)] w-[272px] shrink-0 flex-col gap-7 rounded-[26px] px-4 pt-4 pb-5 lg:flex">
+          <div className="flex gap-2 px-1" aria-hidden>
+            <span className="size-3 rounded-full bg-[#ff5f57]" />
+            <span className="size-3 rounded-full bg-[#febc2e]" />
+            <span className="size-3 rounded-full bg-[#28c840]" />
+          </div>
+          <div className="px-1">{brand}</div>
           <Sidebar items={t.nav} />
           <div className="mt-auto space-y-3">
             {pageLink}
@@ -152,7 +156,7 @@ export default async function PanelLayout({
           <div className="mx-auto w-full max-w-3xl space-y-2 px-4 pt-2 lg:px-10">
             <div className="lg:hidden">{pageLink}</div>
             {!ctx.business.published && (
-              <p className={`${banner} bg-[var(--card)] text-[var(--label)]`}>
+              <p className={`${banner} glass text-[var(--label)]`}>
                 <IconLock size={18} className="mt-0.5 shrink-0 text-[var(--tint)]" />
                 <span>
                   {t.lockedBanner[0]}
@@ -190,7 +194,7 @@ export default async function PanelLayout({
           </div>
 
           <main className="mx-auto w-full max-w-3xl px-4 pt-4 pb-10 lg:px-10 lg:pb-16">
-            <Reveal>{children}</Reveal>
+            <div className="ui-reveal">{children}</div>
           </main>
         </div>
       </div>

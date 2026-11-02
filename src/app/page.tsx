@@ -272,7 +272,7 @@ export default async function LandingPage() {
 
   return (
     <div
-      className={`min-h-dvh bg-[var(--bg)] font-sans text-[var(--label)]`}
+      className={`min-h-dvh font-sans text-[var(--label)]`}
     >
       <SmoothScroll />
       {/* texture carta leggera */}
@@ -291,7 +291,7 @@ export default async function LandingPage() {
       <header className="sticky top-0 z-40 border-b border-[var(--label)]/5 bg-[var(--bg)]/85 px-5 backdrop-blur-md">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between py-4">
         <p className="font-[family-name:var(--font-display)] text-xl font-semibold tracking-tight">
-          agenda<span className="italic text-[var(--tint)]">easy</span>
+          agenda<span className="text-[var(--tint)]">easy</span>
           <span className="text-[var(--tint)]">.</span>
         </p>
         <nav className="flex items-center gap-2 text-sm font-medium sm:gap-5">
@@ -354,7 +354,7 @@ export default async function LandingPage() {
         >
           <div className="absolute -inset-6 rounded-[2rem] bg-[var(--tint)]/10 [transform:rotate(-2deg)]" />
           <div className="relative rounded-3xl border border-[var(--label)]/10 bg-card p-5 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.25)]">
-            <p className="inline-block rounded-full bg-[var(--bg)] px-3 py-1 font-mono text-xs text-[var(--label)]/70">
+            <p className="inline-block rounded-full px-3 py-1 font-mono text-xs text-[var(--label)]/70">
               agendaeasy.it/studio-anna
             </p>
             <p className="mt-4 font-[family-name:var(--font-display)] text-lg font-semibold">
@@ -434,7 +434,7 @@ export default async function LandingPage() {
         <div className="mt-12 grid gap-10 md:grid-cols-3">
           {t.steps.map((step, i) => (
             <div key={step.title} data-bubble className="relative">
-              <p className="font-[family-name:var(--font-display)] text-6xl font-semibold italic text-[var(--tint)]/20">
+              <p className="font-[family-name:var(--font-display)] text-6xl font-semibold text-[var(--tint)]/20">
                 {i + 1}
               </p>
               <h3 className="mt-2 text-xl font-semibold">{step.title}</h3>
@@ -491,7 +491,7 @@ export default async function LandingPage() {
               <div
                 key={f.title}
                 data-bubble
-                className="bg-[var(--card)] p-7 transition-colors hover:bg-[var(--bg)]"
+                className="bg-[var(--card)] p-7 transition-colors hover:"
               >
                 <h3 className="font-semibold">{f.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-[var(--label)]/70">
@@ -570,7 +570,7 @@ export default async function LandingPage() {
         <div className="mx-auto w-full max-w-6xl">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <p className="font-[family-name:var(--font-display)] text-lg text-white">
-              agenda<span className="italic">easy</span>
+              agenda<span className="">easy</span>
               <span className="text-[var(--tint)]">.</span>
             </p>
             <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">

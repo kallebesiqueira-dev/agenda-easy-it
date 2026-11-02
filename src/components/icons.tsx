@@ -90,3 +90,12 @@ export const IconExternal = (p: IconProps) => (
 export const IconCalendarEmpty = (p: IconProps) => (
   <Base {...p}><rect x="3.5" y="5" width="17" height="15.5" rx="3" /><path d="M8 3v4M16 3v4M3.5 10h17" /><path d="M9.5 14.5h5" /></Base>
 );
+
+export function IconMail(p: IconProps) {
+  return (
+    <Base {...p}>
+      <rect x="3" y="5" width="18" height="14" rx="3" />
+      <path d="m4 7 8 6 8-6" />
+    </Base>
+  );
+}

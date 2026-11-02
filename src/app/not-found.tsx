@@ -17,8 +17,8 @@ export default async function NotFound() {
         };
 
   return (
-    <main className="flex ui-panel ui-grain relative min-h-dvh flex-col items-center justify-center bg-[var(--bg)] px-4 py-10 text-center text-zinc-900">
-      <p className="font-[family-name:var(--font-display)] text-8xl font-semibold text-[var(--tint)]/80 italic">404</p>
+    <main className="flex ui-panel ui-grain relative min-h-dvh flex-col items-center justify-center px-4 py-10 text-center text-zinc-900">
+      <p className="font-[family-name:var(--font-display)] text-8xl font-semibold text-[var(--tint)]/80 ">404</p>
       <h1 className="mt-2 font-[family-name:var(--font-display)] text-3xl font-semibold">{t.title}</h1>
       <p className="mt-1 max-w-sm text-sm text-zinc-500">{t.sub}</p>
       <Link

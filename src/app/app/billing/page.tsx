@@ -47,7 +47,7 @@ export default async function BillingPage() {
   );
 
   return (
-    <main className="flex ui-panel ui-grain relative min-h-dvh items-center justify-center bg-[var(--bg)] px-4 py-10 text-zinc-900">
+    <main className="flex ui-panel ui-grain relative min-h-dvh items-center justify-center px-4 py-10 text-zinc-900">
       <div className="w-full max-w-sm">
         <div className="rounded-[22px] bg-card p-6 shadow-lg sm:p-8">
           <div className="flex items-start justify-between gap-2">

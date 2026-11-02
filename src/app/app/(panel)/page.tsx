@@ -188,7 +188,7 @@ export default async function AgendaPage({ searchParams }: Props) {
             </span>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-1">
+        <div key={`${yy}-${mm}`} className="ui-month grid grid-cols-7 gap-1">
           {Array.from({ length: firstWeekday }).map((_, i) => (
             <span key={`pad-${i}`} />
           ))}
