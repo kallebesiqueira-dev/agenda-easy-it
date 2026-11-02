@@ -1,17 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Viewport } from "next";
+import { Inter } from "next/font/google";
+import { SilkBackground } from "@/components/silk-background";
 import { getLang } from "@/lib/i18n/server";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Stack di sistema SF Pro ovunque; Inter solo come fallback fuori da Apple.
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+export const viewport: Viewport = {
+  viewportFit: "cover",
+  themeColor: "#f6f3ee",
+  colorScheme: "light",
+};
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -44,9 +48,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={lang}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <SilkBackground />
+        {children}
+      </body>
     </html>
   );
 }

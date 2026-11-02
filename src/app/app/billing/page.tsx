@@ -1,3 +1,4 @@
+import { IconCheck } from "@/components/icons";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -20,10 +21,10 @@ export default async function BillingPage() {
           title: "Subscription",
           perMonth: "/month",
           bullets: [
-            "✓ Full access, no limits",
-            "✓ Online booking page",
-            "✓ Products and editable plans & promotions",
-            `✓ ${TRIAL_DAYS}-day free trial`,
+            "Full access, no limits",
+            "Online booking page",
+            "Products and editable plans & promotions",
+            `${TRIAL_DAYS}-day free trial`,
           ],
           back: "← Back to the dashboard",
         }
@@ -31,10 +32,10 @@ export default async function BillingPage() {
           title: "Abbonamento",
           perMonth: "/mese",
           bullets: [
-            "✓ Accesso completo, senza limiti",
-            "✓ Pagina di prenotazione online",
-            "✓ Prodotti e piani/promozioni editabili",
-            `✓ Prova gratuita di ${TRIAL_DAYS} giorni`,
+            "Accesso completo, senza limiti",
+            "Pagina di prenotazione online",
+            "Prodotti e piani/promozioni editabili",
+            `Prova gratuita di ${TRIAL_DAYS} giorni`,
           ],
           back: "← Torna al pannello",
         };
@@ -46,11 +47,11 @@ export default async function BillingPage() {
   );
 
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-zinc-100 px-4 text-zinc-900">
+    <main className="flex ui-panel ui-grain relative min-h-dvh items-center justify-center px-4 py-10 text-zinc-900">
       <div className="w-full max-w-sm">
-        <div className="rounded-2xl bg-white p-6 shadow-sm">
+        <div className="rounded-[22px] bg-card p-6 shadow-lg sm:p-8">
           <div className="flex items-start justify-between gap-2">
-            <h1 className="text-xl font-bold">{t.title}</h1>
+            <h1 className="tracking-[-0.02em] text-2xl font-semibold">{t.title}</h1>
             <LanguageSwitcher current={lang} />
           </div>
           <p className="mt-1 text-sm text-zinc-500">{ctx.business.name}</p>
@@ -65,7 +66,10 @@ export default async function BillingPage() {
             </p>
             <ul className="mt-2 space-y-1 text-sm text-zinc-600">
               {t.bullets.map((b) => (
-                <li key={b}>{b}</li>
+                <li key={b} className="flex items-center gap-2">
+                  <IconCheck size={16} className="shrink-0 text-emerald-700" />
+                  {b}
+                </li>
               ))}
             </ul>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { IconLogout } from "@/components/icons";
 import { useLang } from "@/lib/i18n/use-lang";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
@@ -19,9 +20,10 @@ export function SignOutButton() {
     <button
       type="button"
       onClick={signOut}
-      className="rounded-lg px-3 py-1.5 text-sm text-zinc-500 hover:bg-zinc-100"
+      className="flex min-h-10 items-center gap-2 rounded-full px-3 text-sm font-medium text-zinc-500 transition-colors hover:bg-tint/5 hover:text-zinc-900"
     >
-      {lang === "en" ? "Sign out" : "Esci"}
+      <IconLogout size={17} />
+      <span className="hidden sm:inline">{lang === "en" ? "Sign out" : "Esci"}</span>
     </button>
   );
 }

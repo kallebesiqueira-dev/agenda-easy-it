@@ -1,5 +1,7 @@
 "use client";
 
+import { IconCheck } from "@/components/icons";
+
 /**
  * Selettore lingua a tendina: mostra SOLO la bandiera corrente + freccia ▾.
  * Cliccando si apre il menu con le lingue; la scelta scrive il cookie `lang`
@@ -100,8 +102,8 @@ export function LanguageSwitcher({
 
   const trigger =
     variant === "dark"
-      ? "border-white/25 bg-white/10 text-white hover:bg-white/20"
-      : "border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50";
+      ? "border-white/25 bg-card/10 text-white hover:bg-card/20"
+      : "border-zinc-200 bg-card text-zinc-700 hover:bg-zinc-50";
 
   return (
     <div ref={rootRef} className="relative shrink-0">
@@ -137,7 +139,7 @@ export function LanguageSwitcher({
         <ul
           role="listbox"
           aria-label="Lingua / Language"
-          className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-xl border border-zinc-200 bg-white py-1 text-zinc-900 shadow-xl"
+          className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-xl border border-zinc-200 bg-card py-1 text-zinc-900 shadow-xl"
         >
           {OPTIONS.map((o) => (
             <li key={o.value}>
@@ -153,9 +155,7 @@ export function LanguageSwitcher({
                 <o.Flag className="h-3.5 w-5 shrink-0 rounded-[3px] ring-1 ring-black/10" />
                 <span className="flex-1">{o.label}</span>
                 {o.value === current && (
-                  <span aria-hidden className="text-emerald-600">
-                    ✓
-                  </span>
+                  <IconCheck size={16} className="text-emerald-700" />
                 )}
               </button>
             </li>

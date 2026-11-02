@@ -1,3 +1,4 @@
+import { AccentStyle } from "@/components/accent";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -6,6 +7,8 @@ import type { Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n/server";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { SupportChat } from "@/components/support-chat";
+import { IconAlert, IconExternal, IconLock, IconSparkle } from "@/components/icons";
+import { NavBar, Sidebar, TabBar } from "./panel-nav";
 import { SignOutButton } from "./sign-out-button";
 
 const COPY: Record<
@@ -18,6 +21,7 @@ const COPY: Record<
     subscribeNow: string;
     pastDue: string;
     payNow: string;
+    more: string;
   }
 > = {
   it: {
@@ -32,7 +36,7 @@ const COPY: Record<
     ],
     notPublished: " · non pubblicata",
     lockedBanner: [
-      "🔒 La tua pagina ",
+      "La tua pagina ",
       "non è ancora pubblica",
       " — i clienti non possono prenotare. Quando hai finito di inserire servizi, team e orari, ",
       "pubblicala dalle Impostazioni",
@@ -41,6 +45,7 @@ const COPY: Record<
     subscribeNow: "Abbonati ora",
     pastDue: "Fattura scaduta — l'accesso verrà bloccato a breve. ",
     payNow: "Paga ora",
+    more: "Altro",
   },
   en: {
     nav: [
@@ -54,7 +59,7 @@ const COPY: Record<
     ],
     notPublished: " · not published",
     lockedBanner: [
-      "🔒 Your page ",
+      "Your page ",
       "isn't public yet",
       " — clients can't book. Once you've added services, team and hours, ",
       "publish it from Settings",
@@ -63,6 +68,7 @@ const COPY: Record<
     subscribeNow: "Subscribe now",
     pastDue: "Invoice overdue — access will be blocked soon. ",
     payNow: "Pay now",
+    more: "More",
   },
 };
 
@@ -83,72 +89,118 @@ export default async function PanelLayout({
   );
   if (!access.allowed) redirect("/app/billing");
 
+  const initial = ctx.business.name.trim().charAt(0).toUpperCase() || "A";
+
+  const brand = (
+    <Link href="/app" className="flex items-center gap-3 rounded-[12px]">
+      <span className="grid size-11 shrink-0 place-items-center rounded-[13px] bg-[linear-gradient(160deg,var(--tint-light),var(--tint-deep))] text-[19px] font-semibold text-[var(--on-tint)] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12),inset_0_1px_0_rgb(255_255_255/0.15)]">
+        {initial}
+      </span>
+      <span className="min-w-0">
+        <span className="ios-headline block truncate">{ctx.business.name}</span>
+        <span className="block text-[10.5px] font-semibold tracking-[0.16em] text-[var(--label-2)] uppercase">AgendaEasy</span>
+      </span>
+    </Link>
+  );
+
+  const pageLink = (
+    <Link
+      href={`/${ctx.business.slug}`}
+      target="_blank"
+      className="glass ios-row group justify-between rounded-full text-[15px]"
+    >
+      <span className="flex min-w-0 items-center gap-2.5">
+        <span
+          className={`size-2 shrink-0 rounded-full ${ctx.business.published ? "bg-[var(--green)] shadow-[0_0_10px_var(--green)]" : "bg-[var(--label-3)]"}`}
+        />
+        <span className="truncate text-[var(--label-2)]">
+          /{ctx.business.slug}
+          {!ctx.business.published && t.notPublished}
+        </span>
+      </span>
+      <IconExternal size={16} className="shrink-0 text-[var(--tint)]" />
+    </Link>
+  );
+
+  const banner = "ios-subhead flex items-start gap-3 rounded-[16px] px-4 py-3";
+
   return (
-    <div className="min-h-dvh bg-zinc-100 text-zinc-900">
-      <header className="bg-white shadow-sm">
-        <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 py-3">
-          <div>
-            <h1 className="font-bold">{ctx.business.name}</h1>
-            <Link
-              href={`/${ctx.business.slug}`}
-              className="text-xs text-zinc-500 underline"
-              target="_blank"
-            >
-              /{ctx.business.slug}
-              {!ctx.business.published && t.notPublished}
-            </Link>
+    <div className="ui-panel min-h-dvh text-[var(--label)]">
+      <AccentStyle color={ctx.business.brand_primary} />
+      <div className="flex w-full">
+        {/* Sidebar iPadOS (desktop) */}
+        <aside className="glass sticky top-4 m-4 mr-0 hidden h-[calc(100dvh-2rem)] w-[272px] shrink-0 flex-col gap-7 rounded-[26px] px-4 pt-4 pb-5 lg:flex">
+          <div className="flex gap-2 px-1" aria-hidden>
+            <span className="size-3 rounded-full bg-[#ff5f57]" />
+            <span className="size-3 rounded-full bg-[#febc2e]" />
+            <span className="size-3 rounded-full bg-[#28c840]" />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="px-1">{brand}</div>
+          <Sidebar items={t.nav} />
+          <div className="mt-auto space-y-3">
+            {pageLink}
+            <div className="flex items-center justify-between px-1">
+              <LanguageSwitcher current={lang} />
+              <SignOutButton />
+            </div>
+          </div>
+        </aside>
+
+        <div className="min-w-0 flex-1 pb-28 lg:pb-0">
+          <NavBar>
+            <div className="lg:hidden">{brand}</div>
+          </NavBar>
+          <div className="flex items-center justify-end gap-1 px-4 lg:hidden">
             <LanguageSwitcher current={lang} />
             <SignOutButton />
           </div>
+
+          <div className="mx-auto w-full max-w-3xl space-y-2 px-4 pt-2 lg:px-10">
+            <div className="lg:hidden">{pageLink}</div>
+            {!ctx.business.published && (
+              <p className={`${banner} glass text-[var(--label)]`}>
+                <IconLock size={18} className="mt-0.5 shrink-0 text-[var(--tint)]" />
+                <span>
+                  {t.lockedBanner[0]}
+                  <strong>{t.lockedBanner[1]}</strong>
+                  {t.lockedBanner[2]}
+                  <Link href="/app/settings" className="font-semibold text-[var(--tint)]">
+                    {t.lockedBanner[3]}
+                  </Link>
+                  .
+                </span>
+              </p>
+            )}
+            {access.status === "trialing" && (
+              <p className={`${banner} bg-[var(--tint-soft)] text-[var(--label)]`}>
+                <IconSparkle size={18} className="mt-0.5 shrink-0 text-[var(--tint)]" />
+                <span>
+                  {t.trial(access.trialDaysLeft)}
+                  <Link href="/app/billing" className="font-semibold text-[var(--tint)]">
+                    {t.subscribeNow}
+                  </Link>
+                </span>
+              </p>
+            )}
+            {access.status === "past_due" && (
+              <p className={`${banner} bg-red-50 text-[var(--red)]`}>
+                <IconAlert size={18} className="mt-0.5 shrink-0" />
+                <span>
+                  {t.pastDue}
+                  <Link href="/app/billing" className="font-semibold underline underline-offset-4">
+                    {t.payNow}
+                  </Link>
+                </span>
+              </p>
+            )}
+          </div>
+
+          <main className="mx-auto w-full max-w-3xl px-4 pt-4 pb-10 lg:px-10 lg:pb-16">
+            <div className="ui-reveal">{children}</div>
+          </main>
         </div>
-        <nav className="mx-auto flex w-full max-w-3xl gap-1 overflow-x-auto px-4 pb-2">
-          {t.nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="rounded-lg px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-100"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-      </header>
-      {!ctx.business.published && (
-        <div className="bg-sky-50 text-sky-900">
-          <p className="mx-auto w-full max-w-3xl px-4 py-2 text-sm">
-            {t.lockedBanner[0]}
-            <strong>{t.lockedBanner[1]}</strong>
-            {t.lockedBanner[2]}
-            <Link href="/app/settings" className="font-medium underline">
-              {t.lockedBanner[3]}
-            </Link>
-            .
-          </p>
-        </div>
-      )}
-      {access.status === "trialing" && (
-        <div className="bg-amber-50 text-amber-800">
-          <p className="mx-auto w-full max-w-3xl px-4 py-2 text-sm">
-            {t.trial(access.trialDaysLeft)}
-            <Link href="/app/billing" className="font-medium underline">
-              {t.subscribeNow}
-            </Link>
-          </p>
-        </div>
-      )}
-      {access.status === "past_due" && (
-        <div className="bg-red-50 text-red-700">
-          <p className="mx-auto w-full max-w-3xl px-4 py-2 text-sm">
-            {t.pastDue}
-            <Link href="/app/billing" className="font-medium underline">
-              {t.payNow}
-            </Link>
-          </p>
-        </div>
-      )}
-      <main className="mx-auto w-full max-w-3xl px-4 py-6">{children}</main>
+      </div>
+      <TabBar items={t.nav} moreLabel={t.more} />
       <SupportChat />
     </div>
   );

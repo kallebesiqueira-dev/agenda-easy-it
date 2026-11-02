@@ -1,32 +1,288 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   Agenda Easy — design system "iOS nativo"
+   Gerarchia di sfondi in stile UIKit (systemGroupedBackground →
+   secondarySystemGroupedBackground), un solo tint raffinato, dark mode
+   completa via prefers-color-scheme. La scala zinc di Tailwind punta ai
+   colori di sistema, così tutte le schermate seguono la stessa gerarchia.
+   ========================================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  /* Accento del business: sovrascritto lato server da brand_primary. */
+  --accent: #5fae8a;
+  --bg: #f6f3ee;               /* panna */
+  --card: rgb(255 255 255 / 0.62);
+  --card-2: rgb(255 255 255 / 0.78);
+  --glass-solid: rgb(255 255 255 / 0.86);
+  --glass-border: rgb(255 255 255 / 0.75);
+  --glass-edge: rgb(40 36 30 / 0.07);
+  --fill: rgb(60 55 45 / 0.07);
+  --fill-2: rgb(60 55 45 / 0.045);
+  --label: #1d1d1f;
+  --label-2: rgb(60 60 67 / 0.68);
+  --label-3: rgb(60 60 67 / 0.4);
+  --separator: rgb(60 55 45 / 0.1);
+  --green: #1f9d5c;
+  --red: #d8443a;
+  --orange: #c47a12;
+  --blue: #2f6fe0;
+  --material: rgb(250 248 244 / 0.72);
+  --spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --background: var(--bg);
+  --foreground: var(--label);
+}
+
+/* Sfumature derivate: ridefinite in ogni .accent-scope così un accento locale funziona. */
+:root, .accent-scope {
+  --tint: oklch(from var(--accent) min(l, 0.56) c h);          /* testo/link leggibili su chiaro */
+  --tint-deep: oklch(from var(--accent) min(calc(l - 0.12), 0.5) c h);
+  --tint-light: oklch(from var(--accent) max(calc(l + 0.1), 0.78) calc(c * 0.8) h);
+  --tint-soft: color-mix(in oklab, var(--accent) 14%, transparent);
+  --tint-glow: color-mix(in oklab, var(--accent) 45%, transparent);
+  /* bianco o quasi-nero in base alla luminosità dell'accento */
+  --on-tint: oklch(from var(--accent) clamp(0.16, calc((0.7 - l) * 1000), 1) 0 0);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg);
+  --color-foreground: var(--label);
+  --color-card: var(--card);
+  --color-tint: var(--tint);
+  --color-label: var(--label);
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", var(--font-inter), "Helvetica Neue", system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", var(--font-inter), "Helvetica Neue", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+
+  /* zinc → colori di sistema (seguono light/dark) */
+  --color-zinc-50: var(--card-2);
+  --color-zinc-100: var(--fill);
+  --color-zinc-200: var(--separator);
+  --color-zinc-300: var(--label-3);
+  --color-zinc-400: var(--label-3);
+  --color-zinc-500: var(--label-2);
+  --color-zinc-600: var(--label-2);
+  --color-zinc-700: var(--label);
+  --color-zinc-800: var(--label);
+  --color-zinc-900: var(--label);
+  --color-zinc-950: var(--label);
+
+  --color-emerald-50: color-mix(in oklab, var(--accent) 10%, transparent);
+  --color-emerald-100: color-mix(in oklab, var(--accent) 16%, transparent);
+  --color-emerald-200: color-mix(in oklab, var(--accent) 28%, transparent);
+  --color-emerald-400: var(--tint);
+  --color-emerald-500: var(--tint);
+  --color-emerald-600: var(--tint);
+  --color-emerald-700: var(--tint);
+  --color-emerald-800: var(--tint-deep);
+  --color-emerald-900: var(--tint-deep);
+
+  --color-red-50: color-mix(in srgb, var(--red) 10%, transparent);
+  --color-red-100: color-mix(in srgb, var(--red) 16%, transparent);
+  --color-red-200: color-mix(in srgb, var(--red) 30%, transparent);
+  --color-red-500: var(--red);
+  --color-red-600: var(--red);
+  --color-red-700: var(--red);
+  --color-red-800: var(--red);
+
+  --color-blue-50: color-mix(in srgb, var(--blue) 14%, transparent);
+  --color-blue-100: color-mix(in srgb, var(--blue) 18%, transparent);
+  --color-blue-800: var(--blue);
+  --color-sky-50: var(--tint-soft);
+  --color-sky-900: var(--tint);
+  --color-amber-50: color-mix(in srgb, var(--orange) 12%, transparent);
+  --color-amber-800: var(--orange);
+  --color-orange-600: var(--orange);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  /* 8pt grid + raggi "continui" generosi */
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.375rem;
+  --radius-3xl: 1.75rem;
+  --shadow-sm: 0 0 0 0.5px rgb(0 0 0 / 0.04);
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -12px rgb(0 0 0 / 0.12);
+  --shadow-md: 0 2px 6px rgb(0 0 0 / 0.04), 0 12px 32px -12px rgb(0 0 0 / 0.18);
+  --shadow-lg: 0 4px 12px rgb(0 0 0 / 0.04), 0 24px 64px -20px rgb(0 0 0 / 0.28);
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  background: transparent;
+  color: var(--label);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.294;
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Campo password: nasconde l'occhio nativo di Edge/IE — resta solo il
-   nostro bottone emoji (👁️/🙈) per mostrare/nascondere la password. */
+/* ---- Scala tipografica iOS ---- */
+.ios-large-title { font: 700 34px/41px var(--font-display); letter-spacing: -0.028em; }
+.ios-title1 { font: 700 28px/34px var(--font-display); letter-spacing: -0.026em; }
+.ios-title2 { font: 600 22px/28px var(--font-sans); letter-spacing: -0.02em; }
+.ios-title3 { font: 600 20px/25px var(--font-sans); letter-spacing: -0.017em; }
+.ios-headline { font: 600 17px/22px var(--font-sans); letter-spacing: -0.024em; }
+.ios-body { font: 400 17px/22px var(--font-sans); letter-spacing: -0.024em; }
+.ios-callout { font: 400 16px/21px var(--font-sans); letter-spacing: -0.02em; }
+.ios-subhead { font: 400 15px/20px var(--font-sans); letter-spacing: -0.015em; }
+.ios-footnote { font: 400 13px/18px var(--font-sans); letter-spacing: -0.006em; }
+.ios-caption { font: 400 12px/16px var(--font-sans); letter-spacing: 0; }
+.ios-section-header { font: 400 13px/18px var(--font-sans); text-transform: uppercase; letter-spacing: 0.02em; color: var(--label-2); padding: 0 16px 6px; }
+.tabular, time { font-variant-numeric: tabular-nums; }
+
+/* Materiale traslucido (nav bar, tab bar, sheet) */
+.ios-material {
+  background: var(--material);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+.ios-hairline-b { box-shadow: inset 0 -0.5px 0 var(--separator); }
+.ios-hairline-t { box-shadow: inset 0 0.5px 0 var(--separator); }
+
+/* Inset grouped list */
+.ios-group { background: var(--card); border-radius: 22px; overflow: hidden; }
+.ios-group > * + * { position: relative; }
+.ios-group > * + *::before {
+  content: ""; position: absolute; top: 0; right: 0; left: 16px;
+  height: 0.5px; background: var(--separator); z-index: 1;
+}
+.ios-row { min-height: 44px; display: flex; align-items: center; gap: 12px; padding: 11px 16px; }
+
+::selection { background: var(--tint-soft); }
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--tint) 55%, transparent);
+  outline-offset: 2px;
+  border-radius: 10px;
+}
+
+:where(button, a, [role="button"], label:has(input), summary) { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+:where(button:disabled) { cursor: not-allowed; }
+
+/* Press scale 0.97 con molla */
+:where(button:not(:disabled), a[class*="rounded"], .ui-press) {
+  transition: transform 0.45s var(--spring), background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease, box-shadow 0.3s ease;
+}
+:where(button:not(:disabled), a[class*="rounded"], .ui-press):active {
+  transform: scale(0.97);
+  transition-duration: 0.1s;
+}
+
+/* ---- Controlli nativi ---- */
+.ui-panel :where(button, a[class*="rounded"], input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]), select) { min-height: 44px; }
+
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]):not([type="range"]), select, textarea) {
+  background-color: var(--fill-2);
+  border-color: transparent !important;
+  color: var(--label);
+  border-radius: 12px;
+  font-size: 17px;
+  transition: box-shadow 0.25s var(--spring), background-color 0.2s ease;
+}
+:where(input, select, textarea)::placeholder { color: var(--label-3); }
+:where(input:not([type="checkbox"]):not([type="radio"]), select, textarea):focus {
+  outline: none;
+  background-color: var(--card);
+  box-shadow: 0 0 0 2px var(--tint), 0 0 0 6px var(--tint-soft) !important;
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 9 5-5 5 5M7 15l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+/* Toggle iOS per ogni checkbox */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex-shrink: 0;
+  width: 51px;
+  height: 31px;
+  border-radius: 999px;
+  background: var(--fill);
+  transition: background-color 0.3s var(--spring);
+  vertical-align: middle;
+}
+input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 3px 8px rgb(0 0 0 / 0.15), 0 3px 1px rgb(0 0 0 / 0.06);
+  transition: transform 0.45s var(--spring), width 0.2s var(--spring);
+}
+input[type="checkbox"]:active::after { width: 33px; }
+input[type="checkbox"]:checked { background: linear-gradient(180deg, var(--tint-light), var(--tint-deep)); }
+input[type="checkbox"]:checked::after { transform: translateX(20px); }
+input[type="checkbox"]:checked:active::after { transform: translateX(14px); }
+input[type="radio"] { accent-color: var(--tint); width: 20px; height: 20px; }
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.45; cursor: pointer; }
+input[type="time"], input[type="date"] { font-variant-numeric: tabular-nums; }
+
+/* Scrollbar sottili come macOS */
+* { scrollbar-width: thin; scrollbar-color: var(--label-3) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--label-3); border-radius: 999px; border: 3px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-track { background: transparent; }
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Hover morbido solo con puntatore fine */
+@media (hover: hover) {
+  .ui-lift { transition: transform 0.5s var(--spring), box-shadow 0.4s ease; }
+  .ui-lift:hover { box-shadow: var(--shadow-md); }
+}
+
+/* Swipe actions: la riga scorre orizzontalmente e rivela le azioni */
+.ios-swipe { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
+.ios-swipe::-webkit-scrollbar { display: none; }
+.ios-swipe > * { scroll-snap-align: start; flex-shrink: 0; }
+
+/* Skeleton */
+@keyframes ui-shimmer { to { background-position: -200% 0; } }
+.ui-skeleton {
+  background: linear-gradient(90deg, var(--fill-2) 25%, var(--fill) 50%, var(--fill-2) 75%);
+  background-size: 200% 100%;
+  animation: ui-shimmer 1.4s linear infinite;
+  border-radius: 10px;
+}
+
+.safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 8px); }
+.safe-top { padding-top: env(safe-area-inset-top); }
+
+/* Lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  :where(button, a, .ui-press):active { transform: none !important; }
+}
+
+/* Campo password: nasconde l'occhio nativo di Edge/IE */
 input::-ms-reveal,
 input::-ms-clear {
   display: none;
@@ -101,4 +357,120 @@ input::-ms-clear {
     animation: none;
     opacity: 0.6;
   }
+}
+
+/* ==========================================================================
+   v3 — vetro scuro su seta verde
+   ========================================================================== */
+html { background: var(--bg); }
+.text-white { color: #fff; }
+.bg-tint.text-white, .bg-tint .text-white { color: var(--on-tint) !important; }
+
+/* Pannelli di vetro: ogni superficie "card" diventa vetro smerigliato */
+.bg-card, .ios-group, .glass {
+  background-color: var(--card);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(140%);
+  box-shadow: inset 0 0 0 1px var(--glass-edge), inset 0 1px 0 var(--glass-border), 0 1px 2px rgb(40 36 30 / 0.04), 0 18px 44px -22px rgb(60 50 35 / 0.22);
+}
+.ios-group { border-radius: 22px; }
+.ios-group > * { background-color: transparent !important; }
+.ios-material {
+  background: var(--material);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  backdrop-filter: blur(28px) saturate(160%);
+}
+
+/* Pulsanti primari: gradiente salvia → verde profondo */
+.bg-tint {
+  background-color: var(--tint-deep);
+  background-image: linear-gradient(180deg, var(--tint-light) 0%, var(--accent) 50%, var(--tint-deep) 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.28), 0 8px 24px -10px var(--tint-glow);
+  color: var(--on-tint) !important;
+}
+.bg-tint * { color: inherit; }
+
+/* Riflesso di luce al passaggio sul vetro */
+@media (hover: hover) {
+  .bg-card, .ios-group > *, .glass-sheen {
+    background-image: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.5) 50%, transparent 65%);
+    background-size: 250% 100%;
+    background-position: 130% 0;
+    background-repeat: no-repeat;
+    transition: background-position 0.9s var(--expo), box-shadow 0.4s ease;
+  }
+  .bg-card:hover, .ios-group > *:hover, .glass-sheen:hover { background-position: -30% 0; }
+}
+
+/* Ingresso: vetro che appare e si mette a fuoco, a cascata. Solo CSS → nessun mismatch di idratazione */
+@keyframes glass-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); filter: blur(10px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+.ui-reveal > * > *,
+.ui-reveal-self > * { animation: glass-in 0.8s var(--expo) both; }
+.ui-reveal > * > *:nth-child(2), .ui-reveal-self > *:nth-child(2) { animation-delay: 60ms; }
+.ui-reveal > * > *:nth-child(3), .ui-reveal-self > *:nth-child(3) { animation-delay: 120ms; }
+.ui-reveal > * > *:nth-child(4), .ui-reveal-self > *:nth-child(4) { animation-delay: 180ms; }
+.ui-reveal > * > *:nth-child(5), .ui-reveal-self > *:nth-child(5) { animation-delay: 240ms; }
+.ui-reveal > * > *:nth-child(n+6), .ui-reveal-self > *:nth-child(n+6) { animation-delay: 300ms; }
+@keyframes month-in { from { opacity: 0; transform: translateX(var(--dir, 16px)); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+.ui-month { animation: month-in 0.6s var(--expo) both; }
+
+/* Sfondo: seta verde che scorre lentamente (solo transform → GPU) */
+.silk { position: fixed; inset: 0; z-index: -1; overflow: hidden; background: radial-gradient(120% 90% at 80% 0%, #fbf9f5 0%, #f4f1eb 55%, #ebe8e2 100%); pointer-events: none; }
+.silk svg { position: absolute; width: 160%; height: 160%; left: -30%; top: -30%; will-change: transform; }
+.silk .w1 { animation: silk-a 38s ease-in-out infinite alternate; }
+.silk .w2 { animation: silk-b 46s ease-in-out infinite alternate; }
+.silk::after { content: ""; position: absolute; inset: 0; background: radial-gradient(80% 70% at 50% 40%, transparent 50%, rgb(120 110 95 / 0.08) 100%); }
+@keyframes silk-a { to { transform: translate3d(-6%, 4%, 0) rotate(-3deg) scale(1.05); } }
+@keyframes silk-b { to { transform: translate3d(5%, -5%, 0) rotate(4deg) scale(1.08); } }
+
+/* File input e color picker */
+input[type="file"] { color: var(--label-2); font-size: 14px; }
+input[type="file"]::file-selector-button {
+  margin-right: 12px; min-height: 36px; padding: 0 16px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--glass-border); background: var(--fill-2); color: var(--label); font: 600 14px var(--font-sans);
+  transition: background-color 0.2s ease;
+}
+input[type="file"]::file-selector-button:hover { background: var(--fill); }
+input[type="color"] { appearance: none; -webkit-appearance: none; border: 0; padding: 4px; border-radius: 12px; background: var(--fill-2); cursor: pointer; box-shadow: inset 0 0 0 1px var(--glass-border); }
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+input[type="color"]::-webkit-color-swatch { border: 0; border-radius: 9px; }
+input[type="color"]::-moz-color-swatch { border: 0; border-radius: 9px; }
+
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]):not([type="range"]), select, textarea) {
+  background-color: rgb(255 255 255 / 0.7);
+  box-shadow: inset 0 0 0 1px var(--glass-border);
+}
+input[type="time"]::-webkit-calendar-picker-indicator, input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+select option { background: #fff; color: var(--label); }
+
+.wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.035em; }
+.wordmark em { font-style: normal; font-weight: 600; color: var(--tint); }
+
+@media (prefers-reduced-motion: reduce) {
+  .silk svg, .ui-reveal > * > *, .ui-reveal-self > *, .ui-month { animation: none !important; }
+}
+
+/* ---------- Landing ---------- */
+.lp-title { font: 700 clamp(44px, 8.4vw, 124px)/0.95 var(--font-display); letter-spacing: -0.045em; }
+.lp-h2 { font: 700 clamp(34px, 5.2vw, 72px)/1 var(--font-display); letter-spacing: -0.04em; }
+.lp-word { display: inline-block; animation: lp-rise 1.1s var(--expo) both; }
+@keyframes lp-rise { from { opacity: 0; transform: translateY(0.5em); filter: blur(8px); } }
+.lp-fade { animation: glass-in 1s var(--expo) both; }
+.lp-phone { border-radius: 46px; padding: 10px; background: linear-gradient(160deg, #2b2b2e, #0f0f11); box-shadow: 0 0 0 1px rgb(0 0 0 / 0.5), inset 0 0 0 1.5px rgb(255 255 255 / 0.12), 0 40px 80px -30px rgb(40 30 20 / 0.45); }
+.lp-phone-screen { border-radius: 37px; overflow: hidden; background: var(--bg); position: relative; }
+.lp-mac { border-radius: 18px; padding: 10px 10px 14px; background: linear-gradient(180deg, #d9d8d6, #bdbcb9); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.6), 0 50px 90px -40px rgb(40 30 20 / 0.45); }
+.lp-mac-screen { border-radius: 10px; overflow: hidden; background: var(--bg); }
+.lp-mac-foot { height: 14px; margin: 0 -6%; border-radius: 0 0 22px 22px; background: linear-gradient(180deg, #cfcecb, #a9a8a4); box-shadow: 0 20px 30px -18px rgb(40 30 20 / 0.5); }
+.lp-screen-bg { background: radial-gradient(120% 80% at 80% 0%, color-mix(in oklab, var(--accent) 16%, #fbf9f5), #f4f1eb 60%); }
+.lp-hscroll { scrollbar-width: none; }
+.lp-hscroll::-webkit-scrollbar { display: none; }
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .js-story .story-stage { position: relative; height: 100svh; }
+  .js-story .story-step { position: absolute; inset: 0; opacity: 0; visibility: hidden; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-word, .lp-fade { animation: none; }
 }

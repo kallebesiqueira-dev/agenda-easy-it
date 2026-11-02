@@ -1,5 +1,6 @@
 "use client";
 
+import { IconX } from "@/components/icons";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { Weekday } from "@/types/database";
@@ -34,7 +35,7 @@ const COPY: Record<
     to: "alle",
     saving: "Salvataggio…",
     saveHours: "Salva orari",
-    saved: "Salvato ✓",
+    saved: "Salvato",
     breaks: "Pause",
     breaksSub:
       "Intervalli senza appuntamenti (es.: pranzo) — per tutto il team o per un professionista specifico.",
@@ -53,7 +54,7 @@ const COPY: Record<
     to: "to",
     saving: "Saving…",
     saveHours: "Save hours",
-    saved: "Saved ✓",
+    saved: "Saved",
     breaks: "Breaks",
     breaksSub:
       "Intervals with no appointments (e.g. lunch) — for the whole team or a specific professional.",
@@ -153,8 +154,8 @@ export function HoursManager({
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl bg-white p-4 shadow-sm">
-        <h2 className="mb-3 font-semibold">{t.heading}</h2>
+      <section className="rounded-[18px] bg-card p-4">
+        <h2 className="mb-3 ios-large-title">{t.heading}</h2>
         <ul className="space-y-2">
           {week.map((row) => (
             <li
@@ -182,7 +183,7 @@ export function HoursManager({
                     onChange={(e) =>
                       updateDay(row.weekday, { opens_at: e.target.value })
                     }
-                    className="rounded-lg border border-zinc-300 px-2 py-1"
+                    className="rounded-lg border border-zinc-200 px-2 py-1 hover:border-zinc-300"
                   />
                   <span className="text-zinc-400">{t.to}</span>
                   <input
@@ -191,7 +192,7 @@ export function HoursManager({
                     onChange={(e) =>
                       updateDay(row.weekday, { closes_at: e.target.value })
                     }
-                    className="rounded-lg border border-zinc-300 px-2 py-1"
+                    className="rounded-lg border border-zinc-200 px-2 py-1 hover:border-zinc-300"
                   />
                 </>
               )}
@@ -215,7 +216,7 @@ export function HoursManager({
                 () => setSaved(true)
               )
             }
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+            className="rounded-full bg-tint px-4 py-2 text-sm font-medium text-white disabled:opacity-60 ui-press hover:bg-emerald-700"
           >
             {pending ? t.saving : t.saveHours}
           </button>
@@ -223,7 +224,7 @@ export function HoursManager({
         </div>
       </section>
 
-      <section className="rounded-2xl bg-white p-4 shadow-sm">
+      <section className="rounded-[18px] bg-card p-4">
         <h2 className="mb-1 font-semibold">{t.breaks}</h2>
         <p className="mb-3 text-sm text-zinc-500">{t.breaksSub}</p>
 
@@ -241,10 +242,10 @@ export function HoursManager({
                 type="button"
                 disabled={pending}
                 onClick={() => run(() => deleteBreak(b.id))}
-                className="rounded px-2 py-0.5 text-zinc-400 hover:text-red-600"
+                className="grid size-11 place-items-center rounded-full text-zinc-400 hover:bg-red-50 hover:text-red-600"
                 aria-label={t.removeBreak}
               >
-                ✕
+                <IconX size={16} />
               </button>
             </li>
           ))}
@@ -272,7 +273,7 @@ export function HoursManager({
             <select
               value={breakProfessional}
               onChange={(e) => setBreakProfessional(e.target.value)}
-              className="rounded-lg border border-zinc-300 bg-white px-2 py-1.5 text-sm"
+              className="rounded-lg border border-zinc-200 bg-card px-2 py-1.5 text-sm hover:border-zinc-300"
             >
               <option value="">{t.allTeam}</option>
               {professionals.map((p) => (
@@ -287,7 +288,7 @@ export function HoursManager({
             <select
               value={breakWeekday}
               onChange={(e) => setBreakWeekday(Number(e.target.value) as Weekday)}
-              className="rounded-lg border border-zinc-300 bg-white px-2 py-1.5 text-sm"
+              className="rounded-lg border border-zinc-200 bg-card px-2 py-1.5 text-sm hover:border-zinc-300"
             >
               {WEEKDAYS.map((d) => (
                 <option key={d} value={d}>
@@ -303,7 +304,7 @@ export function HoursManager({
               required
               value={breakStart}
               onChange={(e) => setBreakStart(e.target.value)}
-              className="rounded-lg border border-zinc-300 px-2 py-1.5 text-sm"
+              className="rounded-lg border border-zinc-200 px-2 py-1.5 text-sm hover:border-zinc-300"
             />
           </label>
           <label className="block">
@@ -313,13 +314,13 @@ export function HoursManager({
               required
               value={breakEnd}
               onChange={(e) => setBreakEnd(e.target.value)}
-              className="rounded-lg border border-zinc-300 px-2 py-1.5 text-sm"
+              className="rounded-lg border border-zinc-200 px-2 py-1.5 text-sm hover:border-zinc-300"
             />
           </label>
           <button
             type="submit"
             disabled={pending}
-            className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-60"
+            className="rounded-full bg-tint px-3 py-1.5 text-sm font-medium text-white disabled:opacity-60 ui-press hover:bg-emerald-700"
           >
             {t.addBreak}
           </button>

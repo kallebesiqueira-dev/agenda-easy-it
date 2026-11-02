@@ -6,6 +6,7 @@
  * sulla pagina pubblica (niente durata, nessuna prenotazione).
  */
 
+import { IconBag, IconScissors } from "@/components/icons";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { ItemType, Service } from "@/types/database";
@@ -150,17 +151,23 @@ export function ServicesManager({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold">{t.heading}</h2>
+        <h2 className="ios-large-title">{t.heading}</h2>
         <button
           type="button"
           onClick={() => setEditing("new")}
-          className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white"
+          className="rounded-full bg-tint px-3 py-1.5 text-sm font-medium text-white ui-press hover:bg-emerald-700"
         >
           {tab === "service" ? t.newService : t.newProduct}
         </button>
       </div>
 
-      <div className="mb-4 flex gap-1 rounded-xl bg-zinc-200/70 p-1 text-sm font-medium">
+      <div role="tablist" className="relative grid grid-cols-2 rounded-[9px] bg-[var(--fill)] p-0.5 text-[13px] font-semibold">
+        <span
+          aria-hidden
+          className={`absolute inset-y-0.5 left-0.5 w-[calc(50%-2px)] rounded-[7px] bg-[var(--card)] shadow-[0_3px_8px_rgb(0_0_0/0.12),0_3px_1px_rgb(0_0_0/0.04)] transition-transform duration-500 ease-[var(--spring)] dark:bg-[var(--card-2)] ${
+            tab === "product" ? "translate-x-full" : ""
+          }`}
+        />
         {(
           [
             ["service", t.tabServices],
@@ -174,9 +181,9 @@ export function ServicesManager({
               setTab(value);
               setEditing(null);
             }}
-            className={`flex-1 rounded-lg px-3 py-1.5 transition-colors ${
-              tab === value ? "bg-white shadow-sm" : "text-zinc-500"
-            }`}
+            role="tab"
+            aria-selected={tab === value}
+            className="relative z-10 min-h-8 rounded-[7px] px-3 active:scale-100"
           >
             {label}
           </button>
@@ -199,7 +206,7 @@ export function ServicesManager({
       )}
 
       {visible.length === 0 && !editing ? (
-        <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm">
+        <p className="rounded-[18px] bg-card p-8 text-center text-sm text-zinc-500">
           {tab === "service" ? t.emptyServices : t.emptyProducts}
         </p>
       ) : (
@@ -207,7 +214,7 @@ export function ServicesManager({
           {visible.map((s) => (
             <li
               key={s.id}
-              className={`flex items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow-sm ${s.active ? "" : "opacity-60"}`}
+              className={`flex items-center justify-between gap-3 rounded-[18px] bg-card p-4 ${s.active ? "" : "opacity-60"}`}
             >
               {s.image_path ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -217,8 +224,8 @@ export function ServicesManager({
                   className="size-12 shrink-0 rounded-xl object-cover"
                 />
               ) : (
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-300">
-                  {s.item_type === "product" ? "🛍️" : "✂️"}
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-400">
+                  {s.item_type === "product" ? <IconBag size={22} /> : <IconScissors size={22} />}
                 </div>
               )}
               <div className="flex-1">
@@ -238,7 +245,7 @@ export function ServicesManager({
               <button
                 type="button"
                 onClick={() => setEditing(s.id)}
-                className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm"
+                className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm hover:border-zinc-300"
               >
                 {t.edit}
               </button>
@@ -321,7 +328,7 @@ function ServiceForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="mb-4 space-y-3 rounded-2xl bg-white p-4 shadow-sm"
+      className="mb-4 space-y-3 rounded-[18px] bg-card p-4"
     >
       <p className="font-semibold">{service ? editTitle : newTitle}</p>
       <label className="block">
@@ -331,7 +338,7 @@ function ServiceForm({
           maxLength={80}
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+          className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
           placeholder={isProduct ? t.productNamePh : t.namePh}
         />
       </label>
@@ -343,7 +350,7 @@ function ServiceForm({
           maxLength={500}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+          className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
           placeholder={isProduct ? t.productDescriptionPh : t.descriptionPh}
         />
       </label>
@@ -355,7 +362,7 @@ function ServiceForm({
             inputMode="decimal"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+            className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
             placeholder="45,00"
           />
         </label>
@@ -365,7 +372,7 @@ function ServiceForm({
             <select
               value={duration}
               onChange={(e) => setDuration(Number(e.target.value))}
-              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 outline-none focus:border-zinc-900"
+              className="w-full rounded-lg border border-zinc-200 bg-card px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
             >
               {DURATIONS.map((d) => (
                 <option key={d} value={d}>
@@ -387,8 +394,8 @@ function ServiceForm({
               className="size-16 rounded-xl object-cover"
             />
           ) : (
-            <div className="flex size-16 items-center justify-center rounded-xl bg-zinc-100 text-zinc-300">
-              {isProduct ? "🛍️" : "✂️"}
+            <div className="flex size-16 items-center justify-center rounded-xl bg-zinc-100 text-zinc-400">
+              {isProduct ? <IconBag size={26} /> : <IconScissors size={26} />}
             </div>
           )}
           <div className="space-y-1">
@@ -396,7 +403,7 @@ function ServiceForm({
               type="file"
               accept="image/jpeg,image/png,image/webp"
               onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
-              className="block text-sm text-zinc-600 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white"
+              className="block text-sm text-zinc-600 file:mr-3 file:rounded-lg file:border-0 file:bg-tint file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white"
             />
             {(imagePath || imageFile) && (
               <button
@@ -431,14 +438,14 @@ function ServiceForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+          className="rounded-full bg-tint px-4 py-2 text-sm font-medium text-white disabled:opacity-60 ui-press hover:bg-emerald-700"
         >
           {pending ? t.saving : t.save}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg border border-zinc-300 px-4 py-2 text-sm"
+          className="rounded-lg border border-zinc-200 px-4 py-2 text-sm hover:border-zinc-300"
         >
           {t.cancel}
         </button>

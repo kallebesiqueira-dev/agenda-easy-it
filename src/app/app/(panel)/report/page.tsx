@@ -1,3 +1,5 @@
+import { CountUp } from "@/components/count-up";
+import { IconAlert, IconCalendar, IconChart, IconCheck, IconCheckCircle, IconX } from "@/components/icons";
 import Link from "next/link";
 import { todayInTz, zonedTimeToUtc } from "@/lib/dates";
 import { intlLocale, type Lang } from "@/lib/i18n";
@@ -145,22 +147,22 @@ export default async function ReportsPage({ searchParams }: Props) {
   }).format(new Date(Date.UTC(yy, mm - 1, 1, 12)));
 
   const stats = [
-    { label: t.revenue, value: formatEUR(receita) },
-    { label: t.completed, value: String(byStatus("completed").length) },
-    { label: t.confirmed, value: String(byStatus("confirmed").length) },
-    { label: t.cancelled, value: String(byStatus("cancelled").length) },
-    { label: t.noShows, value: String(byStatus("no_show").length) },
-    { label: t.totalBookings, value: String(rows.length) },
+    { label: t.revenue, icon: IconChart, value: formatEUR(receita) },
+    { label: t.completed, icon: IconCheckCircle, value: String(byStatus("completed").length) },
+    { label: t.confirmed, icon: IconCheck, value: String(byStatus("confirmed").length) },
+    { label: t.cancelled, icon: IconX, value: String(byStatus("cancelled").length) },
+    { label: t.noShows, icon: IconAlert, value: String(byStatus("no_show").length) },
+    { label: t.totalBookings, icon: IconCalendar, value: String(rows.length) },
   ];
 
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold capitalize">{t.heading} · {monthLabel}</h2>
+        <h2 className="ios-large-title capitalize">{t.heading} · {monthLabel}</h2>
         <div className="flex items-center gap-1 text-sm">
           <Link
             href={`/app/report?m=${prevM}`}
-            className="rounded-lg px-2 py-1 hover:bg-zinc-200"
+            className="glass grid size-11 place-items-center rounded-full hover:bg-[var(--fill)]"
             aria-label={t.prevMonth}
           >
             ←
@@ -168,14 +170,14 @@ export default async function ReportsPage({ searchParams }: Props) {
           {month !== currentMonth && (
             <Link
               href="/app/report"
-              className="rounded-lg px-2 py-1 font-medium hover:bg-zinc-200"
+              className="glass flex min-h-11 items-center rounded-full px-4 font-medium"
             >
               {t.currentMonth}
             </Link>
           )}
           <Link
             href={`/app/report?m=${nextM}`}
-            className="rounded-lg px-2 py-1 hover:bg-zinc-200"
+            className="glass grid size-11 place-items-center rounded-full hover:bg-[var(--fill)]"
             aria-label={t.nextMonth}
           >
             →
@@ -185,15 +187,18 @@ export default async function ReportsPage({ searchParams }: Props) {
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {stats.map((s) => (
-          <div key={s.label} className="rounded-2xl bg-white p-4 shadow-sm">
-            <p className="text-lg font-bold">{s.value}</p>
-            <p className="mt-0.5 text-xs text-zinc-500">{s.label}</p>
+          <div key={s.label} className="rounded-[22px] bg-card p-5">
+            <s.icon size={24} className="text-[var(--green)]" />
+            <p className="mt-3 text-[28px] leading-none font-bold tracking-[-0.03em]">
+              <CountUp value={s.value} />
+            </p>
+            <p className="mt-1.5 text-[13px] text-[var(--label-2)]">{s.label}</p>
           </div>
         ))}
       </div>
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2 sm:items-start">
-        <section className="rounded-2xl bg-white p-4 shadow-sm">
+        <section className="rounded-[22px] bg-card p-5">
           <h3 className="mb-3 font-semibold">{t.topServices}</h3>
           {topServices.length === 0 ? (
             <p className="text-sm text-zinc-500">{t.noBookings}</p>
@@ -209,7 +214,7 @@ export default async function ReportsPage({ searchParams }: Props) {
           )}
         </section>
 
-        <section className="rounded-2xl bg-white p-4 shadow-sm">
+        <section className="rounded-[22px] bg-card p-5">
           <h3 className="mb-1 font-semibold">{t.products}</h3>
           <p className="mb-3 text-xs text-zinc-500">{t.productsHint}</p>
           {products.length === 0 ? (

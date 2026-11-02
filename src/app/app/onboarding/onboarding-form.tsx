@@ -119,14 +119,14 @@ export function OnboardingForm({ lang }: { lang: Lang }) {
             setName(e.target.value);
             if (!slugTouched) setSlug(slugify(e.target.value));
           }}
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none focus:border-zinc-900"
+          className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
           placeholder={t.businessNamePh}
         />
       </label>
 
       <label className="block">
         <span className="mb-1 block text-sm font-medium">{t.pageAddress}</span>
-        <div className="flex items-center gap-1 rounded-lg border border-zinc-300 px-3 py-2 focus-within:border-zinc-900">
+        <div className="flex items-center gap-1 rounded-lg border border-zinc-200 px-3 py-2 focus-within:border-zinc-900 hover:border-zinc-300">
           <span className="text-sm text-zinc-400">agendaeasy.it/</span>
           <input
             required
@@ -146,7 +146,7 @@ export function OnboardingForm({ lang }: { lang: Lang }) {
         <select
           value={type}
           onChange={(e) => setType(e.target.value as BusinessType)}
-          className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 outline-none focus:border-zinc-900"
+          className="w-full rounded-lg border border-zinc-200 bg-card px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
         >
           {businessTypeOptions(lang).map((o) => (
             <option key={o.value} value={o.value}>
@@ -163,7 +163,7 @@ export function OnboardingForm({ lang }: { lang: Lang }) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-xl bg-zinc-900 py-3 font-semibold text-white disabled:opacity-60"
+        className="w-full rounded-full bg-tint py-3 font-semibold text-white disabled:opacity-60 ui-press hover:bg-emerald-700"
       >
         {loading ? t.creating : t.create}
       </button>

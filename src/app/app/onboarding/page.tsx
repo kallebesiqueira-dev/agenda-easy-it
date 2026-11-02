@@ -24,10 +24,10 @@ export default async function OnboardingPage() {
         };
 
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-zinc-100 px-4 text-zinc-900">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm">
+    <main className="flex ui-panel ui-grain relative min-h-dvh items-center justify-center px-4 py-10 text-zinc-900">
+      <div className="w-full max-w-sm rounded-[22px] bg-card p-6 shadow-lg sm:p-8">
         <div className="flex items-start justify-between gap-2">
-          <h1 className="text-xl font-bold">{t.title}</h1>
+          <h1 className="tracking-[-0.02em] text-2xl font-semibold">{t.title}</h1>
           <LanguageSwitcher current={lang} />
         </div>
         <p className="mb-4 mt-1 text-sm text-zinc-500">{t.sub}</p>

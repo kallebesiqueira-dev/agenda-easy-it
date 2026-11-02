@@ -6,6 +6,7 @@
  * indirizzano al WhatsApp del supporto.
  */
 
+import { IconSend, IconX } from "@/components/icons";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { Lang } from "@/lib/i18n";
@@ -284,16 +285,16 @@ export function SupportChat() {
   const thread: Msg[] = [{ from: "bot", text: t.greeting }, ...messages];
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
+    <div className="fixed right-4 bottom-[calc(env(safe-area-inset-bottom)+76px)] z-50 lg:bottom-6 flex flex-col items-end gap-3 sm:right-6">
       {open && (
-        <div className="flex max-h-[70vh] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10">
-          <div className="flex items-center gap-3 bg-[#17493b] px-4 py-3 text-white">
+        <div className="flex max-h-[70vh] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-[18px] bg-card shadow-2xl ring-1 ring-black/10">
+          <div className="flex items-center gap-3 bg-[var(--tint)] px-4 py-3 text-white">
             <Image
               src="/suporte-avatar.png"
               alt=""
               width={40}
               height={40}
-              className="size-10 rounded-full bg-white/10 object-cover"
+              className="size-10 rounded-full bg-card/10 object-cover"
             />
             <div className="min-w-0 flex-1">
               <p className="font-semibold leading-tight">{t.headerName}</p>
@@ -306,9 +307,9 @@ export function SupportChat() {
               type="button"
               onClick={() => setOpen(false)}
               aria-label={t.closeChat}
-              className="rounded-lg p-1.5 text-white/70 hover:bg-white/10 hover:text-white"
+              className="rounded-lg p-1.5 text-white/70 hover:bg-card/10 hover:text-white"
             >
-              ✕
+              <IconX size={18} />
             </button>
           </div>
 
@@ -318,8 +319,8 @@ export function SupportChat() {
                 <div
                   className={
                     m.from === "bot"
-                      ? "max-w-[85%] rounded-2xl rounded-tl-sm bg-white px-3.5 py-2.5 text-zinc-800 shadow-sm"
-                      : "ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-[#17493b] px-3.5 py-2.5 text-white"
+                      ? "max-w-[85%] rounded-[18px] rounded-tl-sm bg-card px-3.5 py-2.5 text-zinc-800"
+                      : "ml-auto max-w-[85%] rounded-[18px] rounded-br-sm bg-[var(--tint)] px-3.5 py-2.5 text-white"
                   }
                 >
                   {m.text}
@@ -351,13 +352,13 @@ export function SupportChat() {
           </div>
 
           {/* Domande rapide fisse — sempre visibili, non scompaiono */}
-          <div className="flex flex-wrap gap-1.5 border-t border-zinc-100 bg-white px-3 pt-2.5">
+          <div className="flex flex-wrap gap-1.5 border-t border-zinc-100 bg-card px-3 pt-2.5">
             {t.quick.map((q) => (
               <button
                 key={q}
                 type="button"
                 onClick={() => send(q)}
-                className="rounded-full border border-[#17493b]/30 bg-white px-3 py-1.5 text-xs font-medium text-[#17493b] hover:bg-[#17493b]/5"
+                className="rounded-full border border-[var(--tint)]/30 bg-card px-3 py-1.5 text-xs font-medium text-[var(--tint)] hover:bg-[var(--tint)]/5"
               >
                 {q}
               </button>
@@ -365,7 +366,7 @@ export function SupportChat() {
           </div>
 
           <form
-            className="flex items-center gap-2 bg-white p-3"
+            className="flex items-center gap-2 bg-card p-3"
             onSubmit={(e) => {
               e.preventDefault();
               send(input);
@@ -375,14 +376,14 @@ export function SupportChat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={t.inputPh}
-              className="flex-1 rounded-xl border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-[#17493b]"
+              className="flex-1 rounded-xl border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-[var(--tint)]"
             />
             <button
               type="submit"
               aria-label={t.send}
-              className="rounded-xl bg-[#17493b] px-3.5 py-2 font-semibold text-white"
+              className="rounded-xl bg-[var(--tint)] px-3.5 py-2 font-semibold text-white"
             >
-              ➤
+              <IconSend size={18} />
             </button>
           </form>
         </div>
@@ -392,20 +393,17 @@ export function SupportChat() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? t.closeSupport : t.openSupport}
-        className="group relative flex flex-col items-center transition-transform hover:scale-105"
+        className="glass glass-sheen ui-press flex min-h-11 items-center gap-2.5 rounded-full py-1.5 pr-4 pl-1.5 text-[15px] font-semibold tracking-[-0.01em] text-[var(--label)] active:scale-[0.97]"
       >
-        {/* fumetto "Supporto" sopra la testa */}
-        <span className="relative mb-1 rounded-xl bg-white px-3 py-1 text-xs font-semibold text-[#17493b] shadow-md">
-          {t.bubble}
-          <span className="absolute -bottom-1 left-1/2 size-2 -translate-x-1/2 rotate-45 bg-white" />
-        </span>
         <Image
           src="/suporte-avatar.png"
-          alt={t.bubble}
-          width={80}
-          height={78}
-          className="w-20 object-contain"
+          alt=""
+          width={32}
+          height={32}
+          className="size-8 rounded-full bg-[var(--fill)] object-cover"
         />
+        {t.bubble}
+        <span aria-hidden className="text-[var(--label-2)]">›</span>
       </button>
     </div>
   );

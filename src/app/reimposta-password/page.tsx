@@ -5,6 +5,7 @@
  * (/auth/callback ha scambiato il code) e imposta la nuova password.
  */
 
+import { IconEye, IconEyeOff } from "@/components/icons";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -78,21 +79,21 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center bg-zinc-100 px-4 text-zinc-900">
-      <Link href="/" className="mb-4 text-xl font-bold tracking-tight">
-        agenda<span className="italic text-emerald-900">easy</span>
-        <span className="text-orange-600">.</span>
+    <main className="flex ui-panel ui-grain relative min-h-dvh flex-col items-center justify-center px-4 py-10 text-zinc-900">
+      <Link href="/" className="mb-6 rounded-lg font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight">
+        agenda<span className="text-emerald-700">easy</span>
+        <span className="text-[var(--tint)]">.</span>
       </Link>
-      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm">
+      <div className="w-full max-w-sm rounded-3xl border border-zinc-900/[0.06] bg-card p-6 shadow-lg sm:p-8">
         <div className="flex items-start justify-between gap-2">
-          <h1 className="text-xl font-bold">{t.title}</h1>
+          <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold">{t.title}</h1>
           <LanguageSwitcher current={lang} />
         </div>
         <p className="mb-4 mt-1 text-sm text-zinc-500">{t.sub}</p>
         <form onSubmit={onSubmit} className="space-y-3">
           <label className="block">
             <span className="mb-1 block text-sm font-medium">{t.label}</span>
-            <div className="flex items-center rounded-lg border border-zinc-300 focus-within:border-zinc-900">
+            <div className="flex items-center rounded-lg border border-zinc-200 focus-within:border-zinc-900 hover:border-zinc-300">
               <input
                 type={showPassword ? "text" : "password"}
                 required
@@ -107,9 +108,9 @@ export default function ResetPasswordPage() {
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
                 aria-label={showPassword ? t.hide : t.show}
-                className="px-3 text-zinc-400 hover:text-zinc-700"
+                className="grid min-h-11 min-w-11 place-items-center text-zinc-400 transition-colors hover:text-zinc-700"
               >
-                {showPassword ? "🙈" : "👁️"}
+                {showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
               </button>
             </div>
           </label>
@@ -121,7 +122,7 @@ export default function ResetPasswordPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-zinc-900 py-3 font-semibold text-white disabled:opacity-60"
+            className="w-full rounded-full bg-tint py-3 font-semibold text-white disabled:opacity-60 ui-press hover:bg-emerald-700"
           >
             {loading ? t.saving : t.save}
           </button>
