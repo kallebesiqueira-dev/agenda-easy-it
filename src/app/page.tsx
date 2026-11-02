@@ -413,6 +413,11 @@ export default async function LandingPage() {
           <p>© {new Date().getFullYear()} Agenda Easy · {t.footer.by}{" "}
             <a href="https://github.com/kallebesiqueira-dev" target="_blank" rel="noopener noreferrer" className="font-medium text-[var(--label)] hover:underline">Kallebe Gallo</a>
           </p>
+          <a href="https://ctrlagency.dev" target="_blank" rel="noopener" className="group inline-flex items-center gap-1 text-[12px] tracking-wide text-[var(--label-3,var(--label-2))] transition-colors duration-300 hover:text-[var(--tint)]">
+            {lang === "en" ? "A" : "Un progetto"}{" "}
+            <span className="font-semibold text-[var(--label-2)] transition-colors duration-300 group-hover:text-[var(--tint)]">CTRL<sup className="text-[0.6em]">®</sup></span>
+            {lang === "en" ? " project" : ""}
+          </a>
         </div>
       </footer>
 
