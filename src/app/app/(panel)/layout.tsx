@@ -140,7 +140,7 @@ export default async function PanelLayout({
           <div className="mt-auto space-y-3">
             {pageLink}
             <div className="flex items-center justify-between px-1">
-              <LanguageSwitcher current={lang} />
+              <LanguageSwitcher current={lang} variant="bare" />
               <SignOutButton />
             </div>
           </div>
@@ -151,7 +151,7 @@ export default async function PanelLayout({
             <div className="lg:hidden">{brand}</div>
           </NavBar>
           <div className="flex items-center justify-end gap-1 px-4 lg:hidden">
-            <LanguageSwitcher current={lang} />
+            <LanguageSwitcher current={lang} variant="bare" />
             <SignOutButton />
           </div>
 

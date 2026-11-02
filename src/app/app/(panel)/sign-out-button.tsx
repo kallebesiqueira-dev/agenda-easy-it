@@ -20,7 +20,7 @@ export function SignOutButton() {
     <button
       type="button"
       onClick={signOut}
-      className="flex min-h-10 items-center gap-2 rounded-full px-3 text-sm font-medium text-zinc-500 transition-colors hover:bg-tint/5 hover:text-zinc-900"
+      className="flex min-h-10 items-center gap-2 rounded-full px-3 text-sm font-medium text-[var(--label-2)] transition-colors hover:bg-[var(--fill)] hover:text-[var(--label)]"
     >
       <IconLogout size={17} />
       <span className="hidden sm:inline">{lang === "en" ? "Sign out" : "Esci"}</span>
