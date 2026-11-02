@@ -214,7 +214,14 @@ export function TabBar({ items, moreLabel }: { items: Item[]; moreLabel: string 
 }
 
 /** Nav bar compatta: compare quando il Large Title (primo h2 del main) esce. */
-export function NavBar({ children }: { children?: React.ReactNode }) {
+export function NavBar({
+  children,
+  actions,
+}: {
+  children?: React.ReactNode;
+  /** Controlli allineati a destra (lingua, Esci): sempre visibili. */
+  actions?: React.ReactNode;
+}) {
   const [title, setTitle] = useState("");
   const [shown, setShown] = useState(false);
   const pathname = usePathname();
@@ -238,16 +245,19 @@ export function NavBar({ children }: { children?: React.ReactNode }) {
         shown ? "ios-material ios-hairline-b" : "bg-transparent"
       }`}
     >
-      <div className="relative flex h-[52px] items-center justify-between gap-3 px-4 lg:px-10">
-        <div className="min-w-0">{children}</div>
+      <div className="relative flex h-[52px] items-center gap-3 px-4 lg:px-10">
+        <div className="min-w-0 flex-1">{children}</div>
         <span
           aria-hidden={!shown}
-          className={`ios-headline pointer-events-none absolute inset-x-24 truncate text-center capitalize transition-all duration-300 ease-[var(--spring)] ${
+          className={`ios-headline pointer-events-none absolute inset-x-28 truncate text-center capitalize transition-all duration-300 ease-[var(--spring)] ${
             shown ? "translate-y-0 opacity-100" : "translate-y-1.5 opacity-0"
           }`}
         >
           {title}
         </span>
+        {actions && (
+          <div className="relative flex shrink-0 items-center gap-1">{actions}</div>
+        )}
       </div>
     </header>
   );

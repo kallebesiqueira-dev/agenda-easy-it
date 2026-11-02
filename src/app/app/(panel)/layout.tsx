@@ -140,23 +140,20 @@ export default async function PanelLayout({
           <div className="-mx-2 min-h-0 flex-1 overflow-y-auto px-2">
             <Sidebar items={t.nav} />
           </div>
-          <div className="space-y-3">
-            {pageLink}
-            <div className="flex items-center justify-between px-1">
-              <LanguageSwitcher current={lang} variant="bare" />
-              <SignOutButton />
-            </div>
-          </div>
+          <div className="px-1">{pageLink}</div>
         </aside>
 
         <div className="min-w-0 flex-1 pb-28 lg:pb-0">
-          <NavBar>
+          <NavBar
+            actions={
+              <>
+                <LanguageSwitcher current={lang} variant="bare" />
+                <SignOutButton />
+              </>
+            }
+          >
             <div className="lg:hidden">{brand}</div>
           </NavBar>
-          <div className="flex items-center justify-end gap-1 px-4 lg:hidden">
-            <LanguageSwitcher current={lang} variant="bare" />
-            <SignOutButton />
-          </div>
 
           <div className="mx-auto w-full max-w-3xl space-y-2 px-4 pt-2 lg:px-10">
             <div className="lg:hidden">{pageLink}</div>
