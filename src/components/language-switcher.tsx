@@ -62,8 +62,11 @@ export function LanguageSwitcher({
   variant = "light",
 }: {
   current: Lang;
-  /** "light" su sfondi chiari, "dark" su sfondi scuri/colorati. */
-  variant?: "light" | "dark";
+  /**
+   * "light" su sfondi chiari, "dark" su sfondi scuri/colorati,
+   * "bare" senza bordo/sfondo (footer del pannello, accanto a "Esci").
+   */
+  variant?: "light" | "dark" | "bare";
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -102,8 +105,10 @@ export function LanguageSwitcher({
 
   const trigger =
     variant === "dark"
-      ? "border-white/25 bg-card/10 text-white hover:bg-card/20"
-      : "border-zinc-200 bg-card text-zinc-700 hover:bg-zinc-50";
+      ? "border border-white/25 bg-card/10 text-white backdrop-blur-sm hover:bg-card/20"
+      : variant === "bare"
+        ? "text-[var(--label-2)] hover:bg-[var(--fill)] hover:text-[var(--label)]"
+        : "border border-zinc-200 bg-card text-zinc-700 backdrop-blur-sm hover:bg-zinc-50";
 
   return (
     <div ref={rootRef} className="relative shrink-0">
@@ -113,7 +118,7 @@ export function LanguageSwitcher({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label="Lingua / Language"
-        className={`flex min-h-10 items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-sm font-semibold backdrop-blur-sm transition-colors sm:min-h-0 sm:px-3 ${trigger}`}
+        className={`flex min-h-10 items-center gap-1.5 rounded-full px-2.5 py-1.5 text-sm font-semibold transition-colors sm:min-h-0 sm:px-3 ${trigger}`}
       >
         <ActiveFlag className="h-3.5 w-5 shrink-0 rounded-[3px] ring-1 ring-black/10" />
         <span className="hidden sm:inline">{active.code}</span>
