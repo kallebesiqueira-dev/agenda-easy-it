@@ -97,7 +97,7 @@ export function LandingMotion() {
       // Per chi è: scorrimento orizzontale fissato.
       const track = document.querySelector<HTMLElement>("[data-hs-track]");
       const hs = document.querySelector<HTMLElement>("[data-hs]");
-      if (track && hs) {
+      if (track && hs && track.scrollWidth > window.innerWidth + 8) {
         track.style.overflow = "visible";
         gsap.to(track, {
           x: () => -(track.scrollWidth - window.innerWidth + 48),

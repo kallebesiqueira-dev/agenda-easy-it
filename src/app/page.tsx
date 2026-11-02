@@ -10,6 +10,7 @@ import Link from "next/link";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { SupportChat } from "@/components/support-chat";
 import { AccentPicker } from "@/components/landing/accent-picker";
+import { SegmentDemo } from "@/components/landing/segment-demo";
 import { PromoVideo } from "@/components/landing/promo-video";
 import { LandingMotion } from "@/components/landing/landing-motion";
 import { ApptRow, GlassCard, Mac, MiniAgenda, Monogram, Phone, type Appt } from "@/components/landing/app-mock";
@@ -20,7 +21,7 @@ import { getLang } from "@/lib/i18n/server";
 import { formatEUR } from "@/lib/money";
 
 export const metadata: Metadata = {
-  title: "Agenda Easy — La tua agenda. Finalmente semplice.",
+  title: "Agenda Easy · La tua agenda. Finalmente semplice.",
 };
 
 const price = formatEUR(PLAN.priceMinor);
@@ -44,7 +45,7 @@ const COPY = {
     storyKicker: "Come funziona",
     story: [
       { k: "01", t: "Un appuntamento entra in agenda.", b: "Ogni prenotazione arriva già confermata nel pannello: chi, quando, quale servizio e con quale professionista. Tu apri l'agenda del giorno e lavori." },
-      { k: "02", t: "Il cliente prenota dal tuo link.", b: "Condividi la tua pagina su Instagram o WhatsApp. Il cliente sceglie servizio, professionista e orario da solo — senza account e senza app." },
+      { k: "02", t: "Il cliente prenota dal tuo link.", b: "Condividi la tua pagina su Instagram o WhatsApp. Il cliente sceglie servizio, professionista e orario da solo, senza account e senza app." },
       { k: "03", t: "Il promemoria arriva da solo.", b: "Conferma e promemoria via e-mail, con il pulsante per scriverti su WhatsApp e il link per annullare. Meno buchi in agenda, zero messaggi da inviare a mano." },
       { k: "04", t: "Il report si compila da sé.", b: "Ricavi previsti, prenotazioni completate, annullate e non presentate: il mese in un colpo d'occhio, con i servizi più richiesti." },
     ],
@@ -53,6 +54,7 @@ const COPY = {
     report: { title: "Report · Novembre", revenue: "Ricavi previsti", done: "Completate", total: "Prenotazioni", noShow: "Non presentati" },
     picker: { kicker: "Il tuo colore", t: "Il tuo brand, in tutta l'app.", b: "Scegli il colore della tua attività nelle impostazioni: pulsanti, agenda e pagina di prenotazione si adattano. Provalo qui.", label: "Colore del brand", custom: "Colore personalizzato" },
     who: { kicker: "Per chi è", t: "Per chi lavora su appuntamento." },
+    pending: "In attesa",
     segments: [
       { name: "Parrucchieri", studio: "Salone Marta", accent: "#5fae8a", service: "Taglio + piega" },
       { name: "Estetiste", studio: "Beauty Lab", accent: "#e48aa6", service: "Pulizia viso" },
@@ -88,7 +90,7 @@ const COPY = {
     storyKicker: "How it works",
     story: [
       { k: "01", t: "A booking lands in your calendar.", b: "Every booking arrives already confirmed in your dashboard: who, when, which service and with whom. You open today's agenda and get to work." },
-      { k: "02", t: "Clients book from your link.", b: "Share your page on Instagram or WhatsApp. Clients pick the service, the professional and the time on their own — no account, no app." },
+      { k: "02", t: "Clients book from your link.", b: "Share your page on Instagram or WhatsApp. Clients pick the service, the professional and the time on their own, no account, no app." },
       { k: "03", t: "The reminder sends itself.", b: "Confirmation and reminder by e-mail, with a button to message you on WhatsApp and a link to cancel. Fewer gaps, zero messages to send by hand." },
       { k: "04", t: "Your report fills itself in.", b: "Expected revenue, completed, cancelled and no-show bookings: your month at a glance, with your most requested services." },
     ],
@@ -97,6 +99,7 @@ const COPY = {
     report: { title: "Report · November", revenue: "Expected revenue", done: "Completed", total: "Bookings", noShow: "No-shows" },
     picker: { kicker: "Your colour", t: "Your brand, across the app.", b: "Pick your business colour in settings: buttons, calendar and booking page adapt. Try it here.", label: "Brand colour", custom: "Custom colour" },
     who: { kicker: "Who it's for", t: "For anyone who works by appointment." },
+    pending: "Pending",
     segments: [
       { name: "Hairdressers", studio: "Salone Marta", accent: "#5fae8a", service: "Cut + blow-dry" },
       { name: "Beauticians", studio: "Beauty Lab", accent: "#e48aa6", service: "Facial" },
@@ -162,8 +165,8 @@ function SceneBooking({ t }: { t: T }) {
           <path d="M0 70 C 80 30, 160 100, 300 50 L300 100 L0 100Z" fill="#fff" />
         </svg>
       </div>
-      <div className="-mt-6 flex flex-col items-center px-3">
-        <span className="rounded-[14px] bg-white p-1 shadow-md"><Monogram letter="S" size={40} /></span>
+      <div className="relative z-10 -mt-7 flex flex-col items-center px-3">
+        <span className="rounded-[15px] bg-white p-[3px] shadow-[0_6px_16px_-6px_rgb(40_36_30/0.35)] ring-1 ring-black/5"><Monogram letter="S" size={40} /></span>
         <p className="mt-1.5 text-[14px] font-bold tracking-[-0.02em]">{t.studio}</p>
       </div>
       <GlassCard className="mx-3 mt-3 overflow-hidden">
@@ -365,7 +368,7 @@ export default async function LandingPage() {
           <h2 className="lp-h2 mt-3 max-w-2xl">{t.who.t}</h2>
         </div>
         <div data-hs-track className="lp-hscroll mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-4 lg:px-[max(1.25rem,calc((100vw-72rem)/2+1.25rem))]">
-          {t.segments.map((s) => (
+          {t.segments.map((s, si) => (
             <div key={s.name} className="accent-scope glass glass-sheen flex w-[300px] shrink-0 snap-center flex-col overflow-hidden rounded-[28px] sm:w-[420px]" style={{ "--accent": s.accent } as React.CSSProperties}>
               <div className="p-6">
                 <span className="inline-block size-2.5 rounded-full bg-[var(--accent)] shadow-[0_0_12px_var(--tint-glow)]" />
@@ -373,11 +376,12 @@ export default async function LandingPage() {
               </div>
               <div className="lp-screen-bg mx-4 mb-4 flex-1 rounded-[20px] p-4">
                 <div className="flex items-center gap-2.5"><Monogram letter={s.studio.charAt(0)} /><span className="text-[14px] font-semibold">{s.studio}</span></div>
-                <GlassCard className="mt-3 overflow-hidden">
-                  <ApptRow a={{ ...t.appts[0], service: s.service }} />
-                  <ApptRow a={{ ...t.newAppt, service: s.service }} />
-                </GlassCard>
-                <span className="bg-tint mt-3 block rounded-full py-2.5 text-center text-[13px] font-semibold text-white">{t.booking.cta}</span>
+                <SegmentDemo
+                  delay={si * 850}
+                  cta={t.booking.cta}
+                  pending={t.pending}
+                  appts={[t.appts[0], t.newAppt, t.appts[1], t.appts[2]].map((a) => ({ ...a, service: s.service, status: t.newAppt.status, tone: "tint" as const }))}
+                />
               </div>
             </div>
           ))}
