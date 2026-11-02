@@ -1,3 +1,4 @@
+import { AccentStyle } from "@/components/accent";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -29,6 +30,7 @@ export default async function PublicBookingPage({ params }: Props) {
 
   return (
     <>
+      <AccentStyle color={profile.brand_primary} />
       <SmoothScroll />
       <BookingFlow profile={profile} lang={lang} />
     </>

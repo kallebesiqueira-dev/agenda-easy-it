@@ -13,8 +13,8 @@ const inter = Inter({
 
 export const viewport: Viewport = {
   viewportFit: "cover",
-  themeColor: "#0b100e",
-  colorScheme: "dark",
+  themeColor: "#f6f3ee",
+  colorScheme: "light",
 };
 
 const SITE_URL =

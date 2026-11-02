@@ -9,14 +9,14 @@ export function SilkBackground() {
       <svg className="w1" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
         <defs>
           <linearGradient id="s1" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#2f5e4c" stopOpacity="0" />
-            <stop offset="0.5" stopColor="#4d8a72" stopOpacity="0.55" />
-            <stop offset="1" stopColor="#1b3a2f" stopOpacity="0" />
+            <stop offset="0" style={{ stopColor: "var(--accent)", stopOpacity: 0 }} />
+            <stop offset="0.5" style={{ stopColor: "var(--accent)", stopOpacity: 0.2 }} />
+            <stop offset="1" style={{ stopColor: "var(--accent)", stopOpacity: 0 }} />
           </linearGradient>
           <linearGradient id="s2" x1="0" y1="1" x2="1" y2="0">
-            <stop offset="0" stopColor="#0f1a16" stopOpacity="0" />
-            <stop offset="0.55" stopColor="#9ac7b2" stopOpacity="0.32" />
-            <stop offset="1" stopColor="#24463a" stopOpacity="0" />
+            <stop offset="0" style={{ stopColor: "var(--accent)", stopOpacity: 0 }} />
+            <stop offset="0.55" style={{ stopColor: "var(--accent)", stopOpacity: 0.16 }} />
+            <stop offset="1" style={{ stopColor: "var(--accent)", stopOpacity: 0 }} />
           </linearGradient>
           <filter id="sb" x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur stdDeviation="28" />
@@ -30,9 +30,9 @@ export function SilkBackground() {
       <svg className="w2" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
         <defs>
           <linearGradient id="s3" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#3d6b5a" stopOpacity="0" />
-            <stop offset="0.6" stopColor="#c9e4d6" stopOpacity="0.22" />
-            <stop offset="1" stopColor="#3d6b5a" stopOpacity="0" />
+            <stop offset="0" style={{ stopColor: "var(--accent)", stopOpacity: 0 }} />
+            <stop offset="0.6" stopColor="#ffffff" stopOpacity="0.9" />
+            <stop offset="1" style={{ stopColor: "var(--accent)", stopOpacity: 0 }} />
           </linearGradient>
           <filter id="sb2"><feGaussianBlur stdDeviation="14" /></filter>
         </defs>

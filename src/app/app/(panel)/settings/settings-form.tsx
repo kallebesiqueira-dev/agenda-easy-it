@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { applyAccent } from "@/components/accent";
 import { useRouter } from "next/navigation";
 import type { BusinessSettingsInput } from "@/lib/validation";
 import type { BusinessType } from "@/types/database";
@@ -120,6 +121,16 @@ export function SettingsForm({
   const t = COPY[lang];
   const router = useRouter();
   const [form, setForm] = useState(initial);
+
+  // Anteprima live dell'accento su tutta l'app; al cambio pagina torna al valore salvato (stile server).
+  useEffect(() => {
+    const root = document.documentElement;
+    applyAccent(root, form.brand_primary);
+    return () => {
+      root.style.removeProperty("--accent");
+      root.style.removeProperty("--on-tint");
+    };
+  }, [form.brand_primary]);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [saved, setSaved] = useState(false);

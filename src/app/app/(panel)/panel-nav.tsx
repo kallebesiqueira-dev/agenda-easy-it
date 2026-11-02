@@ -65,7 +65,7 @@ export function Sidebar({ items }: { items: Item[] }) {
           className="glass absolute inset-x-0 top-0 rounded-[14px] transition-[transform,height] duration-[650ms] ease-[var(--spring)] motion-reduce:transition-none"
           style={{ transform: `translateY(${pill.y}px)`, height: pill.h }}
         >
-          <span className="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-full bg-[var(--green)] shadow-[0_0_12px_2px_rgb(95_209_151/0.6)]" />
+          <span className="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-full bg-[var(--accent)] shadow-[0_0_12px_2px_var(--tint-glow)]" />
         </span>
       )}
       {items.map((item) => {
@@ -80,7 +80,7 @@ export function Sidebar({ items }: { items: Item[] }) {
               active ? "text-[var(--label)]" : "text-[var(--label-2)] hover:bg-[var(--fill-2)] hover:text-[var(--label)]"
             }`}
           >
-            <Icon size={21} className={active ? "text-[var(--green)]" : ""} />
+            <Icon size={21} className={active ? "text-[var(--tint)]" : ""} />
             {item.label}
           </Link>
         );

@@ -198,14 +198,14 @@ export function AuthForm({
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="min-h-12 w-full rounded-[14px] pr-4 pl-11 outline-none transition-[border-color,box-shadow] hover:border-zinc-300 focus:border-emerald-700 focus:shadow-[0_0_0_4px_rgb(10_108_255/0.15)]"
+          className="min-h-12 w-full rounded-[14px] pr-4 pl-11 outline-none transition-[border-color,box-shadow] hover:border-zinc-300 focus:border-emerald-700 focus:shadow-[0_0_0_4px_var(--tint-soft)]"
           placeholder={t.emailPh}
         />
         </span>
       </label>
       <label className="block">
         <span className="mb-1 block text-sm font-medium">{t.password}</span>
-        <div className="flex items-center rounded-[14px] bg-black/20 shadow-[inset_0_0_0_1px_var(--glass-border)] transition-[border-color,box-shadow] hover:border-zinc-300 focus-within:border-emerald-700 focus-within:shadow-[0_0_0_4px_rgb(10_108_255/0.15)]">
+        <div className="flex items-center rounded-[14px] bg-white/70 shadow-[inset_0_0_0_1px_var(--glass-edge)] transition-[border-color,box-shadow] hover:border-zinc-300 focus-within:border-emerald-700 focus-within:shadow-[0_0_0_4px_var(--tint-soft)]">
           <IconLock size={18} className="ml-4 shrink-0 text-[var(--label-2)]" />
           <input
             type={showPassword ? "text" : "password"}
@@ -240,7 +240,7 @@ export function AuthForm({
       <button
         type="submit"
         disabled={loading}
-        className="ui-press min-h-12 w-full rounded-full bg-tint py-3 font-semibold text-white shadow-[0_10px_24px_-12px_rgb(10_108_255/0.5)] hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-60"
+        className="ui-press min-h-12 w-full rounded-full bg-tint py-3 font-semibold text-white shadow-[0_10px_24px_-12px_var(--tint-soft)] hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-60"
       >
         {loading ? t.wait : mode === "login" ? t.signIn : t.signUp}
       </button>

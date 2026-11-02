@@ -1,3 +1,4 @@
+import { AccentStyle } from "@/components/accent";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -92,7 +93,7 @@ export default async function PanelLayout({
 
   const brand = (
     <Link href="/app" className="flex items-center gap-3 rounded-[12px]">
-      <span className="grid size-11 shrink-0 place-items-center rounded-[13px] bg-[linear-gradient(160deg,#245a45,#0f2c22)] text-[19px] font-semibold text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12),inset_0_1px_0_rgb(255_255_255/0.15)]">
+      <span className="grid size-11 shrink-0 place-items-center rounded-[13px] bg-[linear-gradient(160deg,var(--tint-light),var(--tint-deep))] text-[19px] font-semibold text-[var(--on-tint)] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12),inset_0_1px_0_rgb(255_255_255/0.15)]">
         {initial}
       </span>
       <span className="min-w-0">
@@ -125,6 +126,7 @@ export default async function PanelLayout({
 
   return (
     <div className="ui-panel min-h-dvh text-[var(--label)]">
+      <AccentStyle color={ctx.business.brand_primary} />
       <div className="flex w-full">
         {/* Sidebar iPadOS (desktop) */}
         <aside className="glass sticky top-4 m-4 mr-0 hidden h-[calc(100dvh-2rem)] w-[272px] shrink-0 flex-col gap-7 rounded-[26px] px-4 pt-4 pb-5 lg:flex">
