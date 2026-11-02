@@ -8,8 +8,8 @@
  */
 import type { Metadata } from "next";
 import Image from "next/image";
+import { SmoothScroll } from "@/components/smooth-scroll";
 import Link from "next/link";
-import { Fraunces, Instrument_Sans } from "next/font/google";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ScrollBubbles } from "@/components/scroll-bubbles";
 import { SupportChat } from "@/components/support-chat";
@@ -17,18 +17,6 @@ import { PLAN, TRIAL_DAYS } from "@/lib/billing";
 import { type Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n/server";
 import { formatEUR } from "@/lib/money";
-
-const display = Fraunces({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  axes: ["opsz", "SOFT", "WONK"],
-  variable: "--font-landing-display",
-});
-
-const sans = Instrument_Sans({
-  subsets: ["latin"],
-  variable: "--font-landing-sans",
-});
 
 export const metadata: Metadata = {
   title: "Agenda Easy — Agenda piena, WhatsApp in pace",
@@ -284,26 +272,27 @@ export default async function LandingPage() {
 
   return (
     <div
-      className={`${display.variable} ${sans.variable} min-h-dvh bg-[#f6f1e7] font-[family-name:var(--font-landing-sans)] text-[#221c15]`}
+      className={`min-h-dvh bg-[var(--bg)] font-sans text-[var(--label)]`}
     >
+      <SmoothScroll />
       {/* texture carta leggera */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 opacity-[0.35]"
         style={{
           backgroundImage:
-            "radial-gradient(#221c15 0.5px, transparent 0.5px)",
+            "radial-gradient(var(--label) 0.5px, transparent 0.5px)",
           backgroundSize: "22px 22px",
           maskImage:
             "linear-gradient(to bottom, transparent, black 30%, transparent)",
         }}
       />
 
-      <header className="sticky top-0 z-40 border-b border-[#221c15]/5 bg-[#f6f1e7]/85 px-5 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-[var(--label)]/5 bg-[var(--bg)]/85 px-5 backdrop-blur-md">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between py-4">
-        <p className="font-[family-name:var(--font-landing-display)] text-xl font-semibold tracking-tight">
-          agenda<span className="italic text-[#17493b]">easy</span>
-          <span className="text-[#e4572e]">.</span>
+        <p className="font-[family-name:var(--font-display)] text-xl font-semibold tracking-tight">
+          agenda<span className="italic text-[var(--tint)]">easy</span>
+          <span className="text-[var(--tint)]">.</span>
         </p>
         <nav className="flex items-center gap-2 text-sm font-medium sm:gap-5">
           <a href="#come-funziona" className="hidden hover:underline sm:block">
@@ -318,7 +307,7 @@ export default async function LandingPage() {
           </Link>
           <Link
             href="/signup"
-            className="rounded-full bg-[#221c15] px-4 py-2 text-[#f6f1e7] transition-colors hover:bg-[#17493b]"
+            className="rounded-full bg-tint px-4 py-2 text-white transition-colors hover:bg-[var(--tint)]"
           >
             {t.nav.signUp}
           </Link>
@@ -346,11 +335,11 @@ export default async function LandingPage() {
           >
             <Link
               href="/signup"
-              className="rounded-full bg-[#e4572e] px-7 py-3.5 text-base font-semibold text-white shadow-[0_8px_24px_-8px_rgba(228,87,46,0.6)] transition-transform hover:-translate-y-0.5"
+              className="rounded-full bg-[var(--tint)] px-7 py-3.5 text-base font-semibold text-white shadow-[0_8px_24px_-8px_rgba(10,108,255,0.45)] transition-transform hover:-translate-y-0.5"
             >
               {t.heroCta}
             </Link>
-            <p className="text-sm text-[#221c15]/60">
+            <p className="text-sm text-[var(--label)]/60">
               {t.heroNoCard[0]}
               <br className="sm:hidden" /> {t.heroNoCard[1]}
             </p>
@@ -363,28 +352,28 @@ export default async function LandingPage() {
           className="landing-rise relative mx-auto w-full max-w-sm"
           style={{ animationDelay: "320ms" }}
         >
-          <div className="absolute -inset-6 rounded-[2rem] bg-[#17493b]/10 [transform:rotate(-2deg)]" />
-          <div className="relative rounded-3xl border border-[#221c15]/10 bg-white p-5 shadow-[0_24px_60px_-24px_rgba(34,28,21,0.35)]">
-            <p className="inline-block rounded-full bg-[#f6f1e7] px-3 py-1 font-mono text-xs text-[#221c15]/70">
+          <div className="absolute -inset-6 rounded-[2rem] bg-[var(--tint)]/10 [transform:rotate(-2deg)]" />
+          <div className="relative rounded-3xl border border-[var(--label)]/10 bg-card p-5 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.25)]">
+            <p className="inline-block rounded-full bg-[var(--bg)] px-3 py-1 font-mono text-xs text-[var(--label)]/70">
               agendaeasy.it/studio-anna
             </p>
-            <p className="mt-4 font-[family-name:var(--font-landing-display)] text-lg font-semibold">
+            <p className="mt-4 font-[family-name:var(--font-display)] text-lg font-semibold">
               {t.mock.studio}
             </p>
             <div className="mt-3 space-y-2">
               {t.mock.services.map(([name, duration, price]) => (
                 <div
                   key={name}
-                  className="flex items-center justify-between rounded-xl border border-[#221c15]/10 px-3 py-2.5 text-sm first:border-[#17493b] first:bg-[#17493b]/5"
+                  className="flex items-center justify-between rounded-xl border border-[var(--label)]/10 px-3 py-2.5 text-sm first:border-[var(--tint)] first:bg-[var(--tint)]/5"
                 >
                   <span className="font-medium">{name}</span>
-                  <span className="text-[#221c15]/50">
+                  <span className="text-[var(--label)]/50">
                     {duration} · {price}
                   </span>
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-[#221c15]/50">
+            <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-[var(--label)]/50">
               {t.mock.tomorrow}
             </p>
             <div className="mt-2 grid grid-cols-4 gap-2 text-center text-sm">
@@ -394,8 +383,8 @@ export default async function LandingPage() {
                     key={slot}
                     className={`rounded-lg border px-2 py-1.5 ${
                       i === 3
-                        ? "border-[#e4572e] bg-[#e4572e] font-semibold text-white"
-                        : "border-[#221c15]/10"
+                        ? "border-[var(--tint)] bg-[var(--tint)] font-semibold text-white"
+                        : "border-[var(--label)]/10"
                     }`}
                   >
                     {slot}
@@ -403,7 +392,7 @@ export default async function LandingPage() {
                 )
               )}
             </div>
-            <div className="mt-4 rounded-xl bg-[#221c15] px-4 py-3 text-center text-sm font-semibold text-[#f6f1e7]">
+            <div className="mt-4 rounded-xl bg-tint px-4 py-3 text-center text-sm font-semibold text-white">
               {t.mock.reserve}
             </div>
           </div>
@@ -411,7 +400,7 @@ export default async function LandingPage() {
       </section>
 
       {/* ---------------- Marquee dei segmenti ---------------- */}
-      <div className="relative overflow-hidden border-y border-[#221c15]/10 bg-[#17493b] py-3 text-[#f6f1e7]">
+      <div className="relative overflow-hidden border-y border-[var(--label)]/10 bg-[var(--tint)] py-3 text-white">
         <div className="landing-marquee flex w-max">
           {[0, 1].map((copy) => (
             <div
@@ -421,7 +410,7 @@ export default async function LandingPage() {
               {t.segments.map((s) => (
                 <span key={s} className="flex items-center">
                   <span className="px-5">{s}</span>
-                  <span className="text-[#e4572e]">✦</span>
+                  <span className="text-[var(--tint)]">✦</span>
                 </span>
               ))}
             </div>
@@ -436,20 +425,20 @@ export default async function LandingPage() {
       >
         <h2
           data-bubble
-          className="text-center font-[family-name:var(--font-landing-display)] text-4xl font-semibold tracking-tight sm:text-5xl"
+          className="text-center font-[family-name:var(--font-display)] text-4xl font-semibold tracking-tight sm:text-5xl"
         >
           {t.how.line1}
           <br />
-          {t.how.line2} <em className="text-[#e4572e]">{t.how.em}</em>
+          {t.how.line2} <em className="text-[var(--tint)]">{t.how.em}</em>
         </h2>
         <div className="mt-12 grid gap-10 md:grid-cols-3">
           {t.steps.map((step, i) => (
             <div key={step.title} data-bubble className="relative">
-              <p className="font-[family-name:var(--font-landing-display)] text-6xl font-semibold italic text-[#17493b]/20">
+              <p className="font-[family-name:var(--font-display)] text-6xl font-semibold italic text-[var(--tint)]/20">
                 {i + 1}
               </p>
               <h3 className="mt-2 text-xl font-semibold">{step.title}</h3>
-              <p className="mt-2 leading-relaxed text-[#221c15]/70">
+              <p className="mt-2 leading-relaxed text-[var(--label)]/70">
                 {step.body}
               </p>
             </div>
@@ -461,25 +450,25 @@ export default async function LandingPage() {
       <section id="video" className="relative mx-auto w-full max-w-5xl px-5 pb-24">
         <h2
           data-bubble
-          className="text-center font-[family-name:var(--font-landing-display)] text-4xl font-semibold tracking-tight sm:text-5xl"
+          className="text-center font-[family-name:var(--font-display)] text-4xl font-semibold tracking-tight sm:text-5xl"
         >
-          {t.video.line1} <em className="text-[#17493b]">{t.video.em}</em>
+          {t.video.line1} <em className="text-[var(--tint)]">{t.video.em}</em>
         </h2>
         <p
           data-bubble
-          className="mx-auto mt-4 max-w-2xl text-center text-lg leading-relaxed text-[#221c15]/70"
+          className="mx-auto mt-4 max-w-2xl text-center text-lg leading-relaxed text-[var(--label)]/70"
         >
           {t.video.body}
         </p>
         <div data-bubble className="relative mt-10">
-          <div className="absolute -inset-4 rounded-[2rem] bg-[#e4572e]/10 [transform:rotate(-1.2deg)] sm:-inset-6" />
+          <div className="absolute -inset-4 rounded-[2rem] bg-[var(--tint)]/10 [transform:rotate(-1.2deg)] sm:-inset-6" />
           {/* preload=metadata + faststart: parte subito e non pesa sulla pagina */}
           <video
             controls
             playsInline
             preload="metadata"
             poster="/demo-it-poster.jpg"
-            className="relative w-full rounded-3xl border border-[#221c15]/10 bg-black shadow-[0_24px_60px_-24px_rgba(34,28,21,0.4)]"
+            className="relative w-full rounded-3xl border border-[var(--label)]/10 bg-black shadow-[0_24px_60px_-24px_rgba(34,28,21,0.4)]"
           >
             <source src="/demo-it.mp4" type="video/mp4" />
           </video>
@@ -487,25 +476,25 @@ export default async function LandingPage() {
       </section>
 
       {/* ---------------- Funzionalità ---------------- */}
-      <section className="relative border-y border-[#221c15]/10 bg-[#fffdf8]">
+      <section className="relative border-y border-[var(--label)]/10 bg-[var(--card)]">
         <div className="mx-auto w-full max-w-6xl px-5 py-24">
           <h2
             data-bubble
-            className="text-center font-[family-name:var(--font-landing-display)] text-4xl font-semibold tracking-tight sm:text-5xl"
+            className="text-center font-[family-name:var(--font-display)] text-4xl font-semibold tracking-tight sm:text-5xl"
           >
             {t.features.line1}
             <br />
-            <em className="text-[#17493b]">{t.features.em}</em>
+            <em className="text-[var(--tint)]">{t.features.em}</em>
           </h2>
-          <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-[#221c15]/10 bg-[#221c15]/10 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-[var(--label)]/10 bg-[#1c1c1e]/10 sm:grid-cols-2 lg:grid-cols-3">
             {t.featureItems.map((f) => (
               <div
                 key={f.title}
                 data-bubble
-                className="bg-[#fffdf8] p-7 transition-colors hover:bg-[#f6f1e7]"
+                className="bg-[var(--card)] p-7 transition-colors hover:bg-[var(--bg)]"
               >
                 <h3 className="font-semibold">{f.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[#221c15]/70">
+                <p className="mt-2 text-sm leading-relaxed text-[var(--label)]/70">
                   {f.body}
                 </p>
               </div>
@@ -518,24 +507,24 @@ export default async function LandingPage() {
       <section id="prezzo" className="relative mx-auto w-full max-w-6xl px-5 py-24">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div data-bubble>
-            <h2 className="font-[family-name:var(--font-landing-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h2 className="font-[family-name:var(--font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
               {t.price.line1}
               <br />
-              <em className="text-[#e4572e]">{t.price.em}</em>
+              <em className="text-[var(--tint)]">{t.price.em}</em>
             </h2>
-            <p className="mt-5 max-w-md text-lg leading-relaxed text-[#221c15]/70">
+            <p className="mt-5 max-w-md text-lg leading-relaxed text-[var(--label)]/70">
               {t.price.blurb}
             </p>
           </div>
           <div data-bubble className="relative">
-            <div className="absolute -inset-4 rounded-[2rem] bg-[#e4572e]/10 [transform:rotate(1.5deg)]" />
-            <div className="relative rounded-3xl border border-[#221c15]/10 bg-white p-8 shadow-[0_24px_60px_-24px_rgba(34,28,21,0.3)]">
-              <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[#17493b]">
+            <div className="absolute -inset-4 rounded-[2rem] bg-[var(--tint)]/10 [transform:rotate(1.5deg)]" />
+            <div className="relative rounded-3xl border border-[var(--label)]/10 bg-card p-8 shadow-[0_24px_60px_-24px_rgba(34,28,21,0.3)]">
+              <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--tint)]">
                 {PLAN.name}
               </p>
-              <p className="mt-3 font-[family-name:var(--font-landing-display)] text-5xl font-semibold tracking-tight">
+              <p className="mt-3 font-[family-name:var(--font-display)] text-5xl font-semibold tracking-tight">
                 {formatEUR(PLAN.priceMinor)}
-                <span className="text-xl font-normal text-[#221c15]/50">
+                <span className="text-xl font-normal text-[var(--label)]/50">
                   {" "}
                   {t.price.perMonth}
                 </span>
@@ -543,14 +532,14 @@ export default async function LandingPage() {
               <ul className="mt-6 space-y-3 text-sm">
                 {t.price.bullets.map((item) => (
                   <li key={item} className="flex items-start gap-2.5">
-                    <span className="mt-0.5 text-[#e4572e]">✦</span>
+                    <span className="mt-0.5 text-[var(--tint)]">✦</span>
                     {item}
                   </li>
                 ))}
               </ul>
               <Link
                 href="/signup"
-                className="mt-8 block rounded-full bg-[#221c15] py-3.5 text-center font-semibold text-[#f6f1e7] transition-colors hover:bg-[#17493b]"
+                className="mt-8 block rounded-full bg-tint py-3.5 text-center font-semibold text-white transition-colors hover:bg-[var(--tint)]"
               >
                 {t.price.cta}
               </Link>
@@ -560,52 +549,52 @@ export default async function LandingPage() {
       </section>
 
       {/* ---------------- CTA finale ---------------- */}
-      <section className="relative overflow-hidden bg-[#17493b] text-[#f6f1e7]">
+      <section className="relative overflow-hidden bg-[var(--tint)] text-white">
         <div data-bubble className="mx-auto w-full max-w-6xl px-5 py-24 text-center">
-          <h2 className="mx-auto max-w-2xl font-[family-name:var(--font-landing-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
+          <h2 className="mx-auto max-w-2xl font-[family-name:var(--font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             {t.finalCta.line1}
             <br />
-            <em className="text-[#e4572e]">{t.finalCta.em}</em>
+            <em className="text-[var(--tint)]">{t.finalCta.em}</em>
           </h2>
           <Link
             href="/signup"
-            className="mt-10 inline-block rounded-full bg-[#e4572e] px-8 py-4 text-lg font-semibold text-white transition-transform hover:-translate-y-0.5"
+            className="mt-10 inline-block rounded-full bg-[var(--tint)] px-8 py-4 text-lg font-semibold text-white transition-transform hover:-translate-y-0.5"
           >
             {t.finalCta.button}
           </Link>
-          <p className="mt-4 text-sm text-[#f6f1e7]/60">{t.finalCta.note}</p>
+          <p className="mt-4 text-sm text-white/60">{t.finalCta.note}</p>
         </div>
       </section>
 
-      <footer className="relative bg-[#12130f] px-5 py-8 text-sm text-[#f6f1e7]/50">
+      <footer className="relative bg-[#12130f] px-5 py-8 text-sm text-white/50">
         <div className="mx-auto w-full max-w-6xl">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <p className="font-[family-name:var(--font-landing-display)] text-lg text-[#f6f1e7]">
+            <p className="font-[family-name:var(--font-display)] text-lg text-white">
               agenda<span className="italic">easy</span>
-              <span className="text-[#e4572e]">.</span>
+              <span className="text-[var(--tint)]">.</span>
             </p>
             <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-              <Link href="/login" className="hover:text-[#f6f1e7]">
+              <Link href="/login" className="hover:text-white">
                 {t.footer.signIn}
               </Link>
-              <Link href="/signup" className="hover:text-[#f6f1e7]">
+              <Link href="/signup" className="hover:text-white">
                 {t.footer.signUp}
               </Link>
-              <Link href="/termini" className="hover:text-[#f6f1e7]">
+              <Link href="/termini" className="hover:text-white">
                 {t.footer.terms}
               </Link>
-              <Link href="/privacy" className="hover:text-[#f6f1e7]">
+              <Link href="/privacy" className="hover:text-white">
                 {t.footer.privacy}
               </Link>
             </nav>
           </div>
-          <p className="mt-6 border-t border-[#f6f1e7]/10 pt-5 text-center text-xs">
+          <p className="mt-6 border-t border-[var(--bg)]/10 pt-5 text-center text-xs">
             © {new Date().getFullYear()} Agenda Easy · {t.footer.by}{" "}
             <a
               href="https://github.com/kallebesiqueira-dev"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-[#f6f1e7] hover:underline"
+              className="font-medium text-white hover:underline"
             >
               Kallebe Gallo
             </a>

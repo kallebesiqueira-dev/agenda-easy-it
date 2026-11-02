@@ -173,7 +173,7 @@ export function SettingsForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      <section className="space-y-3 rounded-2xl bg-white p-4 shadow-sm border border-zinc-900/[0.06]">
+      <section className="space-y-3 rounded-[18px] bg-card p-4">
         <h2 className="font-semibold">{t.business}</h2>
 
         <div>
@@ -188,10 +188,10 @@ export function SettingsForm({
                     : mediaUrl(form.logo_path)!
                 }
                 alt="Logo"
-                className="size-16 rounded-2xl object-cover"
+                className="size-16 rounded-[18px] object-cover"
               />
             ) : (
-              <div className="flex size-16 items-center justify-center rounded-2xl bg-zinc-100 text-xl font-bold text-zinc-300">
+              <div className="flex size-16 items-center justify-center rounded-[18px] bg-zinc-100 text-xl font-bold text-zinc-300">
                 {form.name.charAt(0).toUpperCase()}
               </div>
             )}
@@ -200,7 +200,7 @@ export function SettingsForm({
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(e) => setLogoFile(e.target.files?.[0] ?? null)}
-                className="block w-full max-w-full text-sm text-zinc-600 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white"
+                className="block w-full max-w-full text-sm text-zinc-600 file:mr-3 file:rounded-lg file:border-0 file:bg-tint file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white"
               />
               {(form.logo_path || logoFile) && (
                 <button
@@ -244,7 +244,7 @@ export function SettingsForm({
               type="file"
               accept="image/jpeg,image/png,image/webp"
               onChange={(e) => setCoverFile(e.target.files?.[0] ?? null)}
-              className="block w-full max-w-full text-sm text-zinc-600 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white sm:w-auto"
+              className="block w-full max-w-full text-sm text-zinc-600 file:mr-3 file:rounded-lg file:border-0 file:bg-tint file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white sm:w-auto"
             />
             {(form.cover_path || coverFile) && (
               <button
@@ -301,7 +301,7 @@ export function SettingsForm({
               onChange={(e) =>
                 set("business_type", e.target.value as BusinessType)
               }
-              className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
+              className="w-full rounded-lg border border-zinc-200 bg-card px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
             >
               {businessTypeOptions(lang).map((o) => (
                 <option key={o.value} value={o.value}>
@@ -375,7 +375,7 @@ export function SettingsForm({
         </div>
       </section>
 
-      <section className="rounded-2xl bg-white p-4 shadow-sm border border-zinc-900/[0.06]">
+      <section className="rounded-[18px] bg-card p-4">
         <label className="flex items-start gap-3">
           <input
             type="checkbox"
@@ -404,7 +404,7 @@ export function SettingsForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-[#f6f1e7] disabled:opacity-60 ui-press hover:bg-emerald-700"
+          className="rounded-full bg-tint px-4 py-2 text-sm font-medium text-white disabled:opacity-60 ui-press hover:bg-emerald-700"
         >
           {pending ? t.saving : t.save}
         </button>

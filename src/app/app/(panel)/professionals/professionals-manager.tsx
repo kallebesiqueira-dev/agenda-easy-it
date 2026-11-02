@@ -138,11 +138,11 @@ export function ProfessionalsManager({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold sm:text-3xl">{t.heading}</h2>
+        <h2 className="ios-large-title">{t.heading}</h2>
         <button
           type="button"
           onClick={() => setAdding(true)}
-          className="rounded-full bg-zinc-900 px-3 py-1.5 text-sm font-medium text-[#f6f1e7] ui-press hover:bg-emerald-700"
+          className="rounded-full bg-tint px-3 py-1.5 text-sm font-medium text-white ui-press hover:bg-emerald-700"
         >
           {t.add}
         </button>
@@ -151,7 +151,7 @@ export function ProfessionalsManager({
       {adding && (
         <form
           onSubmit={addProfessional}
-          className="mb-4 flex gap-2 rounded-2xl bg-white p-4 shadow-sm border border-zinc-900/[0.06]"
+          className="mb-4 flex gap-2 rounded-[18px] bg-card p-4"
         >
           <input
             required
@@ -164,7 +164,7 @@ export function ProfessionalsManager({
           <button
             type="submit"
             disabled={pending}
-            className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-[#f6f1e7] disabled:opacity-60 ui-press hover:bg-emerald-700"
+            className="rounded-full bg-tint px-4 py-2 text-sm font-medium text-white disabled:opacity-60 ui-press hover:bg-emerald-700"
           >
             {t.save}
           </button>
@@ -185,7 +185,7 @@ export function ProfessionalsManager({
       )}
 
       {professionals.length === 0 && !adding ? (
-        <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm border border-zinc-900/[0.06]">
+        <p className="rounded-[18px] bg-card p-8 text-center text-sm text-zinc-500">
           {t.empty(label)}
         </p>
       ) : (
@@ -242,7 +242,7 @@ function ProfessionalCard({
 
   return (
     <div
-      className={`rounded-2xl bg-white p-4 shadow-sm ${professional.active ? "" : "opacity-60"}`}
+      className={`rounded-2xl bg-card p-4 ${professional.active ? "" : "opacity-60"}`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-3">
@@ -259,7 +259,7 @@ function ProfessionalCard({
                 {professional.display_name.charAt(0).toUpperCase()}
               </span>
             )}
-            <span className="absolute -bottom-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full bg-zinc-900 text-[#f6f1e7] ui-press hover:bg-emerald-700">
+            <span className="absolute -bottom-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full bg-tint text-white ui-press hover:bg-emerald-700">
               <IconPencil size={10} strokeWidth={2.25} />
             </span>
             <input
@@ -312,7 +312,7 @@ function ProfessionalCard({
               <button
                 type="submit"
                 disabled={pending}
-                className="rounded-full bg-zinc-900 px-2 py-1 text-sm text-[#f6f1e7] ui-press hover:bg-emerald-700"
+                className="rounded-full bg-tint px-2 py-1 text-sm text-white ui-press hover:bg-emerald-700"
               >
                 OK
               </button>
@@ -415,7 +415,7 @@ function ProfessionalCard({
               <select
                 value={weekday}
                 onChange={(e) => setWeekday(Number(e.target.value) as Weekday)}
-                className="rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-sm hover:border-zinc-300"
+                className="rounded-lg border border-zinc-200 bg-card px-2 py-1.5 text-sm hover:border-zinc-300"
               >
                 {WEEKDAYS.map((d) => (
                   <option key={d} value={d}>
@@ -447,7 +447,7 @@ function ProfessionalCard({
             <button
               type="submit"
               disabled={pending}
-              className="rounded-full bg-zinc-900 px-3 py-1.5 text-sm font-medium text-[#f6f1e7] disabled:opacity-60 ui-press hover:bg-emerald-700"
+              className="rounded-full bg-tint px-3 py-1.5 text-sm font-medium text-white disabled:opacity-60 ui-press hover:bg-emerald-700"
             >
               {t.addShift}
             </button>

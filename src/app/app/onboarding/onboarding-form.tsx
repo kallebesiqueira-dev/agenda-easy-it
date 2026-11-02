@@ -146,7 +146,7 @@ export function OnboardingForm({ lang }: { lang: Lang }) {
         <select
           value={type}
           onChange={(e) => setType(e.target.value as BusinessType)}
-          className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
+          className="w-full rounded-lg border border-zinc-200 bg-card px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
         >
           {businessTypeOptions(lang).map((o) => (
             <option key={o.value} value={o.value}>
@@ -163,7 +163,7 @@ export function OnboardingForm({ lang }: { lang: Lang }) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-full bg-zinc-900 py-3 font-semibold text-[#f6f1e7] disabled:opacity-60 ui-press hover:bg-emerald-700"
+        className="w-full rounded-full bg-tint py-3 font-semibold text-white disabled:opacity-60 ui-press hover:bg-emerald-700"
       >
         {loading ? t.creating : t.create}
       </button>

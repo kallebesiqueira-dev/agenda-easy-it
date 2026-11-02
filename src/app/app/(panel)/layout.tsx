@@ -8,7 +8,7 @@ import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { SupportChat } from "@/components/support-chat";
 import { IconAlert, IconExternal, IconLock, IconSparkle } from "@/components/icons";
 import { Reveal } from "@/components/reveal";
-import { PanelNav } from "./panel-nav";
+import { NavBar, Sidebar, TabBar } from "./panel-nav";
 import { SignOutButton } from "./sign-out-button";
 
 const COPY: Record<
@@ -21,6 +21,7 @@ const COPY: Record<
     subscribeNow: string;
     pastDue: string;
     payNow: string;
+    more: string;
   }
 > = {
   it: {
@@ -44,6 +45,7 @@ const COPY: Record<
     subscribeNow: "Abbonati ora",
     pastDue: "Fattura scaduta — l'accesso verrà bloccato a breve. ",
     payNow: "Paga ora",
+    more: "Altro",
   },
   en: {
     nav: [
@@ -66,6 +68,7 @@ const COPY: Record<
     subscribeNow: "Subscribe now",
     pastDue: "Invoice overdue — access will be blocked soon. ",
     payNow: "Pay now",
+    more: "More",
   },
 };
 
@@ -89,17 +92,13 @@ export default async function PanelLayout({
   const initial = ctx.business.name.trim().charAt(0).toUpperCase() || "A";
 
   const brand = (
-    <Link href="/app" className="flex items-center gap-2.5 rounded-xl">
-      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-emerald-700 font-[family-name:var(--font-display)] text-lg font-semibold text-[#f6f1e7] shadow-[inset_0_-2px_0_rgb(0_0_0/0.18)]">
+    <Link href="/app" className="flex items-center gap-3 rounded-[12px]">
+      <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-tint text-[17px] font-semibold text-white">
         {initial}
       </span>
       <span className="min-w-0">
-        <span className="block truncate font-[family-name:var(--font-display)] text-[1.05rem] leading-tight font-semibold">
-          {ctx.business.name}
-        </span>
-        <span className="block text-[0.7rem] tracking-[0.14em] text-zinc-500 uppercase">
-          agenda<span className="text-[#e4572e]">easy</span>
-        </span>
+        <span className="ios-headline block truncate">{ctx.business.name}</span>
+        <span className="ios-caption block text-[var(--label-2)]">Agenda Easy</span>
       </span>
     </Link>
   );
@@ -108,60 +107,58 @@ export default async function PanelLayout({
     <Link
       href={`/${ctx.business.slug}`}
       target="_blank"
-      className="group flex items-center justify-between gap-2 rounded-xl border border-zinc-200 bg-white/60 px-3 text-sm text-zinc-600 transition-colors hover:border-zinc-300 hover:text-zinc-900"
+      className="ios-row group justify-between rounded-[12px] bg-[var(--card)] text-[15px]"
     >
-      <span className="flex min-w-0 items-center gap-2">
+      <span className="flex min-w-0 items-center gap-2.5">
         <span
-          className={`size-2 shrink-0 rounded-full ${ctx.business.published ? "bg-emerald-500 shadow-[0_0_0_3px_rgb(47_125_94/0.18)]" : "bg-zinc-300"}`}
+          className={`size-2 shrink-0 rounded-full ${ctx.business.published ? "bg-[var(--green)]" : "bg-[var(--label-3)]"}`}
         />
-        <span className="truncate font-[family-name:var(--font-mono)] text-xs">
+        <span className="truncate text-[var(--label-2)]">
           /{ctx.business.slug}
           {!ctx.business.published && t.notPublished}
         </span>
       </span>
-      <IconExternal size={15} className="shrink-0 text-zinc-400 group-hover:text-zinc-700" />
+      <IconExternal size={16} className="shrink-0 text-[var(--tint)]" />
     </Link>
   );
 
+  const banner = "ios-subhead flex items-start gap-3 rounded-[16px] px-4 py-3";
+
   return (
-    <div className="ui-panel min-h-dvh bg-[#f6f1e7] text-zinc-900">
-      <div className="mx-auto flex w-full max-w-6xl">
-        {/* Barra laterale (desktop) */}
-        <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-6 border-r border-zinc-900/[0.06] px-4 py-6 lg:flex">
-          {brand}
-          <PanelNav items={t.nav} variant="side" />
+    <div className="ui-panel min-h-dvh bg-[var(--bg)] text-[var(--label)]">
+      <div className="flex w-full">
+        {/* Sidebar iPadOS (desktop) */}
+        <aside className="sticky top-0 hidden h-dvh w-[300px] shrink-0 flex-col gap-6 bg-[var(--card-2)] px-4 pt-6 pb-5 lg:flex [box-shadow:inset_-0.5px_0_0_var(--separator)]">
+          <div className="px-2">{brand}</div>
+          <Sidebar items={t.nav} />
           <div className="mt-auto space-y-3">
             {pageLink}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between px-1">
               <LanguageSwitcher current={lang} />
               <SignOutButton />
             </div>
           </div>
         </aside>
 
-        <div className="min-w-0 flex-1">
-          {/* Intestazione (mobile/tablet) */}
-          <header className="sticky top-0 z-30 border-b border-zinc-900/[0.06] bg-[#f6f1e7]/85 px-4 pt-3 backdrop-blur-md lg:hidden">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              {brand}
-              <div className="flex items-center gap-1">
-                <LanguageSwitcher current={lang} />
-                <SignOutButton />
-              </div>
-            </div>
-            <PanelNav items={t.nav} variant="top" />
-          </header>
+        <div className="min-w-0 flex-1 pb-28 lg:pb-0">
+          <NavBar>
+            <div className="lg:hidden">{brand}</div>
+          </NavBar>
+          <div className="flex items-center justify-end gap-1 px-4 lg:hidden">
+            <LanguageSwitcher current={lang} />
+            <SignOutButton />
+          </div>
 
-          <div className="space-y-2 px-4 pt-4 lg:px-10 lg:pt-8">
+          <div className="mx-auto w-full max-w-3xl space-y-2 px-4 pt-2 lg:px-10">
             <div className="lg:hidden">{pageLink}</div>
             {!ctx.business.published && (
-              <p className="flex items-start gap-3 rounded-2xl border border-sky-900/10 bg-sky-50 px-4 py-3 text-sm text-sky-900">
-                <IconLock size={18} className="mt-0.5 shrink-0" />
+              <p className={`${banner} bg-[var(--card)] text-[var(--label)]`}>
+                <IconLock size={18} className="mt-0.5 shrink-0 text-[var(--tint)]" />
                 <span>
                   {t.lockedBanner[0]}
                   <strong>{t.lockedBanner[1]}</strong>
                   {t.lockedBanner[2]}
-                  <Link href="/app/settings" className="font-semibold underline decoration-sky-900/30 underline-offset-4 hover:decoration-sky-900">
+                  <Link href="/app/settings" className="font-semibold text-[var(--tint)]">
                     {t.lockedBanner[3]}
                   </Link>
                   .
@@ -169,19 +166,19 @@ export default async function PanelLayout({
               </p>
             )}
             {access.status === "trialing" && (
-              <p className="flex items-center gap-3 rounded-2xl border border-[#e4572e]/15 bg-[#fdeee7] px-4 py-3 text-sm text-[#7a2d17]">
-                <IconSparkle size={18} className="shrink-0 text-[#e4572e]" />
+              <p className={`${banner} bg-[var(--tint-soft)] text-[var(--label)]`}>
+                <IconSparkle size={18} className="mt-0.5 shrink-0 text-[var(--tint)]" />
                 <span>
                   {t.trial(access.trialDaysLeft)}
-                  <Link href="/app/billing" className="font-semibold underline decoration-[#e4572e]/40 underline-offset-4 hover:decoration-[#e4572e]">
+                  <Link href="/app/billing" className="font-semibold text-[var(--tint)]">
                     {t.subscribeNow}
                   </Link>
                 </span>
               </p>
             )}
             {access.status === "past_due" && (
-              <p className="flex items-center gap-3 rounded-2xl border border-red-700/15 bg-red-50 px-4 py-3 text-sm text-red-700">
-                <IconAlert size={18} className="shrink-0" />
+              <p className={`${banner} bg-red-50 text-[var(--red)]`}>
+                <IconAlert size={18} className="mt-0.5 shrink-0" />
                 <span>
                   {t.pastDue}
                   <Link href="/app/billing" className="font-semibold underline underline-offset-4">
@@ -192,11 +189,12 @@ export default async function PanelLayout({
             )}
           </div>
 
-          <main className="mx-auto w-full max-w-3xl px-4 py-6 lg:mx-0 lg:px-10 lg:pb-16">
+          <main className="mx-auto w-full max-w-3xl px-4 pt-4 pb-10 lg:px-10 lg:pb-16">
             <Reveal>{children}</Reveal>
           </main>
         </div>
       </div>
+      <TabBar items={t.nav} moreLabel={t.more} />
       <SupportChat />
     </div>
   );

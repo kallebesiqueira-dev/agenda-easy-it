@@ -1,25 +1,22 @@
 import type { Metadata } from "next";
-import { Fraunces, Instrument_Sans, JetBrains_Mono } from "next/font/google";
+import type { Viewport } from "next";
+import { Inter } from "next/font/google";
 import { getLang } from "@/lib/i18n/server";
 import "./globals.css";
 
-// Stessa coppia tipografica della landing, ora in tutta l'app:
-// Instrument Sans per l'interfaccia, Fraunces per titoli e numeri "editoriali".
-const uiSans = Instrument_Sans({
-  variable: "--font-ui-sans",
+// Stack di sistema SF Pro; Inter solo come fallback su Android/Windows.
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const uiDisplay = Fraunces({
-  variable: "--font-ui-display",
-  subsets: ["latin"],
-  axes: ["opsz", "SOFT"],
-});
-
-const uiMono = JetBrains_Mono({
-  variable: "--font-ui-mono",
-  subsets: ["latin"],
-});
+export const viewport: Viewport = {
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f2f2f7" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+  ],
+};
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -52,7 +49,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={lang}
-      className={`${uiSans.variable} ${uiDisplay.variable} ${uiMono.variable} h-full antialiased`}
+      className={`${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

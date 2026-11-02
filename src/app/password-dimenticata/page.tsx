@@ -72,12 +72,12 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main className="flex ui-panel ui-grain relative min-h-dvh flex-col items-center justify-center bg-[#f6f1e7] px-4 py-10 text-zinc-900">
+    <main className="flex ui-panel ui-grain relative min-h-dvh flex-col items-center justify-center bg-[var(--bg)] px-4 py-10 text-zinc-900">
       <Link href="/" className="mb-6 rounded-lg font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight">
         agenda<span className="italic text-emerald-700">easy</span>
-        <span className="text-[#e4572e]">.</span>
+        <span className="text-[var(--tint)]">.</span>
       </Link>
-      <div className="w-full max-w-sm rounded-3xl border border-zinc-900/[0.06] bg-white p-6 shadow-lg sm:p-8">
+      <div className="w-full max-w-sm rounded-3xl border border-zinc-900/[0.06] bg-card p-6 shadow-lg sm:p-8">
         <div className="flex items-start justify-between gap-2">
           <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold">{t.title}</h1>
           <LanguageSwitcher current={lang} />
@@ -110,7 +110,7 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-full bg-zinc-900 py-3 font-semibold text-[#f6f1e7] disabled:opacity-60 ui-press hover:bg-emerald-700"
+              className="w-full rounded-full bg-tint py-3 font-semibold text-white disabled:opacity-60 ui-press hover:bg-emerald-700"
             >
               {loading ? t.sending : t.send}
             </button>
@@ -118,7 +118,7 @@ export default function ForgotPasswordPage() {
         )}
 
         <p className="mt-4 text-center text-sm text-zinc-500">
-          <Link href="/login" className="font-semibold text-zinc-900 underline decoration-[#e4572e]/50 underline-offset-4 hover:decoration-[#e4572e]">
+          <Link href="/login" className="font-semibold text-zinc-900 underline decoration-[var(--tint)]/50 underline-offset-4 hover:decoration-[var(--tint)]">
             {t.back}
           </Link>
         </p>

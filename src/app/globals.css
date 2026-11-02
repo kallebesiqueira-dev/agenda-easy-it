@@ -1,214 +1,292 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   Agenda Easy — design system
-   Palette "carta & inchiostro": neutri caldi (stessa famiglia della landing),
-   verde bosco come colore di marca, corallo come accento puntuale.
-   La scala zinc di Tailwind è rimappata sui neutri caldi così che tutte le
-   schermate esistenti ereditino i nuovi toni senza toccare la logica.
+   Agenda Easy — design system "iOS nativo"
+   Gerarchia di sfondi in stile UIKit (systemGroupedBackground →
+   secondarySystemGroupedBackground), un solo tint raffinato, dark mode
+   completa via prefers-color-scheme. La scala zinc di Tailwind punta ai
+   colori di sistema, così tutte le schermate seguono la stessa gerarchia.
    ========================================================================== */
 
 :root {
-  --background: #f6f1e7;
-  --foreground: #221c15;
-  --paper: #fbf8f2;
-  --ink: #221c15;
-  --brand: #17493b;
-  --brand-strong: #0f3329;
-  --accent: #e4572e;
-  --ring: #e4572e;
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  color-scheme: light dark;
+  --bg: #f2f2f7;               /* systemGroupedBackground */
+  --card: #ffffff;             /* secondarySystemGroupedBackground */
+  --card-2: #f2f2f7;           /* tertiary */
+  --fill: rgb(120 120 128 / 0.12);
+  --fill-2: rgb(120 120 128 / 0.08);
+  --label: #000000;
+  --label-2: rgb(60 60 67 / 0.6);
+  --label-3: rgb(60 60 67 / 0.3);
+  --separator: rgb(60 60 67 / 0.29);
+  --tint: #0a6cff;             /* tint unico: blu zaffiro */
+  --tint-soft: rgb(10 108 255 / 0.12);
+  --green: #34c759;
+  --red: #ff3b30;
+  --orange: #ff9500;
+  --material: rgb(249 249 249 / 0.78);
+  --spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --background: var(--bg);
+  --foreground: var(--label);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --card: #1c1c1e;
+    --card-2: #2c2c2e;
+    --fill: rgb(120 120 128 / 0.36);
+    --fill-2: rgb(120 120 128 / 0.24);
+    --label: #ffffff;
+    --label-2: rgb(235 235 245 / 0.6);
+    --label-3: rgb(235 235 245 / 0.3);
+    --separator: rgb(84 84 88 / 0.65);
+    --tint: #3d8bff;
+    --tint-soft: rgb(61 139 255 / 0.2);
+    --green: #30d158;
+    --red: #ff453a;
+    --orange: #ff9f0a;
+    --material: rgb(30 30 30 / 0.72);
+  }
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-paper: var(--paper);
-  --color-ink: var(--ink);
-  --color-brand: var(--brand);
-  --color-brand-strong: var(--brand-strong);
-  --color-accent: var(--accent);
-  --font-sans: var(--font-ui-sans);
-  --font-display: var(--font-ui-display);
-  --font-mono: var(--font-ui-mono);
+  --color-background: var(--bg);
+  --color-foreground: var(--label);
+  --color-card: var(--card);
+  --color-tint: var(--tint);
+  --color-label: var(--label);
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", var(--font-inter), "Helvetica Neue", system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", var(--font-inter), "Helvetica Neue", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+
+  /* zinc → colori di sistema (seguono light/dark) */
+  --color-zinc-50: var(--card-2);
+  --color-zinc-100: var(--fill);
+  --color-zinc-200: var(--separator);
+  --color-zinc-300: var(--label-3);
+  --color-zinc-400: var(--label-3);
+  --color-zinc-500: var(--label-2);
+  --color-zinc-600: var(--label-2);
+  --color-zinc-700: var(--label);
+  --color-zinc-800: var(--label);
+  --color-zinc-900: var(--label);
+  --color-zinc-950: var(--label);
+
+  --color-emerald-50: color-mix(in srgb, var(--green) 12%, transparent);
+  --color-emerald-100: color-mix(in srgb, var(--green) 18%, transparent);
+  --color-emerald-200: color-mix(in srgb, var(--green) 30%, transparent);
+  --color-emerald-400: var(--green);
+  --color-emerald-500: var(--green);
+  --color-emerald-600: var(--green);
+  --color-emerald-700: color-mix(in srgb, var(--green) 70%, var(--label));
+  --color-emerald-800: color-mix(in srgb, var(--green) 60%, var(--label));
+  --color-emerald-900: color-mix(in srgb, var(--green) 50%, var(--label));
+
+  --color-red-50: color-mix(in srgb, var(--red) 10%, transparent);
+  --color-red-100: color-mix(in srgb, var(--red) 16%, transparent);
+  --color-red-200: color-mix(in srgb, var(--red) 30%, transparent);
+  --color-red-500: var(--red);
+  --color-red-600: var(--red);
+  --color-red-700: var(--red);
+  --color-red-800: var(--red);
+
+  --color-blue-50: var(--tint-soft);
+  --color-blue-100: var(--tint-soft);
+  --color-blue-800: var(--tint);
+  --color-sky-50: var(--tint-soft);
+  --color-sky-900: var(--tint);
+  --color-amber-50: color-mix(in srgb, var(--orange) 12%, transparent);
+  --color-amber-800: var(--orange);
+  --color-orange-600: var(--orange);
 }
 
 @theme {
-  /* Neutri caldi (sostituiscono lo zinc freddo) */
-  --color-zinc-50: #faf7f1;
-  --color-zinc-100: #f2ece1;
-  --color-zinc-200: #e6ddcf;
-  --color-zinc-300: #d3c7b5;
-  --color-zinc-400: #a99c89;
-  --color-zinc-500: #7c705f;
-  --color-zinc-600: #5d5346;
-  --color-zinc-700: #463e33;
-  --color-zinc-800: #2f2921;
-  --color-zinc-900: #221c15;
-  --color-zinc-950: #15110c;
-
-  /* Verde bosco = stato positivo / marca */
-  --color-emerald-50: #eef5f1;
-  --color-emerald-100: #dcebe3;
-  --color-emerald-200: #b8d7c7;
-  --color-emerald-300: #8cbea5;
-  --color-emerald-400: #5a9e7f;
-  --color-emerald-500: #2f7d5e;
-  --color-emerald-600: #22654c;
-  --color-emerald-700: #17493b;
-  --color-emerald-800: #123b30;
-  --color-emerald-900: #0e2e26;
-
-  /* Rosso mattone (errori, distruttivo) */
-  --color-red-50: #fcf0ec;
-  --color-red-100: #f8ddd4;
-  --color-red-200: #f0b9a8;
-  --color-red-300: #e48f77;
-  --color-red-400: #d96a4c;
-  --color-red-500: #c94a2b;
-  --color-red-600: #b23b20;
-  --color-red-700: #932f1a;
-  --color-red-800: #742716;
-  --color-red-900: #5a1f12;
-
-  /* Blu inchiostro (informativo, "completata") */
-  --color-blue-50: #eef2f7;
-  --color-blue-100: #dde5ef;
-  --color-blue-800: #263d5c;
-  --color-sky-50: #eef2f7;
-  --color-sky-900: #1f3350;
-
-  /* Raggi e ombre coerenti */
+  /* 8pt grid + raggi "continui" generosi */
   --radius-lg: 0.625rem;
   --radius-xl: 0.875rem;
-  --radius-2xl: 1.25rem;
+  --radius-2xl: 1.375rem;
   --radius-3xl: 1.75rem;
-  --shadow-sm: 0 1px 0 rgb(34 28 21 / 0.04), 0 1px 3px -1px rgb(34 28 21 / 0.08);
-  --shadow: 0 1px 0 rgb(34 28 21 / 0.04), 0 4px 12px -4px rgb(34 28 21 / 0.12);
-  --shadow-md: 0 2px 0 rgb(34 28 21 / 0.03), 0 10px 28px -12px rgb(34 28 21 / 0.22);
-  --shadow-lg: 0 2px 0 rgb(34 28 21 / 0.03), 0 24px 60px -24px rgb(34 28 21 / 0.35);
+  --shadow-sm: 0 0 0 0.5px rgb(0 0 0 / 0.04);
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -12px rgb(0 0 0 / 0.12);
+  --shadow-md: 0 2px 6px rgb(0 0 0 / 0.04), 0 12px 32px -12px rgb(0 0 0 / 0.18);
+  --shadow-lg: 0 4px 12px rgb(0 0 0 / 0.04), 0 24px 64px -20px rgb(0 0 0 / 0.28);
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-feature-settings: "ss01", "cv11";
-  text-rendering: optimizeLegibility;
+  background: var(--bg);
+  color: var(--label);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.294;
+  letter-spacing: -0.022em;
+  -webkit-font-smoothing: antialiased;
 }
 
-h1,
-h2,
-.font-display {
-  letter-spacing: -0.015em;
-}
+/* ---- Scala tipografica iOS ---- */
+.ios-large-title { font: 700 34px/41px var(--font-display); letter-spacing: 0.011em; }
+.ios-title1 { font: 700 28px/34px var(--font-display); letter-spacing: 0.013em; }
+.ios-title2 { font: 700 22px/28px var(--font-display); letter-spacing: -0.016em; }
+.ios-title3 { font: 600 20px/25px var(--font-display); letter-spacing: -0.017em; }
+.ios-headline { font: 600 17px/22px var(--font-sans); letter-spacing: -0.024em; }
+.ios-body { font: 400 17px/22px var(--font-sans); letter-spacing: -0.024em; }
+.ios-callout { font: 400 16px/21px var(--font-sans); letter-spacing: -0.02em; }
+.ios-subhead { font: 400 15px/20px var(--font-sans); letter-spacing: -0.015em; }
+.ios-footnote { font: 400 13px/18px var(--font-sans); letter-spacing: -0.006em; }
+.ios-caption { font: 400 12px/16px var(--font-sans); letter-spacing: 0; }
+.ios-section-header { font: 400 13px/18px var(--font-sans); text-transform: uppercase; letter-spacing: 0.02em; color: var(--label-2); padding: 0 16px 6px; }
+.tabular, time { font-variant-numeric: tabular-nums; }
 
-::selection {
-  background: rgb(228 87 46 / 0.22);
+/* Materiale traslucido (nav bar, tab bar, sheet) */
+.ios-material {
+  background: var(--material);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
 }
+.ios-hairline-b { box-shadow: inset 0 -0.5px 0 var(--separator); }
+.ios-hairline-t { box-shadow: inset 0 0.5px 0 var(--separator); }
 
-/* Focus ring unico e ben visibile (solo da tastiera) */
+/* Inset grouped list */
+.ios-group { background: var(--card); border-radius: 22px; overflow: hidden; }
+.ios-group > * + * { position: relative; }
+.ios-group > * + *::before {
+  content: ""; position: absolute; top: 0; right: 0; left: 16px;
+  height: 0.5px; background: var(--separator); z-index: 1;
+}
+.ios-row { min-height: 44px; display: flex; align-items: center; gap: 12px; padding: 11px 16px; }
+
+::selection { background: var(--tint-soft); }
+
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
-  outline: 2px solid var(--ring);
+  outline: 3px solid color-mix(in srgb, var(--tint) 55%, transparent);
   outline-offset: 2px;
-  border-radius: 0.5rem;
+  border-radius: 10px;
 }
 
-/* ---- Pannello (/app): base dei controlli ---- */
+:where(button, a, [role="button"], label:has(input), summary) { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+:where(button:disabled) { cursor: not-allowed; }
 
-.ui-panel :where(button, a[class*="rounded"], input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]), select) {
-  min-height: 44px;
+/* Press scale 0.97 con molla */
+:where(button:not(:disabled), a[class*="rounded"], .ui-press) {
+  transition: transform 0.45s var(--spring), background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease, box-shadow 0.3s ease;
 }
-
-.ui-panel :where(input:not([type="checkbox"]):not([type="radio"]):not([type="color"]), select, textarea) {
-  background-color: #fffdf9;
-  border-color: var(--color-zinc-200);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.ui-panel :where(input:not([type="checkbox"]):not([type="radio"]):not([type="color"]), select, textarea):hover {
-  border-color: var(--color-zinc-300);
-}
-
-.ui-panel :where(input:not([type="checkbox"]):not([type="radio"]):not([type="color"]), select, textarea):focus {
-  outline: none;
-  border-color: var(--brand);
-  box-shadow: 0 0 0 4px rgb(23 73 59 / 0.12);
-}
-
-.ui-panel :where(input[type="checkbox"], input[type="radio"]) {
-  accent-color: var(--brand);
-  width: 1.125rem;
-  height: 1.125rem;
-}
-
-:where(button, a) {
-  -webkit-tap-highlight-color: transparent;
-}
-
-.ui-panel :where(button:not(:disabled)),
-.ui-press {
-  transition: transform 0.18s var(--ease-out-expo), background-color 0.15s ease,
-    border-color 0.15s ease, color 0.15s ease, box-shadow 0.2s ease;
-}
-
-.ui-panel :where(button:not(:disabled)):active,
-.ui-press:active {
+:where(button:not(:disabled), a[class*="rounded"], .ui-press):active {
   transform: scale(0.97);
+  transition-duration: 0.1s;
 }
 
-.ui-panel :where(button):disabled {
-  cursor: not-allowed;
+/* ---- Controlli nativi ---- */
+.ui-panel :where(button, a[class*="rounded"], input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]), select) { min-height: 44px; }
+
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]):not([type="range"]), select, textarea) {
+  background-color: var(--fill-2);
+  border-color: transparent !important;
+  color: var(--label);
+  border-radius: 12px;
+  font-size: 17px;
+  transition: box-shadow 0.25s var(--spring), background-color 0.2s ease;
+}
+:where(input, select, textarea)::placeholder { color: var(--label-3); }
+:where(input:not([type="checkbox"]):not([type="radio"]), select, textarea):focus {
+  outline: none;
+  background-color: var(--card);
+  box-shadow: 0 0 0 2px var(--tint), 0 0 0 6px var(--tint-soft) !important;
 }
 
-/* Card con lieve sollevamento all'hover (solo puntatori fini) */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 9 5-5 5 5M7 15l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+/* Toggle iOS per ogni checkbox */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex-shrink: 0;
+  width: 51px;
+  height: 31px;
+  border-radius: 999px;
+  background: var(--fill);
+  transition: background-color 0.3s var(--spring);
+  vertical-align: middle;
+}
+input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 3px 8px rgb(0 0 0 / 0.15), 0 3px 1px rgb(0 0 0 / 0.06);
+  transition: transform 0.45s var(--spring), width 0.2s var(--spring);
+}
+input[type="checkbox"]:active::after { width: 33px; }
+input[type="checkbox"]:checked { background: var(--green); }
+input[type="checkbox"]:checked::after { transform: translateX(20px); }
+input[type="checkbox"]:checked:active::after { transform: translateX(14px); }
+input[type="radio"] { accent-color: var(--tint); width: 20px; height: 20px; }
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.45; cursor: pointer; }
+input[type="time"], input[type="date"] { font-variant-numeric: tabular-nums; }
+
+/* Scrollbar sottili come macOS */
+* { scrollbar-width: thin; scrollbar-color: var(--label-3) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--label-3); border-radius: 999px; border: 3px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-track { background: transparent; }
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Hover morbido solo con puntatore fine */
 @media (hover: hover) {
-  .ui-lift {
-    transition: transform 0.25s var(--ease-out-expo), box-shadow 0.25s ease;
-  }
-  .ui-lift:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
-  }
+  .ui-lift { transition: transform 0.5s var(--spring), box-shadow 0.4s ease; }
+  .ui-lift:hover { box-shadow: var(--shadow-md); }
 }
 
-/* Grana carta leggerissima sullo sfondo del pannello */
-.ui-grain {
-  background-image: radial-gradient(rgb(34 28 21 / 0.05) 0.6px, transparent 0.6px);
-  background-size: 18px 18px;
-}
+/* Swipe actions: la riga scorre orizzontalmente e rivela le azioni */
+.ios-swipe { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
+.ios-swipe::-webkit-scrollbar { display: none; }
+.ios-swipe > * { scroll-snap-align: start; flex-shrink: 0; }
 
-/* Skeleton di caricamento */
-@keyframes ui-shimmer {
-  to {
-    background-position: -200% 0;
-  }
-}
-
+/* Skeleton */
+@keyframes ui-shimmer { to { background-position: -200% 0; } }
 .ui-skeleton {
-  background: linear-gradient(90deg, var(--color-zinc-100) 25%, var(--color-zinc-50) 50%, var(--color-zinc-100) 75%);
+  background: linear-gradient(90deg, var(--fill-2) 25%, var(--fill) 50%, var(--fill-2) 75%);
   background-size: 200% 100%;
   animation: ui-shimmer 1.4s linear infinite;
+  border-radius: 10px;
 }
 
+.safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 8px); }
+.safe-top { padding-top: env(safe-area-inset-top); }
+
+/* Lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .ui-skeleton {
-    animation: none;
-  }
-  .ui-panel :where(button):active,
-  .ui-press:active {
-    transform: none;
-  }
+  :where(button, a, .ui-press):active { transform: none !important; }
 }
 
-/* Campo password: nasconde l'occhio nativo di Edge/IE — resta solo il
-   nostro bottone con icona per mostrare/nascondere la password. */
+/* Campo password: nasconde l'occhio nativo di Edge/IE */
 input::-ms-reveal,
 input::-ms-clear {
   display: none;

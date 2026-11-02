@@ -170,7 +170,7 @@ export function AuthForm({
         type="button"
         onClick={signInWithGoogle}
         disabled={loading}
-        className="ui-press flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-zinc-200 bg-white py-3 font-medium hover:border-zinc-300 hover:bg-zinc-50 active:scale-[0.98] disabled:opacity-60"
+        className="ui-press flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-zinc-200 bg-card py-3 font-medium hover:border-zinc-300 hover:bg-zinc-50 active:scale-[0.98] disabled:opacity-60"
       >
         <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden>
           <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -196,13 +196,13 @@ export function AuthForm({
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="min-h-12 w-full rounded-xl border border-zinc-200 bg-[#fffdf9] px-4 outline-none transition-[border-color,box-shadow] hover:border-zinc-300 focus:border-emerald-700 focus:shadow-[0_0_0_4px_rgb(23_73_59/0.12)]"
+          className="min-h-12 w-full rounded-xl border border-zinc-200 bg-[var(--card)] px-4 outline-none transition-[border-color,box-shadow] hover:border-zinc-300 focus:border-emerald-700 focus:shadow-[0_0_0_4px_rgb(10_108_255/0.15)]"
           placeholder={t.emailPh}
         />
       </label>
       <label className="block">
         <span className="mb-1 block text-sm font-medium">{t.password}</span>
-        <div className="flex items-center rounded-xl border border-zinc-200 bg-[#fffdf9] transition-[border-color,box-shadow] hover:border-zinc-300 focus-within:border-emerald-700 focus-within:shadow-[0_0_0_4px_rgb(23_73_59/0.12)]">
+        <div className="flex items-center rounded-xl border border-zinc-200 bg-[var(--card)] transition-[border-color,box-shadow] hover:border-zinc-300 focus-within:border-emerald-700 focus-within:shadow-[0_0_0_4px_rgb(10_108_255/0.15)]">
           <input
             type={showPassword ? "text" : "password"}
             required
@@ -236,7 +236,7 @@ export function AuthForm({
       <button
         type="submit"
         disabled={loading}
-        className="ui-press min-h-12 w-full rounded-full bg-zinc-900 py-3 font-semibold text-[#f6f1e7] shadow-[0_10px_24px_-12px_rgb(34_28_21/0.6)] hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-60"
+        className="ui-press min-h-12 w-full rounded-full bg-tint py-3 font-semibold text-white shadow-[0_10px_24px_-12px_rgb(10_108_255/0.5)] hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-60"
       >
         {loading ? t.wait : mode === "login" ? t.signIn : t.signUp}
       </button>

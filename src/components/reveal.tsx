@@ -28,9 +28,10 @@ export function Reveal({
         ":scope > *, :scope > * > section, :scope > * > ul > li, [data-reveal]"
       );
       gsap.from(targets, {
-        y: 14,
+        y: 12,
+        scale: 0.985,
         opacity: 0,
-        duration: 0.6,
+        duration: 0.7,
         ease: "expo.out",
         stagger: 0.045,
         clearProps: "transform,opacity",

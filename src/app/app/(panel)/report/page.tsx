@@ -156,7 +156,7 @@ export default async function ReportsPage({ searchParams }: Props) {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold sm:text-3xl capitalize">{t.heading} · {monthLabel}</h2>
+        <h2 className="ios-large-title capitalize">{t.heading} · {monthLabel}</h2>
         <div className="flex items-center gap-1 text-sm">
           <Link
             href={`/app/report?m=${prevM}`}
@@ -185,7 +185,7 @@ export default async function ReportsPage({ searchParams }: Props) {
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {stats.map((s) => (
-          <div key={s.label} className="rounded-2xl bg-white p-4 shadow-sm border border-zinc-900/[0.06]">
+          <div key={s.label} className="rounded-[18px] bg-card p-4">
             <p className="text-lg font-bold">{s.value}</p>
             <p className="mt-0.5 text-xs text-zinc-500">{s.label}</p>
           </div>
@@ -193,7 +193,7 @@ export default async function ReportsPage({ searchParams }: Props) {
       </div>
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2 sm:items-start">
-        <section className="rounded-2xl bg-white p-4 shadow-sm border border-zinc-900/[0.06]">
+        <section className="rounded-[18px] bg-card p-4">
           <h3 className="mb-3 font-semibold">{t.topServices}</h3>
           {topServices.length === 0 ? (
             <p className="text-sm text-zinc-500">{t.noBookings}</p>
@@ -209,7 +209,7 @@ export default async function ReportsPage({ searchParams }: Props) {
           )}
         </section>
 
-        <section className="rounded-2xl bg-white p-4 shadow-sm border border-zinc-900/[0.06]">
+        <section className="rounded-[18px] bg-card p-4">
           <h3 className="mb-1 font-semibold">{t.products}</h3>
           <p className="mb-3 text-xs text-zinc-500">{t.productsHint}</p>
           {products.length === 0 ? (

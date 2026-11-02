@@ -225,14 +225,14 @@ export function PlansManager({
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold sm:text-3xl">{t.heading}</h2>
+        <h2 className="ios-large-title">{t.heading}</h2>
         <button
           type="button"
           onClick={() => {
             setTemplate(null);
             setEditing("new");
           }}
-          className="rounded-full bg-zinc-900 px-3 py-1.5 text-sm font-medium text-[#f6f1e7] ui-press hover:bg-emerald-700"
+          className="rounded-full bg-tint px-3 py-1.5 text-sm font-medium text-white ui-press hover:bg-emerald-700"
         >
           {t.newPlan}
         </button>
@@ -240,7 +240,7 @@ export function PlansManager({
       <p className="mb-4 text-sm text-zinc-500">{t.intro}</p>
 
       {!editing && (
-        <div className="mb-4 rounded-2xl bg-white p-4 shadow-sm border border-zinc-900/[0.06]">
+        <div className="mb-4 rounded-[18px] bg-card p-4">
           <p className="mb-2 text-sm font-medium text-zinc-700">
             {t.templatesTitle}
           </p>
@@ -282,7 +282,7 @@ export function PlansManager({
       )}
 
       {plans.length === 0 && !editing ? (
-        <p className="rounded-2xl bg-white p-8 text-center text-sm text-zinc-500 shadow-sm border border-zinc-900/[0.06]">
+        <p className="rounded-[18px] bg-card p-8 text-center text-sm text-zinc-500">
           {t.empty}
         </p>
       ) : (
@@ -290,13 +290,13 @@ export function PlansManager({
           {plans.map((p) => (
             <li
               key={p.id}
-              className={`rounded-2xl bg-white p-4 shadow-sm ${p.active ? "" : "opacity-60"}`}
+              className={`rounded-2xl bg-card p-4 ${p.active ? "" : "opacity-60"}`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <p className="text-base font-semibold text-zinc-900">
                     {p.badge && (
-                      <span className="mr-2 rounded-full bg-zinc-900 px-2 py-0.5 text-xs font-semibold text-[#f6f1e7] ui-press hover:bg-emerald-700">
+                      <span className="mr-2 rounded-full bg-tint px-2 py-0.5 text-xs font-semibold text-white ui-press hover:bg-emerald-700">
                         {p.badge}
                       </span>
                     )}
@@ -411,7 +411,7 @@ function PlanForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="mb-4 space-y-3 rounded-2xl bg-white p-4 shadow-sm border border-zinc-900/[0.06]"
+      className="mb-4 space-y-3 rounded-[18px] bg-card p-4"
     >
       <p className="font-semibold">{plan ? t.editPlan : t.newPlan}</p>
       <label className="block">
@@ -503,7 +503,7 @@ function PlanForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-[#f6f1e7] disabled:opacity-60 ui-press hover:bg-emerald-700"
+          className="rounded-full bg-tint px-4 py-2 text-sm font-medium text-white disabled:opacity-60 ui-press hover:bg-emerald-700"
         >
           {pending ? t.saving : t.save}
         </button>

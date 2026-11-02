@@ -1,3 +1,4 @@
+import { SmoothScroll } from "@/components/smooth-scroll";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getLang } from "@/lib/i18n/server";
@@ -26,5 +27,10 @@ export default async function PublicBookingPage({ params }: Props) {
   ]);
   if (!profile) notFound();
 
-  return <BookingFlow profile={profile} lang={lang} />;
+  return (
+    <>
+      <SmoothScroll />
+      <BookingFlow profile={profile} lang={lang} />
+    </>
+  );
 }

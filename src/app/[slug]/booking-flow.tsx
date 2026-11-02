@@ -410,7 +410,7 @@ export function BookingFlow({
           copertina in proporzione fissa su ogni viewport, avatar che scavalca
           il bordo e blocco identità separato dalla foto. */}
       <header className="mx-auto w-full max-w-md px-4 pt-4 sm:max-w-lg sm:pt-6 lg:max-w-xl">
-        <div className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-black/5">
+        <div className="overflow-hidden rounded-[22px] bg-card ring-1 ring-black/5">
           <div className="relative aspect-[5/2] w-full bg-[var(--brand)] sm:aspect-[3/1]">
             {profile.cover_path ? (
               <Image
@@ -455,10 +455,10 @@ export function BookingFlow({
                   width={96}
                   height={96}
                   quality={90}
-                  className="-mt-10 size-20 shrink-0 rounded-2xl bg-white object-contain p-1 shadow-md ring-4 ring-white sm:-mt-12 sm:size-24"
+                  className="-mt-10 size-20 shrink-0 rounded-[18px] bg-card object-contain p-1 shadow-md ring-4 ring-white sm:-mt-12 sm:size-24"
                 />
               ) : (
-                <div className="-mt-10 flex size-20 shrink-0 items-center justify-center rounded-2xl bg-[var(--brand)] text-3xl font-bold text-[var(--brand-ink)] shadow-md ring-4 ring-white sm:-mt-12 sm:size-24">
+                <div className="-mt-10 flex size-20 shrink-0 items-center justify-center rounded-[18px] bg-[var(--brand)] text-3xl font-bold text-[var(--brand-ink)] shadow-md ring-4 ring-white sm:-mt-12 sm:size-24">
                   {profile.name.charAt(0).toUpperCase()}
                 </div>
               )}
@@ -491,7 +491,7 @@ export function BookingFlow({
       </header>
 
       <main className="mx-auto w-full max-w-md px-4 pb-16 pt-4 sm:max-w-lg lg:max-w-xl">
-        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 sm:p-7">
+        <div className="rounded-[22px] bg-card p-5 ring-1 ring-black/5 sm:p-7">
           {step === "service" && (
             <StepShell title={t.chooseService}>
               <ul className="space-y-2.5">
@@ -509,7 +509,7 @@ export function BookingFlow({
                           setProfessionalId(profile.professionals[0].id);
                         }
                       }}
-                      className="group flex w-full items-center justify-between gap-3 rounded-2xl border border-zinc-200 px-4 py-3.5 text-left transition-all hover:-translate-y-0.5 hover:border-[var(--brand)] hover:shadow-md"
+                      className="group flex w-full items-center justify-between gap-3 rounded-[18px] border border-zinc-200 px-4 py-3.5 text-left transition-all hover:-translate-y-0.5 hover:border-[var(--brand)] hover:shadow-md"
                     >
                       {s.image_path && (
                         <Image
@@ -549,7 +549,7 @@ export function BookingFlow({
                     {profile.plans.map((p) => (
                       <li
                         key={p.id}
-                        className="rounded-2xl border border-zinc-200 bg-zinc-50/60 px-4 py-3.5"
+                        className="rounded-[18px] border border-zinc-200 bg-zinc-50/60 px-4 py-3.5"
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
@@ -601,7 +601,7 @@ export function BookingFlow({
                     {profile.products.map((p) => (
                       <li
                         key={p.id}
-                        className="rounded-2xl border border-zinc-200 px-4 py-3"
+                        className="rounded-[18px] border border-zinc-200 px-4 py-3"
                       >
                         <div className="flex items-center gap-3">
                           {p.image_path && (
@@ -699,10 +699,10 @@ export function BookingFlow({
                       setDateISO(d.dateISO);
                       loadSlots(d.dateISO);
                     }}
-                    className={`flex w-14 shrink-0 flex-col items-center rounded-2xl border py-2.5 text-sm transition-all sm:w-16 ${
+                    className={`flex w-14 shrink-0 flex-col items-center rounded-[18px] border py-2.5 text-sm transition-all sm:w-16 ${
                       dateISO === d.dateISO
                         ? "border-transparent bg-[var(--brand)] text-[var(--brand-ink)] shadow-md"
-                        : "border-zinc-200 bg-white text-zinc-700 hover:border-[var(--brand)]"
+                        : "border-zinc-200 bg-card text-zinc-700 hover:border-[var(--brand)]"
                     }`}
                   >
                     <span className="capitalize">{d.weekdayLabel.replace(".", "")}</span>
@@ -943,7 +943,7 @@ function ChoiceButton({
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center gap-3 rounded-2xl border border-zinc-200 px-4 py-3.5 text-left transition-all hover:-translate-y-0.5 hover:border-[var(--brand)] hover:shadow-md"
+      className="flex w-full items-center gap-3 rounded-[18px] border border-zinc-200 px-4 py-3.5 text-left transition-all hover:-translate-y-0.5 hover:border-[var(--brand)] hover:shadow-md"
     >
       {imageUrl && (
         <Image
