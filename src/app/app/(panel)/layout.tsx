@@ -136,8 +136,11 @@ export default async function PanelLayout({
             <span className="size-3 rounded-full bg-[#28c840]" />
           </div>
           <div className="px-1">{brand}</div>
-          <Sidebar items={t.nav} />
-          <div className="mt-auto space-y-3">
+          {/* La nav scorre se il viewport è basso: logo e footer restano sempre visibili */}
+          <div className="-mx-2 min-h-0 flex-1 overflow-y-auto px-2">
+            <Sidebar items={t.nav} />
+          </div>
+          <div className="space-y-3">
             {pageLink}
             <div className="flex items-center justify-between px-1">
               <LanguageSwitcher current={lang} variant="bare" />
