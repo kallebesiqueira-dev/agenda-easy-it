@@ -3,21 +3,32 @@
 /** Scroll fluido (Lenis) per le pagine pubbliche. Disattivo con reduced motion. */
 
 import { useEffect } from "react";
-import Lenis from "lenis";
 
 export function SmoothScroll() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
     let id = 0;
-    const raf = (t: number) => {
-      lenis.raf(t);
+    let destroy: (() => void) | undefined;
+    let cancelled = false;
+
+    // Lenis caricato on-demand: fuori dal bundle iniziale della pagina.
+    import("lenis").then(({ default: Lenis }) => {
+      if (cancelled) return;
+      const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
+      const raf = (t: number) => {
+        lenis.raf(t);
+        id = requestAnimationFrame(raf);
+      };
       id = requestAnimationFrame(raf);
-    };
-    id = requestAnimationFrame(raf);
+      destroy = () => {
+        cancelAnimationFrame(id);
+        lenis.destroy();
+      };
+    });
+
     return () => {
-      cancelAnimationFrame(id);
-      lenis.destroy();
+      cancelled = true;
+      destroy?.();
     };
   }, []);
   return null;

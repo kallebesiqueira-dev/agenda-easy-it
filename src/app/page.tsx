@@ -8,7 +8,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { SupportChat } from "@/components/support-chat";
+import { SupportChatLazy } from "@/components/support-chat-lazy";
 import { AccentPicker } from "@/components/landing/accent-picker";
 import { SegmentDemo } from "@/components/landing/segment-demo";
 import { PromoVideo } from "@/components/landing/promo-video";
@@ -438,7 +438,7 @@ export default async function LandingPage() {
         </div>
       </footer>
 
-      <SupportChat />
+      <SupportChatLazy />
     </div>
   );
 }

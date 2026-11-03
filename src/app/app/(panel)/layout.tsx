@@ -6,7 +6,7 @@ import { getSubscriptionAccess } from "@/lib/billing";
 import type { Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n/server";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
-import { SupportChat } from "@/components/support-chat";
+import { SupportChatLazy } from "@/components/support-chat-lazy";
 import { IconAlert, IconExternal, IconLock, IconSparkle } from "@/components/icons";
 import { NavBar, Sidebar, TabBar } from "./panel-nav";
 import { SignOutButton } from "./sign-out-button";
@@ -201,7 +201,7 @@ export default async function PanelLayout({
         </div>
       </div>
       <TabBar items={t.nav} moreLabel={t.more} />
-      <SupportChat />
+      <SupportChatLazy />
     </div>
   );
 }

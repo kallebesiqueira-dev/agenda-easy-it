@@ -6,9 +6,13 @@ import { getLang } from "@/lib/i18n/server";
 import "./globals.css";
 
 // Stack di sistema SF Pro ovunque; Inter solo come fallback fuori da Apple.
+// preload: false → su Apple non si scarica un font inutile nel percorso critico;
+// altrove arriva con display:swap (self-hosted, nessun testo invisibile).
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
+  preload: false,
 });
 
 export const viewport: Viewport = {
