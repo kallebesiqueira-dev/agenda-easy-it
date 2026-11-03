@@ -18,7 +18,7 @@ The client picks service, professional and time on their own and the booking lan
 
 ## 🎥 Demo
 
-**[▶ Watch the demo video](docs/media/demo.webm)** — landing, language switch, booking flow and onboarding.
+**[▶ Watch the demo video (48s)](https://www.youtube.com/watch?v=0ZbTfrsfgcM)** — online bookings, automatic reminders and a calendar that stays in order.
 
 | Landing (Italian) | Landing (English) |
 |---|---|

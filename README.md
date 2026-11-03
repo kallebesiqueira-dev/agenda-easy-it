@@ -18,7 +18,7 @@ Il cliente sceglie servizio, professionista e orario da solo e la prenotazione a
 
 ## 🎥 Demo
 
-**[▶ Guarda il video demo](docs/media/demo.webm)** — landing, cambio lingua, flusso di prenotazione e onboarding.
+**[▶ Guarda il video demo (48s)](https://www.youtube.com/watch?v=0ZbTfrsfgcM)** — prenotazioni online, promemoria automatici e agenda sempre in ordine.
 
 | Landing (italiano) | Landing (inglese) |
 |---|---|
