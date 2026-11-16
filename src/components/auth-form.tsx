@@ -232,7 +232,7 @@ export function AuthForm({
         <p role="alert" className="rounded-xl border border-red-700/15 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
       )}
       {info && (
-        <p role="status" className="rounded-xl border border-emerald-700/15 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+        <p role="status" className="rounded-xl border border-[var(--green)]/15 bg-[var(--green-bg)] px-4 py-3 text-sm text-[var(--green)]">
           {info}
         </p>
       )}

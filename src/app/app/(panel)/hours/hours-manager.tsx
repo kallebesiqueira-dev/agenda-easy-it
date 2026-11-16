@@ -220,7 +220,7 @@ export function HoursManager({
           >
             {pending ? t.saving : t.saveHours}
           </button>
-          {saved && <span className="text-sm text-emerald-600">{t.saved}</span>}
+          {saved && <span className="text-sm text-[var(--green)]">{t.saved}</span>}
         </div>
       </section>
 

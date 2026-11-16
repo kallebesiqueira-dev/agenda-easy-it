@@ -836,7 +836,7 @@ export function BookingFlow({
 
           {step === "done" && service && result && (
             <div className="py-2 text-center">
-              <span className="mx-auto grid size-16 place-items-center rounded-full bg-emerald-50 text-emerald-700 ring-8 ring-emerald-50/50">
+              <span className="mx-auto grid size-16 place-items-center rounded-full bg-[var(--green-bg)] text-[var(--green)] ring-8 ring-[var(--green-bg)]/50">
                 <IconCheckCircle size={34} />
               </span>
               <h2 className="mt-2 text-lg font-bold">{t.bookedTitle}</h2>

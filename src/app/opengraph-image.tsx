@@ -15,14 +15,14 @@ export default function OgImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: 72,
-          background: "#f6f1e7",
-          color: "#221c15",
+          background: "#f5f5f7",
+          color: "#1a1a1e",
           fontFamily: "Georgia, serif",
         }}
       >
         <div style={{ display: "flex", fontSize: 40, fontWeight: 700 }}>
-          agenda<span style={{ fontStyle: "italic", color: "#17493b" }}>easy</span>
-          <span style={{ color: "#e4572e" }}>.</span>
+          agenda<span style={{ fontStyle: "italic", color: "#7c3aed" }}>easy</span>
+          <span style={{ color: "#7c3aed" }}>.</span>
         </div>
         <div
           style={{
@@ -36,7 +36,7 @@ export default function OgImage() {
           <span>Agenda piena.</span>
           <span>
             WhatsApp{" "}
-            <span style={{ fontStyle: "italic", color: "#17493b" }}>in pace.</span>
+            <span style={{ fontStyle: "italic", color: "#7c3aed" }}>in pace.</span>
           </span>
         </div>
         <div style={{ display: "flex", fontSize: 30, color: "#5c554b" }}>

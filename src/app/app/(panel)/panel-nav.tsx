@@ -62,11 +62,9 @@ export function Sidebar({ items }: { items: Item[] }) {
       {pill && (
         <span
           aria-hidden
-          className="glass absolute inset-x-0 top-0 rounded-[14px] transition-[transform,height] duration-[650ms] ease-[var(--spring)] motion-reduce:transition-none"
+          className="absolute inset-x-0 top-0 rounded-[12px] bg-[var(--accent)] shadow-[0_6px_16px_color-mix(in_srgb,var(--accent)_35%,transparent)] transition-[transform,height] duration-[550ms] ease-[var(--spring)] motion-reduce:transition-none"
           style={{ transform: `translateY(${pill.y}px)`, height: pill.h }}
-        >
-          <span className="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-full bg-[var(--accent)] shadow-[0_0_12px_2px_var(--tint-glow)]" />
-        </span>
+        />
       )}
       {items.map((item) => {
         const Icon = ICONS[item.href] ?? IconCalendar;
@@ -76,11 +74,13 @@ export function Sidebar({ items }: { items: Item[] }) {
             key={item.href}
             href={item.href}
             aria-current={active ? "page" : undefined}
-            className={`relative flex min-h-11 items-center gap-3.5 rounded-[14px] px-3.5 text-[15px] font-medium tracking-[-0.01em] transition-colors ${
-              active ? "text-[var(--label)]" : "text-[var(--label-2)] hover:bg-[var(--fill-2)] hover:text-[var(--label)]"
+            className={`relative z-10 flex min-h-11 items-center gap-3.5 rounded-[12px] px-3.5 text-[15px] tracking-[-0.01em] transition-colors ${
+              active
+                ? "font-semibold text-white"
+                : "font-medium text-[var(--ink-soft)] hover:bg-[var(--fill)] hover:text-[var(--label)]"
             }`}
           >
-            <Icon size={21} className={active ? "text-[var(--tint)]" : ""} />
+            <Icon size={20} className={active ? "text-white" : "text-[var(--ink-soft)]"} />
             {item.label}
           </Link>
         );

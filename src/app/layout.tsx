@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import type { Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Instrument_Serif } from "next/font/google";
+import localFont from "next/font/local";
 import { SilkBackground } from "@/components/silk-background";
 import { getLang } from "@/lib/i18n/server";
 import "./globals.css";
 
-// Stack di sistema SF Pro ovunque; Inter solo come fallback fuori da Apple.
-// preload: false → su Apple non si scarica un font inutile nel percorso critico;
-// altrove arriva con display:swap (self-hosted, nessun testo invisibile).
+// Inter resta come fallback universale fuori da Apple.
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -15,9 +14,25 @@ const inter = Inter({
   preload: false,
 });
 
+// Font dell'interfaccia: Satoshi (Fontshare, licenza libera), self-hosted.
+const satoshi = localFont({
+  src: "./fonts/Satoshi-Variable.ttf",
+  weight: "300 900",
+  display: "swap",
+  variable: "--font-satoshi",
+});
+
+// Font display editoriale per i titoli (come CTRL Quotes).
+const instrument = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  variable: "--font-instrument",
+});
+
 export const viewport: Viewport = {
   viewportFit: "cover",
-  themeColor: "#f6f3ee",
+  themeColor: "#f5f5f7",
   colorScheme: "light",
 };
 
@@ -52,7 +67,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={lang}
-      className={`${inter.variable} h-full antialiased`}
+      className={`${satoshi.variable} ${instrument.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <SilkBackground />

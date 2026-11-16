@@ -94,7 +94,7 @@ export function BillingPanel({
         <p
           className={`rounded-lg px-3 py-2 text-sm ${
             allowed
-              ? "bg-emerald-50 text-emerald-700"
+              ? "bg-[var(--green-bg)] text-[var(--green)]"
               : "bg-amber-50 text-amber-800"
           }`}
         >

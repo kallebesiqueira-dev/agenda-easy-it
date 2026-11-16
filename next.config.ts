@@ -15,6 +15,10 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Default ".next". Permette di reindirizzare l'output (es. quando la cache
+  // locale si corrompe su Windows) senza toccare il deploy: NEXT_DIST_DIR non è
+  // impostato in produzione.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   images: {
     // AVIF/WebP + srcset responsive generati da Vercel (Android/iOS scaricano
     // versioni piccole invece dei PNG originali)

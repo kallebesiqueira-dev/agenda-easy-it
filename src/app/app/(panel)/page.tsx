@@ -218,7 +218,7 @@ export default async function AgendaPage({ searchParams }: Props) {
                     className={`min-w-4 rounded-full px-1 text-[10px] leading-4 font-bold ${
                       isSelected
                         ? "bg-white/25 text-white"
-                        : "bg-emerald-100 text-emerald-700"
+                        : "bg-[var(--green-bg)] text-[var(--green)]"
                     }`}
                   >
                     {counts.confirmed}
@@ -232,7 +232,7 @@ export default async function AgendaPage({ searchParams }: Props) {
         </div>
         <p className="mt-4 flex gap-5 border-t border-zinc-100 pt-4 text-xs text-zinc-500">
           <span className="flex items-center gap-1.5">
-            <span className="size-2 rounded-full bg-emerald-500" /> {t.confirmed}
+            <span className="size-2 rounded-full bg-[var(--green)]" /> {t.confirmed}
           </span>
           <span className="flex items-center gap-1.5">
             <span className="size-2 rounded-full bg-zinc-300" /> {t.freeDay}

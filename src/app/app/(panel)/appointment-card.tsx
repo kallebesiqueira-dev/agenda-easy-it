@@ -24,14 +24,14 @@ export interface AppointmentCardData {
 }
 
 const STATUS_CLASSES: Record<AppointmentStatus, string> = {
-  confirmed: "bg-emerald-50 text-emerald-700",
+  confirmed: "bg-[var(--green-bg)] text-[var(--green)]",
   cancelled: "bg-zinc-100 text-zinc-500",
   completed: "bg-blue-50 text-blue-800",
   no_show: "bg-red-50 text-red-700",
 };
 
 const STATUS_RAIL: Record<AppointmentStatus, string> = {
-  confirmed: "bg-emerald-500",
+  confirmed: "bg-[var(--green)]",
   cancelled: "bg-zinc-300",
   completed: "bg-blue-800/60",
   no_show: "bg-red-500",

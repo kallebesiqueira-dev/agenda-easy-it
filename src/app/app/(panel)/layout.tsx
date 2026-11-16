@@ -129,12 +129,7 @@ export default async function PanelLayout({
       <AccentStyle color={ctx.business.brand_primary} />
       <div className="flex w-full">
         {/* Sidebar iPadOS (desktop) */}
-        <aside className="glass sticky top-4 m-4 mr-0 hidden h-[calc(100dvh-2rem)] w-[272px] shrink-0 flex-col gap-7 rounded-[26px] px-4 pt-4 pb-5 lg:flex">
-          <div className="flex gap-2 px-1" aria-hidden>
-            <span className="size-3 rounded-full bg-[#ff5f57]" />
-            <span className="size-3 rounded-full bg-[#febc2e]" />
-            <span className="size-3 rounded-full bg-[#28c840]" />
-          </div>
+        <aside className="glass sticky top-4 m-4 mr-0 hidden h-[calc(100dvh-2rem)] w-[260px] shrink-0 flex-col gap-6 rounded-[24px] px-4 pt-6 pb-5 lg:flex">
           <div className="px-1">{brand}</div>
           {/* La nav scorre se il viewport è basso: logo e footer restano sempre visibili */}
           <div className="-mx-2 min-h-0 flex-1 overflow-y-auto px-2">

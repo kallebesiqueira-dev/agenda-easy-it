@@ -419,7 +419,7 @@ export function SettingsForm({
         >
           {pending ? t.saving : t.save}
         </button>
-        {saved && <span className="text-sm text-emerald-600">{t.saved}</span>}
+        {saved && <span className="text-sm text-[var(--green)]">{t.saved}</span>}
       </div>
     </form>
   );

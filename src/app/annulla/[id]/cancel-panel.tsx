@@ -60,7 +60,7 @@ export function CancelPanel({
 
   if (done) {
     return (
-      <p className="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+      <p className="mt-4 rounded-lg bg-[var(--green-bg)] px-3 py-2 text-sm text-[var(--green)]">
         {t.done}
       </p>
     );

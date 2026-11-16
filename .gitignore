@@ -15,7 +15,12 @@
 
 # next.js
 /.next/
+/.next-*/
 /out/
+# output dirs alternativi (workaround cache .next corrotta su Windows)
+*-ctrl.log
+dev-ctrl.log
+start-ctrl.log
 
 # production
 /build

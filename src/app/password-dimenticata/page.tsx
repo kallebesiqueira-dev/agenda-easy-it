@@ -85,7 +85,7 @@ export default function ForgotPasswordPage() {
         <p className="mb-4 mt-1 text-sm text-zinc-500">{t.sub}</p>
 
         {sent ? (
-          <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+          <p className="rounded-lg bg-[var(--green-bg)] px-3 py-2 text-sm text-[var(--green)]">
             {t.sent}
           </p>
         ) : (

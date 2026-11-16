@@ -299,7 +299,7 @@ export function SupportChat() {
             <div className="min-w-0 flex-1">
               <p className="font-semibold leading-tight">{t.headerName}</p>
               <p className="flex items-center gap-1.5 text-xs text-white/70">
-                <span className="size-1.5 rounded-full bg-emerald-400" />
+                <span className="size-1.5 rounded-full bg-[var(--green)]" />
                 {t.online}
               </p>
             </div>

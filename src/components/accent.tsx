@@ -4,7 +4,7 @@
  * qui calcoliamo solo il colore del testo sopra l'accento (WCAG).
  */
 
-export const DEFAULT_ACCENT = "#5fae8a";
+export const DEFAULT_ACCENT = "#7c3aed";
 
 export function normalizeHex(hex: string | null | undefined): string {
   const raw = (hex ?? "").replace("#", "").trim();
