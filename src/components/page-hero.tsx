@@ -65,6 +65,7 @@ export function HeroButton({
   return (
     <button
       type="button"
+      data-magnetic
       {...props}
       className="ui-press inline-flex min-h-11 items-center gap-2 rounded-full bg-[#16181a] px-5 text-[15px] font-semibold text-white shadow-[0_8px_20px_rgb(16_15_20/0.3)] hover:bg-[#26272b] disabled:opacity-60"
     >

@@ -195,6 +195,7 @@ export default async function AgendaPage({ searchParams }: Props) {
           {metrics.map((m) => (
             <div
               key={m.label}
+              data-hover
               className={`flex min-h-[112px] flex-col justify-between rounded-[20px] p-3.5 sm:p-5 ${
                 m.highlight ? "bg-[var(--tint-soft)]" : "bg-card"
               }`}

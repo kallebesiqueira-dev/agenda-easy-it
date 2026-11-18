@@ -10,6 +10,7 @@ import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { SupportChatLazy } from "@/components/support-chat-lazy";
 import { IconAlert, IconExternal, IconLock, IconSparkle } from "@/components/icons";
 import { NavBar, Sidebar, TabBar } from "./panel-nav";
+import { PanelMotion } from "./panel-motion";
 import { UserMenu } from "./user-menu";
 
 const COPY: Record<
@@ -193,7 +194,7 @@ export default async function PanelLayout({
           </div>
 
           <main className="mx-auto w-full max-w-6xl px-4 pt-4 pb-10 lg:px-10 lg:pb-16">
-            <div className="ui-reveal">{children}</div>
+            <PanelMotion>{children}</PanelMotion>
           </main>
         </div>
       </div>
