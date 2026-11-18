@@ -472,8 +472,74 @@ input[type="time"]::-webkit-calendar-picker-indicator, input[type="date"]::-webk
   .js-story .story-stage { position: relative; height: 100svh; }
   .js-story .story-step { position: absolute; inset: 0; opacity: 0; visibility: hidden; }
 }
+/* Hero da landing: blobs, grade e ruído do hero do CTRL Quotes, no violeta Agenda Easy. */
+.ae-hero {
+  color: #fff;
+  background: linear-gradient(160deg, #7c3aed 0%, #5b21b6 55%, #2e1065 100%);
+  isolation: isolate;
+}
+.ae-hero-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.ae-hero > *:not(.ae-hero-bg) { position: relative; z-index: 1; }
+.ae-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  will-change: transform;
+  animation: ae-drift 18s ease-in-out infinite alternate;
+}
+.ae-blob.is-a {
+  width: 46vw; height: 46vw; max-width: 720px; max-height: 720px;
+  right: -10vw; top: -18vw;
+  background: radial-gradient(circle at 40% 40%, rgba(221, 214, 254, 0.85), rgba(221, 214, 254, 0) 65%);
+}
+.ae-blob.is-b {
+  width: 40vw; height: 40vw; max-width: 620px; max-height: 620px;
+  left: -12vw; bottom: -20vw;
+  background: radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.85), rgba(124, 58, 237, 0) 65%);
+  animation-duration: 22s;
+  animation-delay: -6s;
+}
+.ae-blob.is-c {
+  width: 52vw; height: 52vw; max-width: 820px; max-height: 820px;
+  left: 28%; top: 30%;
+  background: radial-gradient(circle, rgba(46, 16, 101, 0.9), rgba(46, 16, 101, 0) 62%);
+  animation-duration: 26s;
+  animation-delay: -12s;
+}
+@keyframes ae-drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(6vw, 4vw, 0) scale(1.12); }
+  100% { transform: translate3d(-4vw, 7vw, 0) scale(0.94); }
+}
+.ae-grid {
+  position: absolute;
+  inset: -64px;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 30%, transparent 80%);
+  animation: ae-grid-move 14s linear infinite;
+}
+@keyframes ae-grid-move { to { transform: translate3d(64px, 64px, 0); } }
+.ae-noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.ae-hero-sub { color: rgba(255, 255, 255, 0.86); }
+.ae-hero-note { color: rgba(255, 255, 255, 0.62); }
+.ae-hero .rb-gradient,
+.ae-hero .rb-gradient .rb-blur-word {
+  background-image: linear-gradient(100deg, #fff 0%, #ddd6fe 46%, #fff 82%);
+}
+.ae-hero .bg-tint { background: #fff; color: #5b21b6 !important; box-shadow: none; }
+.ae-hero .glass { color: #1a1a1e; }
+
 @media (prefers-reduced-motion: reduce) {
-  .lp-word, .lp-fade { animation: none; }
+  .lp-word, .lp-fade, .ae-blob, .ae-grid { animation: none; }
 }
 
 /* ---------- React Bits: BlurText + GradientText ---------- */
@@ -530,6 +596,8 @@ input[type="time"]::-webkit-calendar-picker-indicator, input[type="date"]::-webk
   background: var(--bg);
 }
 .auth-waves { position: fixed; inset: 0; z-index: 0; pointer-events: none; animation: auth-fade-in 1.2s ease-out both; }
+.auth-waves .line-waves,
+.auth-waves .line-waves__canvas { width: 100%; height: 100%; }
 .line-waves { position: relative; width: 100%; height: 100%; overflow: hidden; }
 .line-waves__canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
 @keyframes auth-fade-in { from { opacity: 0; } to { opacity: 1; } }

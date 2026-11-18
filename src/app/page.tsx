@@ -313,7 +313,14 @@ export default async function LandingPage() {
       </header>
 
       {/* HERO */}
-      <section data-hero className="relative px-5 pt-36 pb-20 sm:pt-44">
+      <section data-hero className="ae-hero relative overflow-hidden px-5 pt-36 pb-24 sm:pt-44">
+        <div className="ae-hero-bg" aria-hidden>
+          <span className="ae-blob is-a" />
+          <span className="ae-blob is-b" />
+          <span className="ae-blob is-c" />
+          <span className="ae-grid" />
+          <span className="ae-noise" />
+        </div>
         <div className="mx-auto max-w-6xl text-center">
           <h1 className="lp-title">
             <span className="lp-word">{t.hero[0]}</span>
@@ -322,12 +329,12 @@ export default async function LandingPage() {
               <BlurText text={t.hero[1]} delay={90} />
             </GradientText>
           </h1>
-          <p className="lp-fade mx-auto mt-7 max-w-xl text-[18px] leading-[1.45] text-[var(--label-2)] sm:text-[21px]" style={{ animationDelay: "260ms" }}>{t.heroSub}</p>
+          <p className="ae-hero-sub lp-fade mx-auto mt-7 max-w-xl text-[18px] leading-[1.45] sm:text-[21px]" style={{ animationDelay: "260ms" }}>{t.heroSub}</p>
           <div className="lp-fade mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row" style={{ animationDelay: "380ms" }}>
             <Btn href="/signup">{t.heroCta}</Btn>
             <Btn href="#storia" ghost>{t.nav.story}</Btn>
           </div>
-          <p className="lp-fade mt-4 text-[13px] text-[var(--label-3)]" style={{ animationDelay: "440ms" }}>{t.heroNote}</p>
+          <p className="ae-hero-note lp-fade mt-4 text-[13px]" style={{ animationDelay: "440ms" }}>{t.heroNote}</p>
         </div>
 
         <div className="lp-fade relative mx-auto mt-16 max-w-5xl [perspective:1800px]" style={{ animationDelay: "520ms" }}>

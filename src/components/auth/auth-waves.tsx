@@ -44,34 +44,46 @@ function useWavesEnv() {
   return useSyncExternalStore(subscribe, read, () => SERVER);
 }
 
-/** Onde do login do CTRL Quotes, no violeta do Agenda Easy. Sem WebGL ou com movimento reduzido, o fundo fica parado. */
-export function AuthWaves() {
+/** Mistura o violeta da marca com branco, igual a `tint()` do CTRL Quotes. */
+function tint(amount: number) {
+  const brand = 0x7c3aed;
+  const channel = (shift: number) =>
+    Math.round(((brand >> shift) & 255) * amount + 255 * (1 - amount));
+  return `#${[16, 8, 0].map((shift) => channel(shift).toString(16).padStart(2, "0")).join("")}`;
+}
+
+/**
+ * Fundo do login do CTRL Quotes: LineWaves (React Bits), mesmos parâmetros
+ * de auth-waves.tsx. `panel` deixa o mesmo efeito mais baixo, atrás do painel.
+ */
+export function AuthWaves({ variant = "auth" }: { variant?: "auth" | "panel" }) {
   const env = useWavesEnv();
   if (!env.ok) return null;
+  const panel = variant === "panel";
   return (
-    <div className="auth-waves" aria-hidden>
+    <div className={panel ? "auth-waves is-panel" : "auth-waves"} aria-hidden>
       <LineWaves
-        color1="#c4b5fd"
-        color2="#ddd6fe"
-        color3="#7c3aed"
-        speed={0.3}
-        lineCount={env.mobile ? 40 : 72}
+        color1={tint(0.55)}
+        color2={tint(0.3)}
+        color3={tint(0.75)}
+        speed={panel ? 0.22 : 0.3}
+        lineCount={panel ? (env.mobile ? 28 : 48) : env.mobile ? 40 : 72}
         lineWidth={1.3}
         highlight={1}
         warpIntensity={1}
         rotation={-33}
-        enableMouseInteraction
+        enableMouseInteraction={!panel}
         colorCycleSpeed={1}
         glow={0.6}
         brightness={1}
         highlightWidth={1}
         warpScale={1}
         edgeFade={0}
-        mouseInfluence={2}
-        clickRipple
+        mouseInfluence={panel ? 0 : 2}
+        clickRipple={!panel}
         intro
         lightMode
-        opacity={0.45}
+        opacity={panel ? 0.22 : 0.45}
       />
     </div>
   );
