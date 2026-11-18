@@ -7,8 +7,8 @@
  */
 
 import { IconSend, IconX } from "@/components/icons";
+import { SupportMascot } from "@/components/support-mascot";
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import type { Lang } from "@/lib/i18n";
 import { useLang } from "@/lib/i18n/use-lang";
 
@@ -289,13 +289,7 @@ export function SupportChat() {
       {open && (
         <div className="flex max-h-[70vh] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-[18px] bg-card shadow-2xl ring-1 ring-black/10">
           <div className="flex items-center gap-3 bg-[var(--tint)] px-4 py-3 text-white">
-            <Image
-              src="/suporte-avatar.png"
-              alt=""
-              width={40}
-              height={40}
-              className="size-10 rounded-full bg-card/10 object-cover"
-            />
+            <SupportMascot size={40} />
             <div className="min-w-0 flex-1">
               <p className="font-semibold leading-tight">{t.headerName}</p>
               <p className="flex items-center gap-1.5 text-xs text-white/70">
@@ -395,13 +389,7 @@ export function SupportChat() {
         aria-label={open ? t.closeSupport : t.openSupport}
         className="glass glass-sheen ui-press flex min-h-11 items-center gap-2.5 rounded-full py-1.5 pr-4 pl-1.5 text-[15px] font-semibold tracking-[-0.01em] text-[var(--label)] active:scale-[0.97]"
       >
-        <Image
-          src="/suporte-avatar.png"
-          alt=""
-          width={32}
-          height={32}
-          className="size-8 rounded-full bg-[var(--fill)] object-cover"
-        />
+        <SupportMascot size={32} />
         {t.bubble}
         <span aria-hidden className="text-[var(--label-2)]">›</span>
       </button>

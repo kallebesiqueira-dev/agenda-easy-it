@@ -1,4 +1,5 @@
 import { AccentStyle } from "@/components/accent";
+import { AuthWaves } from "@/components/auth/auth-waves";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -125,9 +126,10 @@ export default async function PanelLayout({
   const banner = "ios-subhead flex items-start gap-3 rounded-[16px] px-4 py-3";
 
   return (
-    <div className="ui-panel min-h-dvh text-[var(--label)]">
+    <div className="ui-panel relative min-h-dvh text-[var(--label)]">
+      <AuthWaves variant="panel" />
       <AccentStyle color={ctx.business.brand_primary} />
-      <div className="flex w-full">
+      <div className="relative z-[1] flex w-full">
         {/* Sidebar iPadOS (desktop) */}
         <aside className="glass sticky top-4 m-4 mr-0 hidden h-[calc(100dvh-2rem)] w-[260px] shrink-0 flex-col gap-6 rounded-[24px] px-4 pt-6 pb-5 lg:flex">
           <div className="px-1">{brand}</div>
@@ -142,6 +144,16 @@ export default async function PanelLayout({
           <NavBar
             actions={
               <>
+                <Link
+                  href="/"
+                  aria-label={lang === "en" ? "Back to the site" : "Torna al sito"}
+                  className="ui-press grid size-11 place-items-center rounded-full text-[var(--label-2)] hover:bg-[var(--fill)] hover:text-[var(--label)]"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="m3 11 9-8 9 8" />
+                    <path d="M5 10v10h14V10" />
+                  </svg>
+                </Link>
                 <LanguageSwitcher current={lang} variant="bare" />
                 <SignOutButton />
               </>

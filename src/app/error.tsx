@@ -24,7 +24,7 @@ export default function GlobalError({ reset }: { error: Error; reset: () => void
       <button
         type="button"
         onClick={reset}
-        className="mt-6 rounded-full bg-tint px-5 py-2.5 font-semibold text-white ui-press hover:bg-emerald-700"
+        className="ui-press mt-6 inline-flex min-h-11 items-center rounded-full bg-tint px-5 font-semibold text-white"
       >
         {t.retry}
       </button>

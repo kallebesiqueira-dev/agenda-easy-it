@@ -1,4 +1,4 @@
-import { IconCalendarEmpty, IconChevronLeft, IconChevronRight } from "@/components/icons";
+import { IconChevronLeft, IconChevronRight } from "@/components/icons";
 import Link from "next/link";
 import type { AppointmentStatus } from "@/types/database";
 import {
@@ -12,7 +12,8 @@ import { getLang } from "@/lib/i18n/server";
 import { formatEUR } from "@/lib/money";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { AppointmentCard, type AppointmentCardData } from "./appointment-card";
+import { DayAgenda } from "./day-agenda";
+import type { AppointmentCardData } from "./appointment-card";
 
 interface Props {
   searchParams: Promise<{ date?: string }>;
@@ -30,6 +31,7 @@ const COPY: Record<
     nextDay: string;
     today: string;
     empty: string;
+    metrics: { today: string; expected: string; open: string };
   }
 > = {
   it: {
@@ -41,7 +43,8 @@ const COPY: Record<
     prevDay: "Giorno precedente",
     nextDay: "Giorno successivo",
     today: "Oggi",
-    empty: "Nessuna prenotazione in questo giorno.",
+    empty: "Nessuna prenotazione in questo giorno. Condividi la pagina per riceverne.",
+    metrics: { today: "Confermate oggi", expected: "Previsto oggi", open: "In agenda" },
   },
   en: {
     weekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
@@ -52,7 +55,8 @@ const COPY: Record<
     prevDay: "Previous day",
     nextDay: "Next day",
     today: "Today",
-    empty: "No bookings on this day.",
+    empty: "No bookings on this day. Share your page to start receiving them.",
+    metrics: { today: "Confirmed today", expected: "Expected today", open: "On the agenda" },
   },
 };
 
@@ -162,9 +166,28 @@ export default async function AgendaPage({ searchParams }: Props) {
   }).format(zonedTimeToUtc(dateISO, "12:00", business.timezone));
 
   const confirmedToday = cards.filter((c) => c.status === "confirmed").length;
+  const expectedMinor = (appointments ?? []).reduce((sum, row) => {
+    if (row.status === "confirmed" || row.status === "completed") {
+      return sum + row.service_price_minor;
+    }
+    return sum;
+  }, 0);
 
   return (
     <div className="space-y-8">
+      <section className="grid grid-cols-3 gap-2 sm:gap-3">
+        {[
+          [t.metrics.today, String(confirmedToday)],
+          [t.metrics.open, String(cards.length)],
+          [t.metrics.expected, formatEUR(expectedMinor)],
+        ].map(([label, value]) => (
+          <div key={label} className="rounded-[18px] bg-card px-3 py-3 sm:px-4 sm:py-4">
+            <p className="text-[20px] leading-none font-bold tracking-[-0.03em] tabular-nums sm:text-[26px]">{value}</p>
+            <p className="mt-1.5 text-[11px] leading-snug text-[var(--label-2)] sm:text-[13px]">{label}</p>
+          </div>
+        ))}
+      </section>
+
       {/* Calendário mensal */}
       <section className="rounded-[22px] bg-card p-4 sm:p-6">
         <div className="mb-4 flex items-center justify-between">
@@ -268,22 +291,12 @@ export default async function AgendaPage({ searchParams }: Props) {
           </div>
         </div>
 
-        {cards.length === 0 ? (
-          <div className="flex flex-col items-center rounded-[22px] bg-[var(--card)] px-6 py-12 text-center">
-            <span className="mb-3 grid size-12 place-items-center rounded-[18px] bg-card text-zinc-400">
-              <IconCalendarEmpty size={24} />
-            </span>
-            <p className="max-w-xs text-sm text-zinc-500">{t.empty}</p>
-          </div>
-        ) : (
-          <ul className="ios-group">
-            {cards.map((card) => (
-              <li key={card.id}>
-                <AppointmentCard data={card} lang={lang} />
-              </li>
-            ))}
-          </ul>
-        )}
+        <DayAgenda
+          cards={cards}
+          lang={lang}
+          empty={t.empty}
+          shareHref={business.published ? `/${business.slug}` : null}
+        />
       </section>
     </div>
   );

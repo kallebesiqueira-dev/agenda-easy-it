@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { requestPasswordReset } from "@/app/login/auth-actions";
+import { AuthShell } from "@/components/auth/auth-shell";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { TurnstileField, turnstileRequired } from "@/components/turnstile-field";
 import type { Lang } from "@/lib/i18n";
 import { useLang } from "@/lib/i18n/use-lang";
-import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 const COPY: Record<
   Lang,
@@ -19,6 +21,7 @@ const COPY: Record<
     sending: string;
     send: string;
     back: string;
+    bot: string;
   }
 > = {
   it: {
@@ -32,6 +35,7 @@ const COPY: Record<
     sending: "Invio in corso…",
     send: "Invia link",
     back: "Torna all'accesso",
+    bot: "Verifica anti-bot non superata. Riprova.",
   },
   en: {
     title: "Recover password",
@@ -44,6 +48,7 @@ const COPY: Record<
     sending: "Sending…",
     send: "Send link",
     back: "Back to sign in",
+    bot: "Bot check failed. Please try again.",
   },
 };
 
@@ -54,35 +59,40 @@ export default function ForgotPasswordPage() {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileReset, setTurnstileReset] = useState(0);
+  const [turnstileOpen, setTurnstileOpen] = useState(false);
+  const needsTurnstile = turnstileRequired() && !turnstileOpen;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (needsTurnstile && !turnstileToken) {
+      setError(t.bot);
+      return;
+    }
     setLoading(true);
-    const supabase = createSupabaseBrowserClient();
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/callback?next=/reimposta-password`,
+    const result = await requestPasswordReset({
+      email,
+      turnstileToken,
+      redirectTo: "/auth/callback?next=/reimposta-password",
     });
+    setTurnstileReset((value) => value + 1);
     setLoading(false);
-    if (error) {
-      setError(t.sendError);
+    if ("error" in result) {
+      setError(result.error === "turnstile" ? t.bot : t.sendError);
       return;
     }
     setSent(true);
   }
 
   return (
-    <main className="flex ui-panel ui-grain relative min-h-dvh flex-col items-center justify-center px-4 py-10 text-zinc-900">
-      <Link href="/" className="mb-6 rounded-lg font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight">
-        agenda<span className="text-emerald-700">easy</span>
-        <span className="text-[var(--tint)]">.</span>
-      </Link>
-      <div className="w-full max-w-sm rounded-3xl border border-zinc-900/[0.06] bg-card p-6 shadow-lg sm:p-8">
-        <div className="flex items-start justify-between gap-2">
-          <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold">{t.title}</h1>
+    <AuthShell lang={lang}>
+        <div className="mb-1 flex items-start justify-between gap-3">
+          <h1>{t.title}</h1>
           <LanguageSwitcher current={lang} />
         </div>
-        <p className="mb-4 mt-1 text-sm text-zinc-500">{t.sub}</p>
+        <p className="lede">{t.sub}</p>
 
         {sent ? (
           <p className="rounded-lg bg-[var(--green-bg)] px-3 py-2 text-sm text-[var(--green)]">
@@ -98,19 +108,27 @@ export default function ForgotPasswordPage() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
+                aria-invalid={error ? true : undefined}
+                className={`auth-field min-h-12 w-full rounded-[14px] px-4 ${error ? "is-invalid" : ""}`}
                 placeholder={t.emailPh}
               />
             </label>
+            <TurnstileField
+              action="recover"
+              lang={lang}
+              resetKey={turnstileReset}
+              onToken={setTurnstileToken}
+              onBypass={() => setTurnstileOpen(true)}
+            />
             {error && (
-              <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+              <p role="alert" className="auth-alert rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">
                 {error}
               </p>
             )}
             <button
               type="submit"
-              disabled={loading}
-              className="w-full rounded-full bg-tint py-3 font-semibold text-white disabled:opacity-60 ui-press hover:bg-emerald-700"
+              disabled={loading || (needsTurnstile && !turnstileToken)}
+              className="ui-press min-h-12 w-full rounded-full bg-tint py-3 font-semibold text-white disabled:opacity-60"
             >
               {loading ? t.sending : t.send}
             </button>
@@ -122,7 +140,6 @@ export default function ForgotPasswordPage() {
             {t.back}
           </Link>
         </p>
-      </div>
-    </main>
+    </AuthShell>
   );
 }

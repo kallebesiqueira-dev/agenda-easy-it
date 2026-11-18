@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import type { BusinessType } from "@/types/database";
 import type { Lang } from "@/lib/i18n";
 import { businessTypeOptions } from "@/lib/labels";
@@ -62,7 +61,6 @@ function slugify(name: string): string {
 
 export function OnboardingForm({ lang }: { lang: Lang }) {
   const t = COPY[lang];
-  const router = useRouter();
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [slugTouched, setSlugTouched] = useState(false);
@@ -103,8 +101,7 @@ export function OnboardingForm({ lang }: { lang: Lang }) {
       );
       return;
     }
-    router.push("/app");
-    router.refresh();
+    window.location.assign("/dashboard");
   }
 
   return (

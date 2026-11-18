@@ -223,8 +223,35 @@ npm run dev                   # http://localhost:7778
 | `STRIPE_SECRET_KEY` / `STRIPE_PRICE_ID` / `STRIPE_WEBHOOK_SECRET` | abbonamento SaaS |
 | `RESEND_API_KEY` / `EMAIL_FROM` | e-mail transazionali |
 | `CRON_SECRET` | protegge il cron dei promemoria |
+| `DEMO_EMAIL` / `DEMO_PASSWORD` | conta demo permanente, **solo server** |
+| `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | dominio Plausible; vuoto = nessuna analisi. Lo script parte solo col consenso |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | anti-bot su accesso, registrazione e recupero password. Senza una delle due, il flusso resta aperto. La demo non lo usa |
 
 Webhook Stripe in locale: `stripe listen --forward-to localhost:7778/api/webhooks/stripe`
+
+## 🎭 Conta demo (non scade)
+
+Utente fisso per mostrare il prodotto: attività **Studio Anna** (`/studio-anna`), già con servizi, prodotti, piani, orari, clienti e prenotazioni. È `comped`: niente prova che finisce e niente blocco Stripe.
+
+- E-mail: `demo@agendaeasy.it` (o il valore di `DEMO_EMAIL`)
+- Password: solo nella variabile **`DEMO_PASSWORD`** (`.env.local` in locale, variabili d'ambiente su Vercel). Non sta nel codice e non arriva al browser.
+- L'accesso è il login normale (e-mail e password). Il pulsante in home è stato tolto.
+
+Creare o **resettare** i dati di esempio (ricrea prenotazioni e reimposta la password, non cancella l'utente):
+
+```bash
+node scripts/seed-demo.mjs
+```
+
+In alternativa, nel SQL editor di Supabase: apri `supabase/seed-demo.sql`, sostituisci `__DEMO_PASSWORD__` e eseguilo. È idempotente.
+
+In produzione: impostare `DEMO_EMAIL`, `DEMO_PASSWORD` e `SUPABASE_SECRET_KEY` sull'ambiente, poi lanciare lo script una volta puntando a quel progetto Supabase. `supabase/seed.sql` è una vecchia vetrina senza login: la conta da mostrare ai clienti è questa.
+
+## Pagine legali e cookie
+
+Termini (`/termini`), privacy (`/privacy`) e cookie (`/cookie`) sono bilingui. I dati della società sono segnaposto in `src/lib/legal.ts` (`[RAGIONE SOCIALE]`, `[P. IVA]`, `[SEDE LEGALE]`, `[EMAIL DI CONTATTO]`, `[PEC]`, `[FORO COMPETENTE]`). Vanno compilati e **i testi rivisti da un professionista** prima della pubblicazione.
+
+Il banner (accetta / rifiuta / personalizza) salva la scelta per 6 mesi nel cookie `ae-consent`. Lo script Plausible parte solo con il consenso «Misurazione» e solo se `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` è impostato. Vuoto = nessuna analisi.
 
 ## 🔒 Sicurezza
 

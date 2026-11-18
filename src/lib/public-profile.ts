@@ -19,6 +19,9 @@ const DEFAULT_PROFESSIONAL_LABELS: Record<BusinessType, string> = {
 /** cache() deduplica a busca entre generateMetadata e a página na mesma requisição. */
 export const getPublicBusinessProfile = cache(
   async (slug: string): Promise<PublicBusinessProfile | null> => {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      return null;
+    }
     const supabase = await createSupabaseServerClient();
 
     const { data: business } = await supabase
