@@ -22,6 +22,7 @@ export function PageHero({
 }) {
   return (
     <section
+      data-hero
       className={`relative isolate flex min-h-[150px] flex-col justify-center overflow-hidden rounded-[24px] px-6 py-7 text-white shadow-[var(--shadow-md)] sm:px-8 ${className}`}
     >
       {/* Immagine di marca dei mockup (pannello astratto viola sfumato): dà la
