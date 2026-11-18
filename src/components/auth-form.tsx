@@ -94,6 +94,12 @@ export function AuthForm({
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const invalid = Boolean(error);
+  const strength = passwordStrength(password);
+  const strengthLabel =
+    lang === "en"
+      ? ["Weak", "Fair", "Good", "Strong"]
+      : ["Debole", "Discreta", "Buona", "Forte"];
 
   async function signInWithGoogle() {
     setError(null);
@@ -188,7 +194,7 @@ export function AuthForm({
       </div>
 
       <form onSubmit={onSubmit} className="space-y-3">
-      <label className="block">
+      <label className={`auth-field block ${invalid ? "is-invalid" : ""}`}>
         <span className="mb-1 block text-sm font-medium">{t.email}</span>
         <span className="relative block">
         <IconMail size={18} className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-[var(--label-2)]" />
@@ -198,15 +204,16 @@ export function AuthForm({
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="min-h-12 w-full rounded-[14px] pr-4 pl-11 outline-none transition-[border-color,box-shadow] hover:border-zinc-300 focus:border-emerald-700 focus:shadow-[0_0_0_4px_var(--tint-soft)]"
+          aria-invalid={invalid || undefined}
+          className="min-h-12 w-full rounded-[14px] pr-4 pl-11"
           placeholder={t.emailPh}
         />
         </span>
       </label>
-      <label className="block">
+      <label className={`auth-field block ${invalid ? "is-invalid" : ""}`}>
         <span className="mb-1 block text-sm font-medium">{t.password}</span>
-        <div className="flex items-center rounded-[14px] bg-white/70 shadow-[inset_0_0_0_1px_var(--glass-edge)] transition-[border-color,box-shadow] hover:border-zinc-300 focus-within:border-emerald-700 focus-within:shadow-[0_0_0_4px_var(--tint-soft)]">
-          <IconLock size={18} className="ml-4 shrink-0 text-[var(--label-2)]" />
+        <div className="auth-password relative">
+          <IconLock size={18} className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-[var(--label-2)]" />
           <input
             type={showPassword ? "text" : "password"}
             required
@@ -214,22 +221,33 @@ export function AuthForm({
             autoComplete={mode === "login" ? "current-password" : "new-password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="min-h-12 w-full rounded-xl !bg-transparent px-3 !shadow-none outline-none"
+            aria-invalid={invalid || undefined}
+            className="min-h-12 w-full rounded-[14px] pr-12 pl-11"
             placeholder={t.passwordPh}
           />
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
             aria-label={showPassword ? t.hide : t.show}
-            className="grid min-h-11 min-w-11 place-items-center text-zinc-400 transition-colors hover:text-zinc-700"
+            className="absolute top-1/2 right-1 grid min-h-11 min-w-11 -translate-y-1/2 place-items-center text-zinc-400 transition-colors hover:text-zinc-700"
           >
             {showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
           </button>
         </div>
       </label>
+      {mode === "signup" && password.length > 0 && (
+        <div className="auth-strength" data-level={strength} aria-hidden>
+          {[1, 2, 3, 4].map((step) => (
+            <i key={step} className={step <= strength ? "is-on" : ""} />
+          ))}
+          <span className="col-span-4 text-right text-[12px] font-semibold text-[var(--label-2)]">
+            {strengthLabel[Math.max(0, strength - 1)]}
+          </span>
+        </div>
+      )}
 
       {error && (
-        <p role="alert" className="rounded-xl border border-red-700/15 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+        <p key={error} role="alert" className="auth-alert rounded-xl border border-red-700/15 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
       )}
       {info && (
         <p role="status" className="rounded-xl border border-[var(--green)]/15 bg-[var(--green-bg)] px-4 py-3 text-sm text-[var(--green)]">
@@ -240,7 +258,7 @@ export function AuthForm({
       <button
         type="submit"
         disabled={loading}
-        className="ui-press min-h-12 w-full rounded-full bg-tint py-3 font-semibold text-white shadow-[0_10px_24px_-12px_var(--tint-soft)] hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-60"
+        className="ui-press min-h-12 w-full rounded-full bg-tint py-3 font-semibold text-white disabled:opacity-60"
       >
         {loading ? t.wait : mode === "login" ? t.signIn : t.signUp}
       </button>
@@ -255,4 +273,13 @@ export function AuthForm({
     </form>
     </div>
   );
+}
+
+function passwordStrength(password: string) {
+  let score = 0;
+  if (password.length >= 8) score += 1;
+  if (password.length >= 12) score += 1;
+  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score += 1;
+  if (/\d/.test(password) || /[^A-Za-z0-9]/.test(password)) score += 1;
+  return Math.min(4, score);
 }

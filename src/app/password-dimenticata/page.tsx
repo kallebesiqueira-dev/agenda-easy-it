@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { AuthShell } from "@/components/auth/auth-shell";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import type { Lang } from "@/lib/i18n";
 import { useLang } from "@/lib/i18n/use-lang";
@@ -72,17 +73,12 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main className="flex ui-panel ui-grain relative min-h-dvh flex-col items-center justify-center px-4 py-10 text-zinc-900">
-      <Link href="/" className="mb-6 rounded-lg font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight">
-        agenda<span className="text-emerald-700">easy</span>
-        <span className="text-[var(--tint)]">.</span>
-      </Link>
-      <div className="w-full max-w-sm rounded-3xl border border-zinc-900/[0.06] bg-card p-6 shadow-lg sm:p-8">
-        <div className="flex items-start justify-between gap-2">
-          <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold">{t.title}</h1>
+    <AuthShell lang={lang}>
+        <div className="mb-1 flex items-start justify-between gap-3">
+          <h1>{t.title}</h1>
           <LanguageSwitcher current={lang} />
         </div>
-        <p className="mb-4 mt-1 text-sm text-zinc-500">{t.sub}</p>
+        <p className="lede">{t.sub}</p>
 
         {sent ? (
           <p className="rounded-lg bg-[var(--green-bg)] px-3 py-2 text-sm text-[var(--green)]">
@@ -98,19 +94,20 @@ export default function ForgotPasswordPage() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-900 hover:border-zinc-300"
+                aria-invalid={error ? true : undefined}
+                className={`auth-field min-h-12 w-full rounded-[14px] px-4 ${error ? "is-invalid" : ""}`}
                 placeholder={t.emailPh}
               />
             </label>
             {error && (
-              <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+              <p role="alert" className="auth-alert rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">
                 {error}
               </p>
             )}
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-full bg-tint py-3 font-semibold text-white disabled:opacity-60 ui-press hover:bg-emerald-700"
+              className="ui-press min-h-12 w-full rounded-full bg-tint py-3 font-semibold text-white disabled:opacity-60"
             >
               {loading ? t.sending : t.send}
             </button>
@@ -122,7 +119,6 @@ export default function ForgotPasswordPage() {
             {t.back}
           </Link>
         </p>
-      </div>
-    </main>
+    </AuthShell>
   );
 }

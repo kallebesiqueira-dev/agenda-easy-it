@@ -15,6 +15,10 @@ import { PromoVideo } from "@/components/landing/promo-video";
 import { LandingMotion } from "@/components/landing/landing-motion";
 import { ApptRow, GlassCard, Mac, MiniAgenda, Monogram, Phone, type Appt } from "@/components/landing/app-mock";
 import { IconCalendar, IconChart, IconCheck, IconUsers } from "@/components/icons";
+import { ManageCookies } from "@/components/cookie-consent";
+import { DemoButton } from "@/components/demo-button";
+import { BlurText } from "@/components/reactbits/blur-text";
+import { GradientText } from "@/components/reactbits/gradient-text";
 import { PLAN, TRIAL_DAYS } from "@/lib/billing";
 import { type Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n/server";
@@ -34,6 +38,30 @@ const COPY = {
     heroSub: "Una pagina di prenotazione tutta tua, l'agenda che si riempie da sola e promemoria automatici per i clienti. Senza app da scaricare.",
     heroCta: `Inizia gratis per ${TRIAL_DAYS} giorni`,
     heroNote: "Nessuna carta di credito alla registrazione.",
+    demo: "Prova la demo",
+    demoPending: "Apro la demo…",
+    demoError: "La demo non è ancora disponibile in questo ambiente.",
+    benefitsK: "Perché Agenda Easy",
+    benefits: [
+      { t: "Pagina tua, in un link.", b: "Logo, colore e servizi. La condividi su Instagram o WhatsApp: il cliente prenota senza account." },
+      { t: "Agenda già confermata.", b: "Ogni prenotazione arriva nel pannello con orario, servizio e professionista. Tu apri la giornata e lavori." },
+      { t: "Promemoria da soli.", b: "Conferma e promemoria via e-mail, con WhatsApp e annullamento. Meno buchi, zero messaggi da scrivere a mano." },
+    ],
+    quotesK: "In attività",
+    quotesT: "Meno messaggi, più appuntamenti.",
+    quotes: [
+      { q: "I clienti prenotano la sera, quando il salone è chiuso. La mattina l'agenda è già piena.", n: "Marta", r: "Parrucchiera, Torino" },
+      { q: "Il promemoria ha tagliato i buchi del lunedì. Non devo più scrivere a una a una.", n: "Chiara", r: "Estetista, Bologna" },
+      { q: "Ho messo il link in bio e ho smesso di rispondere «che orari hai?» su WhatsApp.", n: "Davide", r: "Personal trainer, Roma" },
+    ],
+    faqK: "Domande",
+    faqT: "Prima di iniziare.",
+    faq: [
+      { q: "Serve una carta per provare?", a: `No. I ${TRIAL_DAYS} giorni sono completi e senza carta. Ti abboni solo se ti piace.` },
+      { q: "Il cliente deve scaricare un'app?", a: "No. Apre il tuo link, sceglie servizio, professionista e orario, e la prenotazione è confermata." },
+      { q: "Come si paga la seduta?", a: "Sul posto, a te. Agenda Easy non trattiene acconti: gestisce solo l'agenda e il tuo abbonamento." },
+      { q: "Posso disdire?", a: "Sì, quando vuoi, senza penali. L'abbonamento non si rinnova dal mese successivo." },
+    ],
     today: "Oggi",
     studio: "Studio Anna",
     appts: [
@@ -70,7 +98,7 @@ const COPY = {
     final: ["Mentre tu lavori,", "la tua pagina prenota."],
     finalCta: "Crea la mia pagina",
     finalNote: `${TRIAL_DAYS} giorni gratis · ${price}/mese dopo · disdici quando vuoi`,
-    footer: { terms: "Termini", privacy: "Privacy", by: "Sviluppato da" },
+    footer: { terms: "Termini", privacy: "Privacy", cookie: "Cookie", by: "Sviluppato da" },
   },
   en: {
     video: { kicker: "The video", t: "Agenda Easy in 48 seconds.", b: "Online bookings, automatic reminders and a calendar that stays in order. See how it works.", label: "Agenda Easy promo video", play: "Watch the video" },
@@ -79,6 +107,30 @@ const COPY = {
     heroSub: "A booking page of your own, a calendar that fills itself and automatic reminders for your clients. No app to download.",
     heroCta: `Start free for ${TRIAL_DAYS} days`,
     heroNote: "No credit card required to sign up.",
+    demo: "Try the demo",
+    demoPending: "Opening the demo…",
+    demoError: "The demo isn't available in this environment yet.",
+    benefitsK: "Why Agenda Easy",
+    benefits: [
+      { t: "Your page, in one link.", b: "Logo, colour and services. Share it on Instagram or WhatsApp: clients book with no account." },
+      { t: "A calendar that's already confirmed.", b: "Every booking lands in the dashboard with time, service and professional. You open the day and work." },
+      { t: "Reminders that send themselves.", b: "Confirmation and reminder by e-mail, with WhatsApp and cancellation. Fewer gaps, no messages to write by hand." },
+    ],
+    quotesK: "In the studio",
+    quotesT: "Fewer messages, more bookings.",
+    quotes: [
+      { q: "Clients book in the evening, when the salon is closed. In the morning the calendar is already full.", n: "Marta", r: "Hairdresser, Turin" },
+      { q: "The reminder cut Monday's gaps. I don't message people one by one anymore.", n: "Chiara", r: "Beautician, Bologna" },
+      { q: "I put the link in my bio and stopped answering «what times do you have?» on WhatsApp.", n: "Davide", r: "Personal trainer, Rome" },
+    ],
+    faqK: "Questions",
+    faqT: "Before you start.",
+    faq: [
+      { q: "Do I need a card to try it?", a: `No. The ${TRIAL_DAYS} days are complete and card-free. You subscribe only if you like it.` },
+      { q: "Does the client download an app?", a: "No. They open your link, pick the service, the professional and the time, and the booking is confirmed." },
+      { q: "How is the appointment paid?", a: "In person, to you. Agenda Easy doesn't take deposits: it only runs the calendar and your subscription." },
+      { q: "Can I cancel?", a: "Yes, whenever you want, with no fee. The subscription doesn't renew the following month." },
+    ],
     today: "Today",
     studio: "Studio Anna",
     appts: [
@@ -115,7 +167,7 @@ const COPY = {
     final: ["While you work,", "your page takes bookings."],
     finalCta: "Create my page",
     finalNote: `${TRIAL_DAYS} days free · ${price}/month after · cancel anytime`,
-    footer: { terms: "Terms", privacy: "Privacy", by: "Developed by" },
+    footer: { terms: "Terms", privacy: "Privacy", cookie: "Cookies", by: "Developed by" },
   },
 } satisfies Record<Lang, unknown>;
 
@@ -133,7 +185,7 @@ function Btn({ href, children, ghost }: { href: string; children: React.ReactNod
   return (
     <Link
       href={href}
-      className={`ui-press inline-flex min-h-12 items-center justify-center rounded-full px-7 text-[16px] font-semibold tracking-[-0.01em] transition-transform duration-500 ease-[var(--spring)] hover:-translate-y-0.5 active:scale-[0.97] ${ghost ? "glass" : "bg-tint text-white"}`}
+      className={`ui-press inline-flex min-h-12 items-center justify-center rounded-full px-7 text-[16px] font-semibold tracking-[-0.01em] whitespace-nowrap transition-transform duration-500 ease-[var(--spring)] hover:-translate-y-0.5 active:scale-[0.97] ${ghost ? "glass" : "bg-tint text-white"}`}
     >
       {children}
     </Link>
@@ -273,12 +325,19 @@ export default async function LandingPage() {
           <h1 className="lp-title">
             <span className="lp-word">{t.hero[0]}</span>
             <br />
-            <span className="lp-word text-[var(--tint)]" style={{ animationDelay: "120ms" }}>{t.hero[1]}</span>
+            <GradientText>
+              <BlurText text={t.hero[1]} delay={90} />
+            </GradientText>
           </h1>
           <p className="lp-fade mx-auto mt-7 max-w-xl text-[18px] leading-[1.45] text-[var(--label-2)] sm:text-[21px]" style={{ animationDelay: "260ms" }}>{t.heroSub}</p>
           <div className="lp-fade mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row" style={{ animationDelay: "380ms" }}>
             <Btn href="/signup">{t.heroCta}</Btn>
-            <Btn href="#storia" ghost>{t.nav.story}</Btn>
+            <DemoButton
+              label={t.demo}
+              pendingLabel={t.demoPending}
+              errorLabel={t.demoError}
+              className="ui-press glass inline-flex min-h-12 items-center justify-center rounded-full px-7 text-[16px] font-semibold whitespace-nowrap disabled:opacity-60"
+            />
           </div>
           <p className="lp-fade mt-4 text-[13px] text-[var(--label-3)]" style={{ animationDelay: "440ms" }}>{t.heroNote}</p>
         </div>
@@ -310,6 +369,20 @@ export default async function LandingPage() {
           </div>
           <div data-hero-phone className="absolute -right-2 -bottom-16 hidden scale-[0.82] sm:block lg:-right-10">
             <Phone><SceneBooking t={t} /></Phone>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-5 pt-16 pb-8 sm:pt-28" data-reveal>
+        <div className="mx-auto max-w-6xl">
+          <p className="text-[13px] font-semibold tracking-[0.14em] text-[var(--tint)] uppercase">{t.benefitsK}</p>
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            {t.benefits.map((item) => (
+              <article key={item.t} className="glass rounded-[24px] p-6">
+                <h2 className="text-[22px] font-bold tracking-[-0.03em]">{item.t}</h2>
+                <p className="mt-2 text-[15px] leading-relaxed text-[var(--label-2)]">{item.b}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
@@ -412,6 +485,44 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      <section className="px-5 py-20" data-reveal>
+        <div className="mx-auto max-w-6xl">
+          <p className="text-[13px] font-semibold tracking-[0.14em] text-[var(--tint)] uppercase">{t.quotesK}</p>
+          <h2 className="lp-h2 mt-3 max-w-3xl">{t.quotesT}</h2>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {t.quotes.map((item) => (
+              <figure key={item.n} className="glass flex flex-col rounded-[24px] p-6">
+                <blockquote className="text-[17px] leading-snug tracking-[-0.02em]">“{item.q}”</blockquote>
+                <figcaption className="mt-6 text-[14px]">
+                  <span className="font-semibold">{item.n}</span>
+                  <span className="mt-0.5 block text-[var(--label-2)]">{item.r}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-5 pb-20" data-reveal>
+        <div className="mx-auto max-w-3xl">
+          <p className="text-[13px] font-semibold tracking-[0.14em] text-[var(--tint)] uppercase">{t.faqK}</p>
+          <h2 className="lp-h2 mt-3">{t.faqT}</h2>
+          <div className="mt-8 divide-y divide-[var(--separator)] overflow-hidden rounded-[24px] border border-[var(--border)] bg-white shadow-[var(--shadow-sm)]">
+            {t.faq.map((item) => (
+              <details key={item.q} className="group px-5 py-4">
+                <summary className="cursor-pointer list-none text-[17px] font-semibold tracking-[-0.02em] [&::-webkit-details-marker]:hidden">
+                  <span className="flex items-center justify-between gap-4">
+                    {item.q}
+                    <span className="text-[var(--label-3)] transition-transform duration-300 group-open:rotate-45" aria-hidden>+</span>
+                  </span>
+                </summary>
+                <p className="pt-2 pr-8 text-[15px] leading-relaxed text-[var(--label-2)]">{item.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA FINALE */}
       <section className="px-5 pt-16 pb-32 text-center" data-reveal>
         <h2 className="lp-title mx-auto max-w-5xl">{t.final[0]}<br /><span className="text-[var(--tint)]">{t.final[1]}</span></h2>
@@ -422,9 +533,11 @@ export default async function LandingPage() {
       <footer className="border-t border-[var(--separator)] px-5 py-8 text-[13px] text-[var(--label-2)]">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
           <Wordmark className="text-[16px] text-[var(--label)]" />
-          <nav className="flex gap-6">
+          <nav className="flex flex-wrap justify-center gap-x-5 gap-y-2">
             <Link href="/termini" className="hover:text-[var(--label)]">{t.footer.terms}</Link>
             <Link href="/privacy" className="hover:text-[var(--label)]">{t.footer.privacy}</Link>
+            <Link href="/cookie" className="hover:text-[var(--label)]">{t.footer.cookie}</Link>
+            <ManageCookies label={lang === "en" ? "Cookie settings" : "Gestisci cookie"} />
             <Link href="/login" className="hover:text-[var(--label)]">{t.nav.signIn}</Link>
           </nav>
           <p>© {new Date().getFullYear()} Agenda Easy · {t.footer.by}{" "}

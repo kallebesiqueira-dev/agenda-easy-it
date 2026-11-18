@@ -23,7 +23,7 @@ export default async function NotFound() {
       <p className="mt-1 max-w-sm text-sm text-zinc-500">{t.sub}</p>
       <Link
         href="/"
-        className="mt-6 rounded-full bg-tint px-5 py-2.5 font-semibold text-white ui-press hover:bg-emerald-700"
+        className="ui-press mt-6 inline-flex min-h-11 items-center rounded-full bg-tint px-5 font-semibold text-white"
       >
         {t.home}
       </Link>

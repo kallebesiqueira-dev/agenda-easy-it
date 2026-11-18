@@ -1,113 +1,52 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import type { Lang } from "@/lib/i18n";
+import { LegalShell } from "@/components/legal/legal-shell";
+import { COMPANY, LEGAL_UPDATED } from "@/lib/legal";
 import { getLang } from "@/lib/i18n/server";
 
-export const metadata: Metadata = { title: "Termini di Utilizzo — Agenda Easy" };
-
-const COPY: Record<
-  Lang,
-  {
-    title: string;
-    updated: string;
-    sections: { h: string; p: string }[];
-    contactPre: string;
-    privacyLink: string;
-    back: string;
-  }
-> = {
-  it: {
-    title: "Termini di Utilizzo",
-    updated: "Ultimo aggiornamento: 6 ottobre 2026",
-    sections: [
-      {
-        h: "1. Il servizio",
-        p: "Agenda Easy è una piattaforma di prenotazione online per piccole attività. L'attività abbonata inserisce servizi, prodotti, piani/promozioni, team e orari e riceve una pagina pubblica dove i suoi clienti prenotano appuntamenti direttamente, senza pagamenti anticipati.",
-      },
-      {
-        h: "2. Abbonamento e prova gratuita",
-        p: "L'uso del pannello richiede un abbonamento (Piano Unico, 9,90 €/mese), con 7 giorni di prova gratuita dalla creazione dell'attività. Al termine della prova, l'accesso viene bloccato fino alla conferma del pagamento. La disdetta può essere effettuata in qualsiasi momento e interrompe gli addebiti successivi.",
-      },
-      {
-        h: "3. Pagamenti tra attività e cliente finale",
-        p: "Il pagamento di servizi, prodotti e piani avviene direttamente tra l'attività e il suo cliente (es.: in contanti o con carta, sul posto). Agenda Easy non intermedia, trattiene o garantisce tali importi, né risponde di eventuali rimborsi tra le parti.",
-      },
-      {
-        h: "4. Responsabilità",
-        p: "L'attività è responsabile delle informazioni pubblicate sulla propria pagina (servizi, prezzi, orari) e dell'erogazione degli appuntamenti. Agenda Easy fornisce la piattaforma «così com'è», impegnandosi ragionevolmente a mantenerla disponibile e sicura.",
-      },
-      {
-        h: "5. Chiusura",
-        p: "Gli account che violano questi termini o la legge possono essere sospesi. Puoi chiudere il tuo account in qualsiasi momento scrivendo all'e-mail di supporto.",
-      },
-    ],
-    contactPre: "6. Contatti — Domande su questi termini: kallebesiqueira@gmail.com. Consulta anche la nostra",
-    privacyLink: "Informativa sulla Privacy",
-    back: "← Torna alla home",
-  },
-  en: {
-    title: "Terms of Use",
-    updated: "Last updated: 6 October 2026",
-    sections: [
-      {
-        h: "1. The service",
-        p: "Agenda Easy is an online booking platform for small businesses. The subscribing business adds services, products, plans/promotions, team and hours and gets a public page where its clients book appointments directly, with no upfront payment.",
-      },
-      {
-        h: "2. Subscription and free trial",
-        p: "Using the dashboard requires a subscription (Single Plan, €9.90/month), with a 7-day free trial from the creation of the business. When the trial ends, access is blocked until payment is confirmed. You can cancel at any time, which stops future charges.",
-      },
-      {
-        h: "3. Payments between business and end client",
-        p: "Payment for services, products and plans happens directly between the business and its client (e.g. in cash or by card, on site). Agenda Easy does not intermediate, hold or guarantee these amounts, nor is it responsible for refunds between the parties.",
-      },
-      {
-        h: "4. Responsibilities",
-        p: "The business is responsible for the information published on its page (services, prices, hours) and for delivering the appointments. Agenda Easy provides the platform “as is”, making reasonable efforts to keep it available and secure.",
-      },
-      {
-        h: "5. Termination",
-        p: "Accounts that violate these terms or the law may be suspended. You can close your account at any time by writing to the support e-mail.",
-      },
-    ],
-    contactPre: "6. Contact — Questions about these terms: kallebesiqueira@gmail.com. See also our",
-    privacyLink: "Privacy Policy",
-    back: "← Back to the homepage",
-  },
+export const metadata: Metadata = {
+  title: "Termini e Condizioni — Agenda Easy",
+  description:
+    "Condizioni del servizio Agenda Easy, abbonamento, prova gratuita e responsabilità. Bozza da completare con i dati societari.",
 };
 
 export default async function TermsPage() {
   const lang = await getLang();
-  const t = COPY[lang];
+  const it = lang === "it";
+
+  const sections = it
+    ? [
+        ["1. Chi siamo e cosa accetti", `Agenda Easy è un software di prenotazione online offerto da ${COMPANY.name}, P. IVA ${COMPANY.vat}, con sede in ${COMPANY.address}. Creando un account accetti questi termini e l'informativa privacy. Se non li accetti, non usare il servizio.`],
+        ["2. Il servizio", "L'attività abbonata inserisce servizi, prodotti, piani, team e orari e riceve una pagina pubblica. I suoi clienti prenotano da soli. Il pagamento della seduta avviene sul posto, tra attività e cliente: Agenda Easy non incassa quegli importi e non li garantisce."],
+        ["3. Account", "L'account è personale. Sei responsabile delle credenziali e dei dati che pubblichi (prezzi, orari, foto, testi). Devi avere il diritto di trattare i dati dei tuoi clienti e di informarli."],
+        ["4. Abbonamento, prova e recesso", "Il pannello richiede il Piano Unico (9,90 €/mese), con 7 giorni di prova dalla creazione dell'attività. Senza pagamento al termine della prova l'accesso si blocca. Puoi disdire quando vuoi: gli addebiti successivi si interrompono. Il servizio è rivolto a imprese e professionisti. Se chi acquista è un consumatore ai sensi del Codice del consumo, il recesso di 14 giorni si applica nei limiti di legge e non copre il periodo già usato se hai chiesto di iniziare subito."],
+        ["5. Uso lecito", "Non è consentito usare la piattaforma per contenuti illeciti, per aggirare i limiti tecnici o per caricare dati di cui non puoi disporre. Gli account in violazione possono essere sospesi."],
+        ["6. Disponibilità", `La piattaforma è fornita «così com'è». Ci impegniamo a mantenerla disponibile e sicura, senza garantire l'assenza di interruzioni. La responsabilità complessiva di ${COMPANY.name}, salvo dolo o colpa grave e i casi inderogabili di legge, è limitata ai canoni pagati nei 12 mesi precedenti il fatto.`],
+        ["7. Legge applicabile", `Si applica la legge italiana. Per le controversie con clienti professionisti il foro è ${COMPANY.forum}, salvo i fori inderogabili del consumatore.`],
+        ["8. Contatti", `Domande su questi termini: ${COMPANY.email} — PEC ${COMPANY.pec}.`],
+      ]
+    : [
+        ["1. Who we are and what you accept", `Agenda Easy is online booking software offered by ${COMPANY.name}, VAT no. ${COMPANY.vat}, based at ${COMPANY.address}. Creating an account means you accept these terms and the privacy notice. If you do not, do not use the service.`],
+        ["2. The service", "The subscribing business adds services, products, plans, team and hours and gets a public page. Its clients book on their own. The appointment is paid on site, between the business and the client: Agenda Easy does not collect those amounts and does not guarantee them."],
+        ["3. Account", "The account is personal. You are responsible for your credentials and for what you publish (prices, hours, photos, text). You must be entitled to process your clients' data and to inform them."],
+        ["4. Subscription, trial and withdrawal", "The dashboard requires the Single Plan (€9.90/month), with a 7-day trial from the creation of the business. Without payment at the end of the trial, access is blocked. You can cancel at any time: future charges stop. The service is aimed at businesses and professionals. If the buyer is a consumer under the Italian Consumer Code, the 14-day withdrawal right applies within the limits of the law and does not cover the period already used if you asked to start immediately."],
+        ["5. Lawful use", "You may not use the platform for unlawful content, to bypass technical limits, or to upload data you are not allowed to use. Accounts in breach may be suspended."],
+        ["6. Availability", `The platform is provided “as is”. We work to keep it available and secure, without promising uninterrupted service. The overall liability of ${COMPANY.name}, except for wilful misconduct or gross negligence and non-waivable law, is limited to the fees paid in the 12 months before the event.`],
+        ["7. Governing law", `Italian law applies. Disputes with professional customers go to the courts of ${COMPANY.forum}, except for non-waivable consumer venues.`],
+        ["8. Contact", `Questions about these terms: ${COMPANY.email} — PEC ${COMPANY.pec}.`],
+      ];
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-5 py-16 text-zinc-900">
-      <h1 className="text-3xl font-bold">{t.title}</h1>
-      <p className="mt-2 text-sm text-zinc-500">{t.updated}</p>
-
-      <div className="mt-8 space-y-6 text-sm leading-relaxed text-zinc-700">
-        {t.sections.map((s) => (
-          <section key={s.h}>
-            <h2 className="mb-1 font-semibold text-zinc-900">{s.h}</h2>
-            <p>{s.p}</p>
-          </section>
-        ))}
-        <section>
-          <p>
-            {t.contactPre}{" "}
-            <Link href="/privacy" className="underline">
-              {t.privacyLink}
-            </Link>
-            .
-          </p>
+    <LegalShell
+      lang={lang}
+      title={it ? "Termini e Condizioni" : "Terms and Conditions"}
+      updated={it ? `Ultimo aggiornamento: ${LEGAL_UPDATED.it}` : `Last updated: ${LEGAL_UPDATED.en}`}
+    >
+      {sections.map(([h, p]) => (
+        <section key={h}>
+          <h2 className="mb-1 font-semibold text-[var(--label)]">{h}</h2>
+          <p>{p}</p>
         </section>
-      </div>
-
-      <p className="mt-10 text-sm">
-        <Link href="/" className="underline">
-          {t.back}
-        </Link>
-      </p>
-    </main>
+      ))}
+    </LegalShell>
   );
 }

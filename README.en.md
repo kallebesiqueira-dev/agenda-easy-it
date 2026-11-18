@@ -223,8 +223,32 @@ npm run dev                   # http://localhost:7778
 | `STRIPE_SECRET_KEY` / `STRIPE_PRICE_ID` / `STRIPE_WEBHOOK_SECRET` | SaaS subscription |
 | `RESEND_API_KEY` / `EMAIL_FROM` | transactional e-mails |
 | `CRON_SECRET` | protects the reminders cron |
+| `DEMO_EMAIL` / `DEMO_PASSWORD` | permanent demo account, **server only** |
+| `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Plausible domain; empty = no analytics. The script starts only after consent |
 
 Stripe webhooks locally: `stripe listen --forward-to localhost:7778/api/webhooks/stripe`
+
+## 🎭 Demo account (never expires)
+
+A fixed user for showing the product: business **Studio Anna** (`/studio-anna`), already filled with services, products, plans, hours, clients and bookings. It is `comped`: no trial expiry and no Stripe lock.
+
+- E-mail: `demo@agendaeasy.it` (or the value of `DEMO_EMAIL`)
+- Password: only in **`DEMO_PASSWORD`** (`.env.local` locally, environment variables on Vercel). It is not in the code and never reaches the browser.
+- The **Try the demo** button (landing and login) signs in with those variables, on the server.
+
+Create or **reset** the sample data (rebuilds bookings and resets the password, does not delete the user):
+
+```bash
+node scripts/seed-demo.mjs
+```
+
+In production: set `DEMO_EMAIL`, `DEMO_PASSWORD` and `SUPABASE_SECRET_KEY` on the environment, then run the script once against that Supabase project. `supabase/seed.sql` is an old public fixture without a login: this is the account to show clients.
+
+## Legal pages and cookies
+
+Terms (`/termini`), privacy (`/privacy`) and cookies (`/cookie`) are bilingual. Company details are placeholders in `src/lib/legal.ts` (`[RAGIONE SOCIALE]`, `[P. IVA]`, `[SEDE LEGALE]`, `[EMAIL DI CONTATTO]`, `[PEC]`, `[FORO COMPETENTE]`). Fill them in and **have a professional review the text** before publishing.
+
+The banner (accept / reject / customise) stores the choice for 6 months in the `ae-consent` cookie. The Plausible script starts only with “Measurement” consent and only if `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` is set. Empty = no analytics.
 
 ## 🔒 Security
 

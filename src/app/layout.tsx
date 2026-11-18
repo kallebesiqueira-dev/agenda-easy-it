@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import type { Viewport } from "next";
+import { cookies } from "next/headers";
 import { Inter, Instrument_Serif } from "next/font/google";
 import localFont from "next/font/local";
+import { CookieConsent, type ConsentValue } from "@/components/cookie-consent";
 import { SilkBackground } from "@/components/silk-background";
 import { getLang } from "@/lib/i18n/server";
 import "./globals.css";
@@ -64,6 +66,8 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const lang = await getLang();
+  const saved = (await cookies()).get("ae-consent")?.value;
+  const consent: ConsentValue | null = saved === "all" || saved === "essential" ? saved : null;
   return (
     <html
       lang={lang}
@@ -72,6 +76,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <SilkBackground />
         {children}
+        <CookieConsent initial={consent} />
       </body>
     </html>
   );
