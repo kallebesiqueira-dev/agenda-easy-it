@@ -219,21 +219,21 @@ export function ServicesManager({
           {visible.map((s) => (
             <li
               key={s.id}
-              className={`flex items-center justify-between gap-3 rounded-[18px] bg-card p-4 ${s.active ? "" : "opacity-60"}`}
+              className={`flex items-center gap-3.5 rounded-[20px] bg-card p-4 sm:p-5 ${s.active ? "" : "opacity-60"}`}
             >
               {s.image_path ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={mediaUrl(s.image_path)!}
                   alt=""
-                  className="size-12 shrink-0 rounded-xl object-cover"
+                  className="size-12 shrink-0 rounded-[14px] object-cover"
                 />
               ) : (
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-400">
+                <div className="grid size-12 shrink-0 place-items-center rounded-[14px] bg-[var(--tint-soft)] text-[var(--tint)]">
                   {s.item_type === "product" ? <IconBag size={22} /> : <IconScissors size={22} />}
                 </div>
               )}
-              <div className="flex-1">
+              <div className="min-w-0 flex-1">
                 <p className="text-base font-semibold text-zinc-900">
                   {s.name}
                   {!s.active && (
@@ -242,7 +242,7 @@ export function ServicesManager({
                     </span>
                   )}
                 </p>
-                <p className="text-sm text-zinc-500">
+                <p className="text-sm text-zinc-500 tabular-nums">
                   {formatEUR(s.price_minor)}
                   {s.item_type === "service" && ` · ${s.duration_minutes} min`}
                 </p>
@@ -250,7 +250,7 @@ export function ServicesManager({
               <button
                 type="button"
                 onClick={() => setEditing(s.id)}
-                className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm hover:border-zinc-300"
+                className="ui-press shrink-0 rounded-full bg-[#16181a] px-4 py-2 text-sm font-semibold text-white hover:bg-[#26272b]"
               >
                 {t.edit}
               </button>

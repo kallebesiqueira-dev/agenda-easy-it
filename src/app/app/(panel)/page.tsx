@@ -195,33 +195,33 @@ export default async function AgendaPage({ searchParams }: Props) {
           {metrics.map((m) => (
             <div
               key={m.label}
-              className={`flex min-h-[112px] flex-col justify-between rounded-[18px] p-3 sm:p-4 ${
+              className={`flex min-h-[112px] flex-col justify-between rounded-[20px] p-3.5 sm:p-5 ${
                 m.highlight ? "bg-[var(--tint-soft)]" : "bg-card"
               }`}
             >
-              <span
-                className={`grid size-9 place-items-center rounded-[11px] text-[15px] font-bold ${
-                  m.highlight ? "bg-[var(--accent)] text-[var(--on-tint)]" : "bg-[var(--tint-soft)] text-[var(--tint)]"
-                }`}
-              >
-                {m.Icon ? <m.Icon size={18} /> : "€"}
-              </span>
-              <div>
+              <div className="flex items-start justify-between gap-2">
                 <p
-                  className={`text-[20px] leading-none font-bold tracking-[-0.03em] tabular-nums sm:text-[26px] ${
+                  className={`text-[21px] leading-none font-bold tracking-[-0.03em] tabular-nums sm:text-[28px] ${
                     m.highlight ? "text-[var(--tint-deep)]" : ""
                   }`}
                 >
                   {m.value}
                 </p>
-                <p
-                  className={`mt-1.5 text-[11px] leading-snug sm:text-[13px] ${
-                    m.highlight ? "font-medium text-[var(--tint)]" : "text-[var(--label-2)]"
+                <span
+                  className={`grid size-8 shrink-0 place-items-center rounded-[10px] text-[14px] font-bold ${
+                    m.highlight ? "bg-[var(--accent)] text-[var(--on-tint)]" : "bg-[var(--tint-soft)] text-[var(--tint)]"
                   }`}
                 >
-                  {m.label}
-                </p>
+                  {m.Icon ? <m.Icon size={17} /> : "€"}
+                </span>
               </div>
+              <p
+                className={`text-[11px] leading-snug sm:text-[13px] ${
+                  m.highlight ? "font-medium text-[var(--tint)]" : "text-[var(--label-2)]"
+                }`}
+              >
+                {m.label}
+              </p>
             </div>
           ))}
         </div>

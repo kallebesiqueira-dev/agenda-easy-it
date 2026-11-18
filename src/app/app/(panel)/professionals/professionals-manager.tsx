@@ -247,7 +247,7 @@ function ProfessionalCard({
 
   return (
     <div
-      className={`rounded-2xl bg-card p-4 ${professional.active ? "" : "opacity-60"}`}
+      className={`rounded-[20px] bg-card p-4 sm:p-5 ${professional.active ? "" : "opacity-60"}`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-3">
@@ -357,14 +357,14 @@ function ProfessionalCard({
                 })
               )
             }
-            className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm disabled:opacity-60 hover:border-zinc-300"
+            className="ui-press min-h-9 rounded-full bg-[var(--fill)] px-4 text-sm font-medium text-[var(--ink-soft)] disabled:opacity-60 hover:bg-[var(--tint-soft)]"
           >
             {professional.active ? t.deactivate : t.reactivate}
           </button>
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm hover:border-zinc-300"
+            className="ui-press min-h-9 rounded-full bg-[var(--tint-soft)] px-4 text-sm font-semibold text-[var(--tint)] hover:bg-[color-mix(in_oklab,var(--accent)_18%,white)]"
           >
             {t.shifts} ({shifts.length})
           </button>

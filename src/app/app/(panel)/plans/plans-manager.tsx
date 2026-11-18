@@ -10,6 +10,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { HeroButton, IconPlus, PageHero } from "@/components/page-hero";
+import { IconTicket } from "@/components/icons";
 import type { Plan } from "@/types/database";
 import type { Lang } from "@/lib/i18n";
 import { formatEUR, parseEURToMinor } from "@/lib/money";
@@ -243,12 +244,12 @@ export function PlansManager({
       />
 
       {!editing && (
-        <div className="mb-4 rounded-[18px] bg-card p-4">
-          <p className="mb-2 text-sm font-medium text-zinc-700">
+        <div className="mb-4">
+          <p className="mb-2.5 text-sm font-semibold text-[var(--label)]">
             {t.templatesTitle}
           </p>
           <div className="flex flex-wrap gap-2">
-            {t.templates.map((tpl) => (
+            {t.templates.map((tpl, i) => (
               <button
                 key={tpl.label}
                 type="button"
@@ -256,7 +257,11 @@ export function PlansManager({
                   setTemplate(tpl);
                   setEditing("new");
                 }}
-                className="rounded-full border border-zinc-200 px-3 py-1.5 text-sm hover:border-zinc-900"
+                className={`min-h-9 rounded-full px-4 text-[13px] font-semibold ui-press ${
+                  i === 0
+                    ? "bg-[var(--accent)] text-[var(--on-tint)]"
+                    : "bg-[var(--fill)] text-[var(--ink-soft)] hover:bg-[var(--tint-soft)]"
+                }`}
               >
                 {tpl.label}
               </button>
@@ -293,9 +298,12 @@ export function PlansManager({
           {plans.map((p) => (
             <li
               key={p.id}
-              className={`rounded-2xl bg-card p-4 ${p.active ? "" : "opacity-60"}`}
+              className={`rounded-[20px] bg-card p-4 sm:p-5 ${p.active ? "" : "opacity-60"}`}
             >
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3.5">
+                <span className="grid size-11 shrink-0 place-items-center rounded-[13px] bg-[var(--tint-soft)] text-[var(--tint)]">
+                  <IconTicket size={20} />
+                </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-base font-semibold text-zinc-900">
                     {p.badge && (
@@ -331,7 +339,7 @@ export function PlansManager({
                     setTemplate(null);
                     setEditing(p.id);
                   }}
-                  className="shrink-0 rounded-lg border border-zinc-200 px-3 py-1.5 text-sm hover:border-zinc-300"
+                  className="ui-press shrink-0 rounded-full bg-[#16181a] px-4 py-2 text-sm font-semibold text-white hover:bg-[#26272b]"
                 >
                   {t.edit}
                 </button>

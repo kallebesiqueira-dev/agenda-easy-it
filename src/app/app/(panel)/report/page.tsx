@@ -150,14 +150,20 @@ export default async function ReportsPage({ searchParams }: Props) {
     timeZone: "UTC",
   }).format(new Date(Date.UTC(yy, mm - 1, 1, 12)));
 
+  const chipTone = {
+    tint: "bg-[var(--tint-soft)] text-[var(--tint)]",
+    red: "bg-[var(--red-bg)] text-[var(--red)]",
+    orange: "bg-[var(--orange-bg)] text-[var(--orange)]",
+  } as const;
   const stats = [
-    { label: t.revenue, icon: IconChart, value: formatEUR(receita) },
-    { label: t.completed, icon: IconCheckCircle, value: String(byStatus("completed").length) },
-    { label: t.confirmed, icon: IconCheck, value: String(byStatus("confirmed").length) },
-    { label: t.cancelled, icon: IconX, value: String(byStatus("cancelled").length) },
-    { label: t.noShows, icon: IconAlert, value: String(byStatus("no_show").length) },
-    { label: t.totalBookings, icon: IconCalendar, value: String(rows.length) },
+    { label: t.revenue, icon: IconChart, value: formatEUR(receita), tone: "tint" as const },
+    { label: t.completed, icon: IconCheckCircle, value: String(byStatus("completed").length), tone: "tint" as const },
+    { label: t.confirmed, icon: IconCheck, value: String(byStatus("confirmed").length), tone: "tint" as const },
+    { label: t.cancelled, icon: IconX, value: String(byStatus("cancelled").length), tone: "red" as const },
+    { label: t.noShows, icon: IconAlert, value: String(byStatus("no_show").length), tone: "orange" as const },
+    { label: t.totalBookings, icon: IconCalendar, value: String(rows.length), tone: "tint" as const },
   ];
+  const topMax = Math.max(1, ...topServices.map(([, c]) => c));
 
   const heroArrow =
     "grid size-11 place-items-center rounded-full bg-white/15 text-[var(--on-tint)] ui-press hover:bg-white/25";
@@ -189,27 +195,37 @@ export default async function ReportsPage({ searchParams }: Props) {
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {stats.map((s) => (
-          <div key={s.label} className="rounded-[22px] bg-card p-5">
-            <s.icon size={24} className="text-[var(--green)]" />
-            <p className="mt-3 text-[28px] leading-none font-bold tracking-[-0.03em]">
+          <div key={s.label} className="rounded-[20px] bg-card p-4 sm:p-5">
+            <span className={`grid size-9 place-items-center rounded-[11px] ${chipTone[s.tone]}`}>
+              <s.icon size={19} />
+            </span>
+            <p className="mt-3 text-[26px] leading-none font-bold tracking-[-0.03em] tabular-nums sm:text-[28px]">
               <CountUp value={s.value} />
             </p>
-            <p className="mt-1.5 text-[13px] text-[var(--label-2)]">{s.label}</p>
+            <p className="mt-1.5 text-[13px] leading-snug text-[var(--label-2)]">{s.label}</p>
           </div>
         ))}
       </div>
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2 sm:items-start">
-        <section className="rounded-[22px] bg-card p-5">
-          <h3 className="mb-3 font-semibold">{t.topServices}</h3>
+        <section className="rounded-[20px] bg-card p-5">
+          <h3 className="mb-4 font-semibold">{t.topServices}</h3>
           {topServices.length === 0 ? (
             <p className="text-sm text-zinc-500">{t.noBookings}</p>
           ) : (
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-3.5 text-sm">
               {topServices.map(([name, count]) => (
-                <li key={name} className="flex items-center justify-between">
-                  <span>{name}</span>
-                  <span className="font-semibold">{count}</span>
+                <li key={name}>
+                  <div className="mb-1.5 flex items-center justify-between gap-2">
+                    <span className="truncate">{name}</span>
+                    <span className="shrink-0 font-semibold tabular-nums">{count}</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-[var(--fill)]">
+                    <div
+                      className="h-full rounded-full bg-[var(--accent)]"
+                      style={{ width: `${Math.round((count / topMax) * 100)}%` }}
+                    />
+                  </div>
                 </li>
               ))}
             </ul>
