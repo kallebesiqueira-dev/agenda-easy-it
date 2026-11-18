@@ -5,7 +5,12 @@ import { AuthShell } from "@/components/auth/auth-shell";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { getLang } from "@/lib/i18n/server";
 
-export const metadata: Metadata = { title: "Accedi — Agenda Easy" };
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
+  return {
+    title: lang === "en" ? "Sign in — Agenda Easy" : "Accedi — Agenda Easy",
+  };
+}
 
 export default async function LoginPage() {
   const lang = await getLang();

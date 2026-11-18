@@ -21,6 +21,7 @@ import type {
   PublicService,
 } from "@/types/database";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { AuthWaves } from "@/components/auth/auth-waves";
 import { formatDateTimeInTz, formatTimeInTz, todayInTz } from "@/lib/dates";
 import { intlLocale, type Lang } from "@/lib/i18n";
 import { formatEUR } from "@/lib/money";
@@ -405,11 +406,12 @@ export function BookingFlow({
     : null;
 
   return (
-    <div style={brandStyle} className="min-h-dvh bg-zinc-100 text-zinc-900">
+    <div style={brandStyle} className="relative isolate min-h-dvh bg-zinc-100 text-zinc-900">
+      <AuthWaves variant="public" color={profile.brand_primary} />
       {/* Header in stile LinkedIn (stesso modello della versione BR): card con
           copertina in proporzione fissa su ogni viewport, avatar che scavalca
           il bordo e blocco identità separato dalla foto. */}
-      <header className="mx-auto w-full max-w-md px-4 pt-4 sm:max-w-lg sm:pt-6 lg:max-w-xl">
+      <header className="relative z-[1] mx-auto w-full max-w-md px-4 pt-4 sm:max-w-lg sm:pt-6 lg:max-w-xl">
         <div className="overflow-hidden rounded-[22px] bg-card ring-1 ring-black/5">
           <div className="relative aspect-[5/2] w-full bg-[var(--brand)] sm:aspect-[3/1]">
             {profile.cover_path ? (
@@ -490,7 +492,7 @@ export function BookingFlow({
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-md px-4 pb-16 pt-4 sm:max-w-lg lg:max-w-xl">
+      <main className="relative z-[1] mx-auto w-full max-w-md px-4 pb-16 pt-4 sm:max-w-lg lg:max-w-xl">
         <div className="rounded-[22px] bg-card p-5 ring-1 ring-black/5 sm:p-7">
           {step === "service" && (
             <StepShell title={t.chooseService}>

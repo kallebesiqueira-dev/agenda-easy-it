@@ -3,11 +3,18 @@ import { LegalShell } from "@/components/legal/legal-shell";
 import { COMPANY, LEGAL_UPDATED } from "@/lib/legal";
 import { getLang } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "Informativa cookie — Agenda Easy",
-  description:
-    "Cookie tecnici e, solo dopo il consenso, misurazione delle visite. Come accettare, rifiutare o cambiare scelta.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
+  return lang === "en"
+    ? {
+        title: "Cookie Policy — Agenda Easy",
+        description: "Essential cookies and, only after consent, visit measurement. How to accept, reject or change your choice.",
+      }
+    : {
+        title: "Informativa cookie — Agenda Easy",
+        description: "Cookie tecnici e, solo dopo il consenso, misurazione delle visite. Come accettare, rifiutare o cambiare scelta.",
+      };
+}
 
 export default async function CookiePage() {
   const lang = await getLang();

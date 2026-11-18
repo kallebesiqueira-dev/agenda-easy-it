@@ -97,3 +97,26 @@ const EN: ActionMessages = {
 export function actionMessages(lang: Lang): ActionMessages {
   return lang === "en" ? EN : IT;
 }
+
+const ZOD_EN: Record<string, string> = {
+  "Minimo 3 caratteri": "At least 3 characters",
+  "Massimo 40 caratteri": "At most 40 characters",
+  "Usa lettere minuscole, numeri e trattini": "Use lowercase letters, numbers and hyphens",
+  "Orario non valido (HH:MM)": "Invalid time (HH:MM)",
+  "Data non valida (AAAA-MM-GG)": "Invalid date (YYYY-MM-DD)",
+  "Telefono incompleto": "Phone number is incomplete",
+  "Telefono non valido": "Invalid phone number",
+  "Codice Fiscale o Partita IVA non validi": "Invalid tax code",
+  "Colore non valido": "Invalid colour",
+  "L'inizio deve essere prima della fine": "The start must be before the end",
+  "L'apertura deve essere prima della chiusura": "Opening must be before closing",
+  "E-mail non valido": "Invalid e-mail",
+  "Minimo 8 caratteri": "At least 8 characters",
+};
+
+/** Messaggi Zod scritti in italiano, tradotti quando la lingua è inglese. */
+export function zodError(message: string | undefined, lang: Lang, fallback: string): string {
+  if (!message) return fallback;
+  if (lang !== "en") return message;
+  return ZOD_EN[message] ?? message;
+}

@@ -1,7 +1,10 @@
 /** Skeleton con shimmer mentre la pagina del pannello carica. */
-export default function Loading() {
+import { getLang } from "@/lib/i18n/server";
+
+export default async function Loading() {
+  const lang = await getLang();
   return (
-    <div aria-busy="true" aria-label="Caricamento" className="space-y-6">
+    <div aria-busy="true" aria-label={lang === "en" ? "Loading" : "Caricamento"} className="space-y-6">
       <div className="ui-skeleton h-10 w-56" />
       <div className="ios-group">
         {Array.from({ length: 5 }).map((_, i) => (

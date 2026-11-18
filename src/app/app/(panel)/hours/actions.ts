@@ -7,7 +7,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { actionMessages } from "@/lib/i18n/messages";
+import { actionMessages, zodError } from "@/lib/i18n/messages";
 import { getLang } from "@/lib/i18n/server";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -22,10 +22,11 @@ const weekSchema = z.array(businessHourInputSchema).length(7);
 export async function saveBusinessHours(
   hours: unknown
 ): Promise<{ error?: string }> {
-  const t = actionMessages(await getLang());
+  const lang = await getLang();
+  const t = actionMessages(lang);
   const parsed = weekSchema.safeParse(hours);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? t.invalidData };
+    return { error: zodError(parsed.error.issues[0]?.message, lang, t.invalidData) };
   }
 
   const ctx = await getCurrentBusiness();
@@ -52,10 +53,11 @@ export async function addBreak(input: {
   /** null/assente = pausa generale (tutto il team) */
   professional_id?: string | null;
 }): Promise<{ error?: string }> {
-  const t = actionMessages(await getLang());
+  const lang = await getLang();
+  const t = actionMessages(lang);
   const parsed = shiftInputSchema.safeParse(input);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? t.invalidData };
+    return { error: zodError(parsed.error.issues[0]?.message, lang, t.invalidData) };
   }
   const professionalId = input.professional_id ?? null;
   if (professionalId !== null && !uuidSchema.safeParse(professionalId).success) {
@@ -92,7 +94,8 @@ export async function addBreak(input: {
 export async function deleteBreak(
   breakId: string
 ): Promise<{ error?: string }> {
-  const t = actionMessages(await getLang());
+  const lang = await getLang();
+  const t = actionMessages(lang);
   const parsed = uuidSchema.safeParse(breakId);
   if (!parsed.success) return { error: t.invalidData };
 

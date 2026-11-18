@@ -44,25 +44,33 @@ const SITE_URL =
     ? "https://agendaeasy.it"
     : "http://localhost:7778");
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: "Agenda Easy — Prenotazioni online per la tua attività",
-  description:
-    "Pagina di prenotazione online per qualsiasi servizio su appuntamento. I tuoi clienti prenotano da soli; tu gestisci agenda, servizi, prodotti e promozioni da un unico pannello.",
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: "Agenda Easy — Agenda piena, WhatsApp in pace",
-    description:
-      "Prenotazioni online, prodotti in vetrina e piani/promozioni editabili per qualsiasi servizio su appuntamento.",
-    type: "website",
-    locale: "it_IT",
-  },
-  twitter: { card: "summary_large_image" },
-  appleWebApp: {
-    title: "AgendaEasy", // nome della scorciatoia salvata nella home (iOS)
-    statusBarStyle: "default",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
+  const en = lang === "en";
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: en
+      ? "Agenda Easy — Online bookings for your business"
+      : "Agenda Easy — Prenotazioni online per la tua attività",
+    description: en
+      ? "An online booking page for any appointment-based service. Your clients book themselves; you run the calendar, services, products and promotions from one dashboard."
+      : "Pagina di prenotazione online per qualsiasi servizio su appuntamento. I tuoi clienti prenotano da soli; tu gestisci agenda, servizi, prodotti e promozioni da un unico pannello.",
+    alternates: { canonical: "/" },
+    openGraph: {
+      title: en ? "Agenda Easy — A full calendar, a quiet WhatsApp" : "Agenda Easy — Agenda piena, WhatsApp in pace",
+      description: en
+        ? "Online bookings, a shop window for products and editable plans for any appointment-based service."
+        : "Prenotazioni online, prodotti in vetrina e piani/promozioni editabili per qualsiasi servizio su appuntamento.",
+      type: "website",
+      locale: en ? "en_GB" : "it_IT",
+    },
+    twitter: { card: "summary_large_image" },
+    appleWebApp: {
+      title: "AgendaEasy",
+      statusBarStyle: "default",
+    },
+  };
+}
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const lang = await getLang();

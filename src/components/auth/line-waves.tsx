@@ -375,7 +375,13 @@ const LineWaves = ({
     let last = 0;
     let visible = true;
     let pageVisible = document.visibilityState !== 'hidden';
-    let lost = false;
+      let lost = false;
+      const copy = (color: number[]) => color.slice();
+      const live = {
+        c1: copy(settingsRef.current.color1),
+        c2: copy(settingsRef.current.color2),
+        c3: copy(settingsRef.current.color3),
+      };
 
     let resizePending = false;
     const applyResize = () => {
@@ -416,6 +422,15 @@ const LineWaves = ({
       const s = settingsRef.current;
       const dt = clamp((now - last) / 1000 || 0, 0, 0.05);
       last = Math.max(last, now);
+      const glide = reduced ? 1 : 1 - Math.exp(-dt * 3.5);
+      const glideTo = (from: number[], to: number[]) => {
+        from[0] += (to[0] - from[0]) * glide;
+        from[1] += (to[1] - from[1]) * glide;
+        from[2] += (to[2] - from[2]) * glide;
+      };
+      glideTo(live.c1, s.color1);
+      glideTo(live.c2, s.color2);
+      glideTo(live.c3, s.color3);
       time += dt * s.speed * 2.5 * (reduced ? 0.25 : 1);
       cycle += dt * s.speed * s.cycleSpeed * 0.05;
       if (reveal < 1) reveal = Math.min(1, reveal + dt / 1.8);
@@ -465,9 +480,9 @@ const LineWaves = ({
       gl.uniform1f(u.uWarp, s.warp * (0.25 + 0.75 * eased));
       gl.uniform1f(u.uScale, s.scale);
       gl.uniform1f(u.uRotation, s.rotation);
-      gl.uniform3f(u.uColor1, s.color1[0], s.color1[1], s.color1[2]);
-      gl.uniform3f(u.uColor2, s.color2[0], s.color2[1], s.color2[2]);
-      gl.uniform3f(u.uColor3, s.color3[0], s.color3[1], s.color3[2]);
+      gl.uniform3f(u.uColor1, live.c1[0], live.c1[1], live.c1[2]);
+      gl.uniform3f(u.uColor2, live.c2[0], live.c2[1], live.c2[2]);
+      gl.uniform3f(u.uColor3, live.c3[0], live.c3[1], live.c3[2]);
       gl.uniform1f(u.uCycle, cycle);
       gl.uniform1f(u.uEdge, s.edge);
       gl.uniform4f(u.uMouse, lens.x, lens.y, lens.presence * s.influence * 0.16, 0.2);

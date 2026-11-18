@@ -9,7 +9,10 @@ import { formatEUR } from "@/lib/money";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { BillingPanel } from "./billing-panel";
 
-export const metadata: Metadata = { title: "Abbonamento — Agenda Easy" };
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
+  return { title: lang === "en" ? "Subscription — Agenda Easy" : "Abbonamento — Agenda Easy" };
+}
 
 export default async function BillingPage() {
   const ctx = await getCurrentBusiness();

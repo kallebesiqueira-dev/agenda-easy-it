@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { BusinessType } from "@/types/database";
 import type { Lang } from "@/lib/i18n";
+import { zodError } from "@/lib/i18n/messages";
 import { businessTypeOptions } from "@/lib/labels";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { createBusinessSchema } from "@/lib/validation";
@@ -79,7 +80,7 @@ export function OnboardingForm({ lang }: { lang: Lang }) {
       timezone: "Europe/Rome",
     });
     if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? t.invalid);
+      setError(zodError(parsed.error.issues[0]?.message, lang, t.invalid));
       return;
     }
 

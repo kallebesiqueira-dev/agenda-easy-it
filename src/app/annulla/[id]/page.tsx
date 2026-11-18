@@ -6,7 +6,10 @@ import { getLang } from "@/lib/i18n/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { CancelPanel } from "./cancel-panel";
 
-export const metadata: Metadata = { title: "Annulla prenotazione — Agenda Easy" };
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
+  return { title: lang === "en" ? "Cancel booking — Agenda Easy" : "Annulla prenotazione — Agenda Easy" };
+}
 
 interface Props {
   params: Promise<{ id: string }>;

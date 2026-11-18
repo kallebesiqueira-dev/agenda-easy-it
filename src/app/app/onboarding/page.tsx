@@ -5,7 +5,12 @@ import { getLang } from "@/lib/i18n/server";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { OnboardingForm } from "./onboarding-form";
 
-export const metadata: Metadata = { title: "Crea attività — Agenda Easy" };
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
+  return {
+    title: lang === "en" ? "Create your business — Agenda Easy" : "Crea attività — Agenda Easy",
+  };
+}
 
 export default async function OnboardingPage() {
   // Chi ha già un'attività non ripassa di qui

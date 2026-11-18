@@ -7,7 +7,7 @@
  */
 
 import { revalidatePath } from "next/cache";
-import { actionMessages } from "@/lib/i18n/messages";
+import { actionMessages, zodError } from "@/lib/i18n/messages";
 import { getLang } from "@/lib/i18n/server";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -23,12 +23,13 @@ export async function saveProfessional(input: {
   active: boolean;
   image_path?: string | null;
 }): Promise<{ error?: string }> {
-  const t = actionMessages(await getLang());
+  const lang = await getLang();
+  const t = actionMessages(lang);
   const parsed = professionalInputSchema
     .extend({ id: uuidSchema.optional() })
     .safeParse(input);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? t.invalidData };
+    return { error: zodError(parsed.error.issues[0]?.message, lang, t.invalidData) };
   }
 
   const ctx = await getCurrentBusiness();
@@ -106,12 +107,13 @@ export async function addShift(input: {
   starts_at: string;
   ends_at: string;
 }): Promise<{ error?: string }> {
-  const t = actionMessages(await getLang());
+  const lang = await getLang();
+  const t = actionMessages(lang);
   const parsedId = uuidSchema.safeParse(input.professional_id);
   const parsedShift = shiftInputSchema.safeParse(input);
   if (!parsedId.success || !parsedShift.success) {
     return {
-      error: parsedShift.error?.issues[0]?.message ?? t.invalidData,
+      error: zodError(parsedShift.error?.issues[0]?.message, lang, t.invalidData),
     };
   }
 
@@ -146,7 +148,8 @@ export async function addShift(input: {
 export async function deleteShift(
   shiftId: string
 ): Promise<{ error?: string }> {
-  const t = actionMessages(await getLang());
+  const lang = await getLang();
+  const t = actionMessages(lang);
   const parsed = uuidSchema.safeParse(shiftId);
   if (!parsed.success) return { error: t.invalidData };
 

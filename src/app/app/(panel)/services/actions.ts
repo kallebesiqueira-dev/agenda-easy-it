@@ -7,7 +7,7 @@
  */
 
 import { revalidatePath } from "next/cache";
-import { actionMessages } from "@/lib/i18n/messages";
+import { actionMessages, zodError } from "@/lib/i18n/messages";
 import { getLang } from "@/lib/i18n/server";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -27,12 +27,13 @@ export interface SaveServiceInput {
 export async function saveService(
   input: SaveServiceInput
 ): Promise<{ error?: string }> {
-  const t = actionMessages(await getLang());
+  const lang = await getLang();
+  const t = actionMessages(lang);
   const parsed = serviceInputSchema
     .extend({ id: uuidSchema.optional() })
     .safeParse(input);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? t.invalidData };
+    return { error: zodError(parsed.error.issues[0]?.message, lang, t.invalidData) };
   }
 
   const ctx = await getCurrentBusiness();
