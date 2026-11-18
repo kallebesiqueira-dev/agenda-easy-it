@@ -104,7 +104,14 @@ export function AuthForm({
   async function signInWithGoogle() {
     setError(null);
     setLoading(true);
-    const supabase = createSupabaseBrowserClient();
+    let supabase: ReturnType<typeof createSupabaseBrowserClient>;
+    try {
+      supabase = createSupabaseBrowserClient();
+    } catch {
+      setError(t.googleError);
+      setLoading(false);
+      return;
+    }
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -136,7 +143,14 @@ export function AuthForm({
     }
 
     setLoading(true);
-    const supabase = createSupabaseBrowserClient();
+    let supabase: ReturnType<typeof createSupabaseBrowserClient>;
+    try {
+      supabase = createSupabaseBrowserClient();
+    } catch {
+      setError(mode === "login" ? t.wrongCredentials : t.cannotCreate);
+      setLoading(false);
+      return;
+    }
     try {
       if (mode === "login") {
         const { error } = await supabase.auth.signInWithPassword(parsed.data);

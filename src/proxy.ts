@@ -7,35 +7,50 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+function hasPublicSupabaseEnv() {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+}
+
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          for (const { name, value } of cookiesToSet) {
-            request.cookies.set(name, value);
-          }
-          response = NextResponse.next({ request });
-          for (const { name, value, options } of cookiesToSet) {
-            response.cookies.set(name, value, options);
-          }
-        },
-      },
-    }
-  );
+  // Sem as chaves públicas o site de marketing continua no ar. O painel
+  // exige sessão, então cai no login. Preview da Vercel hoje só tem envs
+  // de Production — não pode responder 500 por isso.
+  let user: { id: string } | null = null;
+  if (hasPublicSupabaseEnv()) {
+    try {
+      const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            getAll() {
+              return request.cookies.getAll();
+            },
+            setAll(cookiesToSet) {
+              for (const { name, value } of cookiesToSet) {
+                request.cookies.set(name, value);
+              }
+              response = NextResponse.next({ request });
+              for (const { name, value, options } of cookiesToSet) {
+                response.cookies.set(name, value, options);
+              }
+            },
+          },
+        }
+      );
 
-  // getUser() valida o token junto ao Supabase Auth (getSession() apenas
-  // decodifica o cookie sem validar — nunca usar para autorização).
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+      // getUser() valida o token junto ao Supabase Auth (getSession() apenas
+      // decodifica o cookie sem validar — nunca usar para autorização).
+      const { data } = await supabase.auth.getUser();
+      user = data.user;
+    } catch {
+      user = null;
+    }
+  }
 
   const { pathname } = request.nextUrl;
   const isPanelRoute = pathname.startsWith("/app");
