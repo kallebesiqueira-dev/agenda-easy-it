@@ -235,13 +235,15 @@ A fixed user for showing the product: business **Studio Anna** (`/studio-anna`),
 
 - E-mail: `demo@agendaeasy.it` (or the value of `DEMO_EMAIL`)
 - Password: only in **`DEMO_PASSWORD`** (`.env.local` locally, environment variables on Vercel). It is not in the code and never reaches the browser.
-- The **Try the demo** button (landing and login) signs in with those variables, on the server.
+- Sign-in is the normal login (e-mail and password). The homepage button has been removed.
 
 Create or **reset** the sample data (rebuilds bookings and resets the password, does not delete the user):
 
 ```bash
 node scripts/seed-demo.mjs
 ```
+
+Or, in the Supabase SQL editor: open `supabase/seed-demo.sql`, replace `__DEMO_PASSWORD__` and run it. It is idempotent.
 
 In production: set `DEMO_EMAIL`, `DEMO_PASSWORD` and `SUPABASE_SECRET_KEY` on the environment, then run the script once against that Supabase project. `supabase/seed.sql` is an old public fixture without a login: this is the account to show clients.
 

@@ -235,13 +235,15 @@ Utente fisso per mostrare il prodotto: attività **Studio Anna** (`/studio-anna`
 
 - E-mail: `demo@agendaeasy.it` (o il valore di `DEMO_EMAIL`)
 - Password: solo nella variabile **`DEMO_PASSWORD`** (`.env.local` in locale, variabili d'ambiente su Vercel). Non sta nel codice e non arriva al browser.
-- Il pulsante **Prova la demo** (landing e login) entra con quelle variabili, lato server.
+- L'accesso è il login normale (e-mail e password). Il pulsante in home è stato tolto.
 
 Creare o **resettare** i dati di esempio (ricrea prenotazioni e reimposta la password, non cancella l'utente):
 
 ```bash
 node scripts/seed-demo.mjs
 ```
+
+In alternativa, nel SQL editor di Supabase: apri `supabase/seed-demo.sql`, sostituisci `__DEMO_PASSWORD__` e eseguilo. È idempotente.
 
 In produzione: impostare `DEMO_EMAIL`, `DEMO_PASSWORD` e `SUPABASE_SECRET_KEY` sull'ambiente, poi lanciare lo script una volta puntando a quel progetto Supabase. `supabase/seed.sql` è una vecchia vetrina senza login: la conta da mostrare ai clienti è questa.
 

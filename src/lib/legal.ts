@@ -1,15 +1,14 @@
 /**
- * Dati societari da compilare prima della pubblicazione.
- * I valori tra parentesi quadre sono segnaposto: non sono dati reali.
- * I testi delle pagine legali vanno rivisti da un professionista.
+ * Dati pubblici della CTRL Agency, presi dal sito https://ctrlagency.dev
+ * (informativa privacy e cookie policy, aggiornate al 31 ottobre 2026).
+ * Non ci sono P. IVA, ragione sociale, PEC né foro: non vanno inventati.
+ * I testi legali vanno comunque rivisti da un professionista.
  */
 export const COMPANY = {
-  name: "[RAGIONE SOCIALE]",
-  vat: "[P. IVA]",
-  address: "[SEDE LEGALE]",
-  email: "[EMAIL DI CONTATTO]",
-  pec: "[PEC]",
-  forum: "[FORO COMPETENTE, es. Milano]",
+  name: "CTRL Agency",
+  address: "Valle d'Aosta, Italia",
+  email: "ctrlragency@gmail.com",
+  site: "https://ctrlagency.dev",
 } as const;
 
 export const LEGAL_UPDATED = {

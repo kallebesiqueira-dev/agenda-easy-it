@@ -24,8 +24,8 @@ export function LegalShell({
   const nav = NAV[lang];
   const notice =
     lang === "en"
-      ? "Draft for publication. Replace every [PLACEHOLDER] with the company’s real details before going live. This text is not legal advice and must be reviewed by a professional."
-      : "Bozza da pubblicare. Sostituisci ogni [SEGNAPOSTO] con i dati reali della società prima di andare online. Questo testo non è un parere legale e va rivisto da un professionista.";
+      ? "Informational text. It is not legal advice and should be reviewed by a professional before you rely on it."
+      : "Testo informativo. Non è un parere legale e va rivisto da un professionista prima di farvi affidamento.";
 
   return (
     <main className="mx-auto w-full max-w-2xl px-5 py-12 sm:py-16">
@@ -44,12 +44,8 @@ export function LegalShell({
       <p className="mt-3 text-[13px] text-[var(--label-2)]">{updated}</p>
       <dl className="mt-6 grid gap-1 text-[14px] text-[var(--ink-soft)]">
         <div>
-          <dt className="inline font-semibold text-[var(--label)]">{lang === "en" ? "Company" : "Titolare"}: </dt>
+          <dt className="inline font-semibold text-[var(--label)]">{lang === "en" ? "Operator" : "Titolare"}: </dt>
           <dd className="inline">{COMPANY.name}</dd>
-        </div>
-        <div>
-          <dt className="inline font-semibold text-[var(--label)]">P. IVA: </dt>
-          <dd className="inline">{COMPANY.vat}</dd>
         </div>
         <div>
           <dt className="inline font-semibold text-[var(--label)]">{lang === "en" ? "Address" : "Sede"}: </dt>
@@ -57,11 +53,15 @@ export function LegalShell({
         </div>
         <div>
           <dt className="inline font-semibold text-[var(--label)]">E-mail: </dt>
-          <dd className="inline">{COMPANY.email}</dd>
+          <dd className="inline">
+            <a href={`mailto:${COMPANY.email}`} className="underline">{COMPANY.email}</a>
+          </dd>
         </div>
         <div>
-          <dt className="inline font-semibold text-[var(--label)]">PEC: </dt>
-          <dd className="inline">{COMPANY.pec}</dd>
+          <dt className="inline font-semibold text-[var(--label)]">Sito: </dt>
+          <dd className="inline">
+            <a href={COMPANY.site} className="underline">{COMPANY.site.replace("https://", "")}</a>
+          </dd>
         </div>
       </dl>
       <div className="mt-8 space-y-6 text-[15px] leading-relaxed text-[var(--ink-soft)]">{children}</div>

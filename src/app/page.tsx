@@ -16,7 +16,6 @@ import { LandingMotion } from "@/components/landing/landing-motion";
 import { ApptRow, GlassCard, Mac, MiniAgenda, Monogram, Phone, type Appt } from "@/components/landing/app-mock";
 import { IconCalendar, IconChart, IconCheck, IconUsers } from "@/components/icons";
 import { ManageCookies } from "@/components/cookie-consent";
-import { DemoButton } from "@/components/demo-button";
 import { BlurText } from "@/components/reactbits/blur-text";
 import { GradientText } from "@/components/reactbits/gradient-text";
 import { PLAN, TRIAL_DAYS } from "@/lib/billing";
@@ -38,9 +37,6 @@ const COPY = {
     heroSub: "Una pagina di prenotazione tutta tua, l'agenda che si riempie da sola e promemoria automatici per i clienti. Senza app da scaricare.",
     heroCta: `Inizia gratis per ${TRIAL_DAYS} giorni`,
     heroNote: "Nessuna carta di credito alla registrazione.",
-    demo: "Prova la demo",
-    demoPending: "Apro la demo…",
-    demoError: "La demo non è ancora disponibile in questo ambiente.",
     benefitsK: "Perché Agenda Easy",
     benefits: [
       { t: "Pagina tua, in un link.", b: "Logo, colore e servizi. La condividi su Instagram o WhatsApp: il cliente prenota senza account." },
@@ -107,9 +103,6 @@ const COPY = {
     heroSub: "A booking page of your own, a calendar that fills itself and automatic reminders for your clients. No app to download.",
     heroCta: `Start free for ${TRIAL_DAYS} days`,
     heroNote: "No credit card required to sign up.",
-    demo: "Try the demo",
-    demoPending: "Opening the demo…",
-    demoError: "The demo isn't available in this environment yet.",
     benefitsK: "Why Agenda Easy",
     benefits: [
       { t: "Your page, in one link.", b: "Logo, colour and services. Share it on Instagram or WhatsApp: clients book with no account." },
@@ -332,12 +325,7 @@ export default async function LandingPage() {
           <p className="lp-fade mx-auto mt-7 max-w-xl text-[18px] leading-[1.45] text-[var(--label-2)] sm:text-[21px]" style={{ animationDelay: "260ms" }}>{t.heroSub}</p>
           <div className="lp-fade mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row" style={{ animationDelay: "380ms" }}>
             <Btn href="/signup">{t.heroCta}</Btn>
-            <DemoButton
-              label={t.demo}
-              pendingLabel={t.demoPending}
-              errorLabel={t.demoError}
-              className="ui-press glass inline-flex min-h-12 items-center justify-center rounded-full px-7 text-[16px] font-semibold whitespace-nowrap disabled:opacity-60"
-            />
+            <Btn href="#storia" ghost>{t.nav.story}</Btn>
           </div>
           <p className="lp-fade mt-4 text-[13px] text-[var(--label-3)]" style={{ animationDelay: "440ms" }}>{t.heroNote}</p>
         </div>

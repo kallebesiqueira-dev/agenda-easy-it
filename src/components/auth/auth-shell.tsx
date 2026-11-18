@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AuthWaves } from "@/components/auth/auth-waves";
 import type { Lang } from "@/lib/i18n";
 
 /**
@@ -19,22 +20,13 @@ export function AuthShell({
 
   return (
     <main className="auth-screen">
-      <div className="auth-wash" aria-hidden>
-        <span />
-        <span />
-        <span />
-      </div>
+      <AuthWaves />
       <div className="auth-split">
         <aside className="auth-brand">
           <Link href="/" className="auth-mark" aria-label="Agenda Easy">
             <span className="auth-mark-tile">
-              <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden>
-                <rect x="4" y="8" width="40" height="36" rx="12" fill="#fff" />
-                <rect x="14" y="4" width="6" height="8" rx="2" fill="#ddd6fe" />
-                <rect x="28" y="4" width="6" height="8" rx="2" fill="#ddd6fe" />
-                <circle cx="18" cy="26" r="3" fill="#7c3aed" />
-                <circle cx="30" cy="26" r="3" fill="#7c3aed" />
-              </svg>
+              {/* Mesmo arquivo de src/app/icon.svg, servido em /icon.svg */}
+              <img src="/icon.svg" alt="" width={48} height={48} />
             </span>
             <span className="auth-mark-word">
               agenda<span>easy.</span>
