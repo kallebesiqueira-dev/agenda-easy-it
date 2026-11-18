@@ -7,6 +7,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { SupportChatLazy } from "@/components/support-chat-lazy";
 import { AccentPicker } from "@/components/landing/accent-picker";
@@ -16,7 +17,7 @@ import { LandingMotion } from "@/components/landing/landing-motion";
 import { ApptRow, GlassCard, Mac, MiniAgenda, Monogram, Phone, type Appt } from "@/components/landing/app-mock";
 import { IconCalendar, IconChart, IconCheck, IconUsers } from "@/components/icons";
 import { ManageCookies } from "@/components/cookie-consent";
-import { HeroGalaxy } from "@/components/landing/hero-galaxy";
+import { AuthWaves } from "@/components/auth/auth-waves";
 import { BlurText } from "@/components/reactbits/blur-text";
 import { GradientText } from "@/components/reactbits/gradient-text";
 import { PLAN, TRIAL_DAYS } from "@/lib/billing";
@@ -289,7 +290,21 @@ function SceneReport({ t }: { t: T }) {
 
 const SCENES = [SceneAgenda, SceneBooking, SceneReminder, SceneReport];
 
-export default async function LandingPage() {
+export default async function LandingPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const code = params.code;
+  if (typeof code === "string" && code.length > 0) {
+    const query = new URLSearchParams();
+    for (const [key, value] of Object.entries(params)) {
+      if (typeof value === "string") query.set(key, value);
+    }
+    redirect(`/auth/callback?${query.toString()}`);
+  }
+
   const lang = await getLang();
   const t: T = COPY[lang];
 
@@ -316,7 +331,7 @@ export default async function LandingPage() {
       {/* HERO */}
       <section data-hero className="ae-hero relative overflow-hidden px-5 pt-36 pb-24 sm:pt-44">
         <div className="ae-hero-bg" aria-hidden>
-          <HeroGalaxy />
+          <AuthWaves variant="hero" />
           <span className="ae-noise" />
         </div>
         <div className="mx-auto max-w-6xl text-center">

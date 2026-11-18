@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Crea attività — Agenda Easy" };
 export default async function OnboardingPage() {
   // Chi ha già un'attività non ripassa di qui
   const ctx = await getCurrentBusiness();
-  if (ctx) redirect("/app");
+  if (ctx) redirect("/dashboard");
   const lang = await getLang();
   const t =
     lang === "en"

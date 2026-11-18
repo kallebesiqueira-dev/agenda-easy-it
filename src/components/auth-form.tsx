@@ -10,8 +10,8 @@ import { IconEye, IconEyeOff, IconLock, IconMail } from "@/components/icons";
 import { TurnstileField, turnstileRequired } from "@/components/turnstile-field";
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { signInWithEmail, signUpWithEmail } from "@/app/login/auth-actions";
+import { safeNextPath } from "@/lib/safe-next";
 import type { Lang } from "@/lib/i18n";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { signInSchema } from "@/lib/validation";
@@ -92,7 +92,6 @@ export function AuthForm({
   lang?: Lang;
 }) {
   const t = COPY[lang];
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -121,12 +120,11 @@ export function AuthForm({
       setLoading(false);
       return;
     }
-    const next = new URLSearchParams(window.location.search).get("next");
-    const safeNext = next?.startsWith("/") && !next.startsWith("//") ? next : "/app";
+    const next = safeNextPath(new URLSearchParams(window.location.search).get("next"));
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(safeNext)}`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
       },
     });
     if (error) {
@@ -171,9 +169,8 @@ export function AuthForm({
           setError(result.error === "turnstile" ? t.bot : result.error === "invalid" ? t.invalid : t.wrongCredentials);
           return;
         }
-        const next = new URLSearchParams(window.location.search).get("next");
-        router.push(next?.startsWith("/") ? next : "/app");
-        router.refresh();
+        const next = safeNextPath(new URLSearchParams(window.location.search).get("next"));
+        window.location.assign(next);
       } else {
         const result = await signUpWithEmail({
           email: parsed.data.email,
@@ -196,8 +193,7 @@ export function AuthForm({
           setInfo(t.confirmationSent);
           return;
         }
-        router.push("/app");
-        router.refresh();
+        window.location.assign("/dashboard");
       }
     } finally {
       setTurnstileReset((value) => value + 1);

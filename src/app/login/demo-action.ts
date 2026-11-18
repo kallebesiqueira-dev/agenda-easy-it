@@ -24,5 +24,5 @@ export async function signInDemo(): Promise<{ error: "unavailable" } | never> {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: "unavailable" };
 
-  redirect("/app");
+  redirect("/dashboard");
 }

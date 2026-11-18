@@ -53,19 +53,22 @@ function tint(amount: number) {
 }
 
 /**
- * Fundo do login do CTRL Quotes: LineWaves (React Bits), mesmos parâmetros
- * de auth-waves.tsx. `panel` deixa o mesmo efeito mais baixo, atrás do painel.
+ * Fundo do login do CTRL Quotes: LineWaves (React Bits), mesmos parâmetros.
+ * `panel` deixa o efeito mais baixo. `hero` usa os mesmos números no violeta
+ * da landing, com linhas claras para o título continuar legível.
  */
-export function AuthWaves({ variant = "auth" }: { variant?: "auth" | "panel" }) {
+export function AuthWaves({ variant = "auth" }: { variant?: "auth" | "panel" | "hero" }) {
   const env = useWavesEnv();
   if (!env.ok) return null;
   const panel = variant === "panel";
+  const hero = variant === "hero";
+  const className = hero ? "auth-waves is-hero" : panel ? "auth-waves is-panel" : "auth-waves";
   return (
-    <div className={panel ? "auth-waves is-panel" : "auth-waves"} aria-hidden>
+    <div className={className} aria-hidden>
       <LineWaves
-        color1={tint(0.55)}
-        color2={tint(0.3)}
-        color3={tint(0.75)}
+        color1={tint(hero ? 0.72 : 0.55)}
+        color2={tint(hero ? 0.42 : 0.3)}
+        color3={tint(hero ? 0.9 : 0.75)}
         speed={panel ? 0.22 : 0.3}
         lineCount={panel ? (env.mobile ? 28 : 48) : env.mobile ? 40 : 72}
         lineWidth={1.3}
@@ -74,16 +77,16 @@ export function AuthWaves({ variant = "auth" }: { variant?: "auth" | "panel" }) 
         rotation={-33}
         enableMouseInteraction={!panel}
         colorCycleSpeed={1}
-        glow={0.6}
-        brightness={1}
+        glow={hero ? 0.45 : 0.6}
+        brightness={hero ? 0.85 : 1}
         highlightWidth={1}
         warpScale={1}
         edgeFade={0}
         mouseInfluence={panel ? 0 : 2}
         clickRipple={!panel}
         intro
-        lightMode
-        opacity={panel ? 0.22 : 0.45}
+        lightMode={!hero}
+        opacity={hero ? 0.62 : panel ? 0.22 : 0.45}
       />
     </div>
   );

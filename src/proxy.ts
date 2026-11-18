@@ -14,6 +14,16 @@ function hasPublicSupabaseEnv() {
 }
 
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Site URL do Supabase (produção) devolve o OAuth em "/?code=". Encaminha
+  // para o callback neste mesmo host, em vez de mostrar a landing.
+  if (pathname === "/" && request.nextUrl.searchParams.get("code")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/callback";
+    return NextResponse.redirect(url);
+  }
+
   let response = NextResponse.next({ request });
 
   // Sem as chaves públicas o site de marketing continua no ar. O painel
@@ -52,8 +62,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  const { pathname } = request.nextUrl;
-  const isPanelRoute = pathname.startsWith("/app");
+  const isPanelRoute = pathname.startsWith("/app") || pathname.startsWith("/dashboard");
   const isAuthRoute = pathname === "/login" || pathname === "/signup";
 
   if (isPanelRoute && !user) {
@@ -65,7 +74,7 @@ export async function proxy(request: NextRequest) {
 
   if (isAuthRoute && user) {
     const url = request.nextUrl.clone();
-    url.pathname = "/app";
+    url.pathname = "/dashboard";
     url.search = "";
     return NextResponse.redirect(url);
   }

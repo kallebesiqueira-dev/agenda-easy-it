@@ -7,7 +7,6 @@
 
 import { IconEye, IconEyeOff } from "@/components/icons";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import type { Lang } from "@/lib/i18n";
@@ -57,7 +56,6 @@ const COPY: Record<
 export default function ResetPasswordPage() {
   const lang = useLang();
   const t = COPY[lang];
-  const router = useRouter();
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,8 +72,7 @@ export default function ResetPasswordPage() {
       setError(t.saveError);
       return;
     }
-    router.push("/app");
-    router.refresh();
+    window.location.assign("/dashboard");
   }
 
   return (
