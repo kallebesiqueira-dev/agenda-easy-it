@@ -30,20 +30,14 @@ export function PanelMotion({ children }: { children: React.ReactNode }) {
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray<HTMLElement>(".bg-card, [data-hover]", el);
       if (cards.length) {
+        // Ingresso discreto: salita + dissolvenza, con una leggera variazione
+        // casuale (niente dispersione 3D marcata). Movimento morbido.
         gsap.from(cards, {
           opacity: 0,
-          x: () => gsap.utils.random(-40, 40),
-          y: () => gsap.utils.random(-24, 60),
-          z: () => gsap.utils.random(-120, 30),
-          rotationX: () => gsap.utils.random(-26, 26),
-          rotationY: () => gsap.utils.random(-26, 26),
-          rotation: () => gsap.utils.random(-6, 6),
-          scale: () => gsap.utils.random(0.88, 0.96),
-          transformPerspective: 1000,
-          transformOrigin: "center center",
+          y: () => gsap.utils.random(10, 20),
           duration: 0.6,
-          ease: "power3.out",
-          stagger: { each: 0.04, from: "random" },
+          ease: "power2.out",
+          stagger: { each: 0.05, from: "start" },
           clearProps: "transform,opacity",
         });
       }
@@ -51,10 +45,9 @@ export function PanelMotion({ children }: { children: React.ReactNode }) {
       if (hero.length) {
         gsap.from(hero, {
           opacity: 0,
-          y: -22,
-          scale: 0.975,
-          duration: 0.55,
-          ease: "power3.out",
+          y: -14,
+          duration: 0.5,
+          ease: "power2.out",
           clearProps: "transform,opacity",
         });
       }
@@ -73,27 +66,28 @@ export function PanelMotion({ children }: { children: React.ReactNode }) {
     const cleanups: (() => void)[] = [];
 
     el.querySelectorAll<HTMLElement>(".bg-card, [data-hover]").forEach((card) => {
-      const rotX = gsap.quickTo(card, "rotationX", { duration: 0.5, ease: "power3" });
-      const rotY = gsap.quickTo(card, "rotationY", { duration: 0.5, ease: "power3" });
+      const rotX = gsap.quickTo(card, "rotationX", { duration: 0.7, ease: "power2" });
+      const rotY = gsap.quickTo(card, "rotationY", { duration: 0.7, ease: "power2" });
       let rect: DOMRect | null = null;
 
       const onEnter = () => {
         rect = card.getBoundingClientRect();
-        gsap.set(card, { transformPerspective: 800, transformOrigin: "center center" });
-        gsap.to(card, { scale: 1.015, y: -4, duration: 0.35, ease: "power2.out", overwrite: "auto" });
+        gsap.set(card, { transformPerspective: 1000, transformOrigin: "center center" });
+        gsap.to(card, { scale: 1.008, y: -2, duration: 0.45, ease: "power2.out", overwrite: "auto" });
       };
       const onMove = (e: PointerEvent) => {
         if (!rect) rect = card.getBoundingClientRect();
         const px = (e.clientX - rect.left) / rect.width - 0.5;
         const py = (e.clientY - rect.top) / rect.height - 0.5;
-        rotY(px * 10);
-        rotX(-py * 10);
+        // Inclinazione tenue
+        rotY(px * 4);
+        rotX(-py * 4);
       };
       const onLeave = () => {
         rect = null;
         rotX(0);
         rotY(0);
-        gsap.to(card, { scale: 1, y: 0, duration: 0.5, ease: "power3.out", overwrite: "auto" });
+        gsap.to(card, { scale: 1, y: 0, duration: 0.6, ease: "power2.out", overwrite: "auto" });
       };
 
       card.addEventListener("pointerenter", onEnter);
@@ -109,15 +103,16 @@ export function PanelMotion({ children }: { children: React.ReactNode }) {
     });
 
     el.querySelectorAll<HTMLElement>("[data-magnetic]").forEach((mag) => {
-      const xTo = gsap.quickTo(mag, "x", { duration: 0.4, ease: "power3" });
-      const yTo = gsap.quickTo(mag, "y", { duration: 0.4, ease: "power3" });
+      const xTo = gsap.quickTo(mag, "x", { duration: 0.5, ease: "power2" });
+      const yTo = gsap.quickTo(mag, "y", { duration: 0.5, ease: "power2" });
       let rect: DOMRect | null = null;
 
       const onEnter = () => (rect = mag.getBoundingClientRect());
       const onMove = (e: PointerEvent) => {
         if (!rect) rect = mag.getBoundingClientRect();
-        xTo((e.clientX - (rect.left + rect.width / 2)) * 0.22);
-        yTo((e.clientY - (rect.top + rect.height / 2)) * 0.32);
+        // Magnetismo molto leggero
+        xTo((e.clientX - (rect.left + rect.width / 2)) * 0.1);
+        yTo((e.clientY - (rect.top + rect.height / 2)) * 0.14);
       };
       const onLeave = () => {
         rect = null;
