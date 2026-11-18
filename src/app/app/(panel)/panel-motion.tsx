@@ -65,7 +65,7 @@ export function PanelMotion({ children }: { children: React.ReactNode }) {
 
     const cleanups: (() => void)[] = [];
 
-    el.querySelectorAll<HTMLElement>(".bg-card, [data-hover]").forEach((card) => {
+    el.querySelectorAll<HTMLElement>(".bg-card:not([data-still]), [data-hover]").forEach((card) => {
       const rotX = gsap.quickTo(card, "rotationX", { duration: 0.7, ease: "power2" });
       const rotY = gsap.quickTo(card, "rotationY", { duration: 0.7, ease: "power2" });
       let rect: DOMRect | null = null;

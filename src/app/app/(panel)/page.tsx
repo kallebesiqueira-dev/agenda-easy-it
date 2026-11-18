@@ -230,8 +230,8 @@ export default async function AgendaPage({ searchParams }: Props) {
 
       {/* Riga 2 — calendario + agenda del giorno */}
       <div className="grid gap-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start">
-      {/* Calendário mensal */}
-      <section className="rounded-[22px] bg-card p-4 sm:p-6">
+      {/* Calendário mensal (data-still: niente tilt, è un'area interattiva) */}
+      <section data-still className="rounded-[22px] bg-card p-4 sm:p-6">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="ios-title2 capitalize">
             {monthLabel}
