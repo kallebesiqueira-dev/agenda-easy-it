@@ -16,6 +16,7 @@ import { LandingMotion } from "@/components/landing/landing-motion";
 import { ApptRow, GlassCard, Mac, MiniAgenda, Monogram, Phone, type Appt } from "@/components/landing/app-mock";
 import { IconCalendar, IconChart, IconCheck, IconUsers } from "@/components/icons";
 import { ManageCookies } from "@/components/cookie-consent";
+import { HeroGalaxy } from "@/components/landing/hero-galaxy";
 import { BlurText } from "@/components/reactbits/blur-text";
 import { GradientText } from "@/components/reactbits/gradient-text";
 import { PLAN, TRIAL_DAYS } from "@/lib/billing";
@@ -315,10 +316,7 @@ export default async function LandingPage() {
       {/* HERO */}
       <section data-hero className="ae-hero relative overflow-hidden px-5 pt-36 pb-24 sm:pt-44">
         <div className="ae-hero-bg" aria-hidden>
-          <span className="ae-blob is-a" />
-          <span className="ae-blob is-b" />
-          <span className="ae-blob is-c" />
-          <span className="ae-grid" />
+          <HeroGalaxy />
           <span className="ae-noise" />
         </div>
         <div className="mx-auto max-w-6xl text-center">

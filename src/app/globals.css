@@ -478,7 +478,23 @@ input[type="time"]::-webkit-calendar-picker-indicator, input[type="date"]::-webk
   background: linear-gradient(160deg, #7c3aed 0%, #5b21b6 55%, #2e1065 100%);
   isolation: isolate;
 }
-.ae-hero-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.ae-hero-bg { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
+.ae-galaxy,
+.ae-hero-bg .galaxy-container { position: absolute; inset: 0; width: 100%; height: 100%; }
+.galaxy-canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.ae-hero .mx-auto { position: relative; }
+.ae-hero .mx-auto::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 42%;
+  width: min(920px, 120%);
+  height: 280px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse at center, rgba(46, 16, 101, 0.55), rgba(46, 16, 101, 0) 72%);
+  pointer-events: none;
+}
 .ae-hero > *:not(.ae-hero-bg) { position: relative; z-index: 1; }
 .ae-blob {
   position: absolute;
@@ -511,17 +527,6 @@ input[type="time"]::-webkit-calendar-picker-indicator, input[type="date"]::-webk
   50% { transform: translate3d(6vw, 4vw, 0) scale(1.12); }
   100% { transform: translate3d(-4vw, 7vw, 0) scale(0.94); }
 }
-.ae-grid {
-  position: absolute;
-  inset: -64px;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 30%, transparent 80%);
-  animation: ae-grid-move 14s linear infinite;
-}
-@keyframes ae-grid-move { to { transform: translate3d(64px, 64px, 0); } }
 .ae-noise {
   position: absolute;
   inset: 0;
@@ -539,7 +544,7 @@ input[type="time"]::-webkit-calendar-picker-indicator, input[type="date"]::-webk
 .ae-hero .glass { color: #1a1a1e; }
 
 @media (prefers-reduced-motion: reduce) {
-  .lp-word, .lp-fade, .ae-blob, .ae-grid { animation: none; }
+  .lp-word, .lp-fade, .ae-blob { animation: none; }
 }
 
 /* ---------- React Bits: BlurText + GradientText ---------- */
