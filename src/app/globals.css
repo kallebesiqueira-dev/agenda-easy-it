@@ -603,7 +603,7 @@ input[type="time"]::-webkit-calendar-picker-indicator, input[type="date"]::-webk
   padding: 32px 20px 160px;
   background: var(--bg);
 }
-.auth-waves { position: fixed; inset: 0; z-index: 0; pointer-events: none; animation: auth-fade-in 1.2s ease-out both; }
+.auth-waves { position: fixed; inset: 0; z-index: 0; pointer-events: none; animation: auth-fade-in 0.45s ease-out both; }
 .auth-waves .line-waves,
 .auth-waves .line-waves__canvas { width: 100%; height: 100%; }
 .line-waves { position: relative; width: 100%; height: 100%; overflow: hidden; }

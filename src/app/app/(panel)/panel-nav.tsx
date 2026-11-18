@@ -241,7 +241,7 @@ export function NavBar({
 
   return (
     <header
-      className={`safe-top sticky top-0 z-30 transition-[background-color,box-shadow] duration-300 ${
+      className={`safe-top sticky top-0 z-30 transition-[background-color,box-shadow] duration-200 ${
         shown ? "ios-material ios-hairline-b" : "bg-transparent"
       }`}
     >
@@ -249,7 +249,7 @@ export function NavBar({
         <div className="min-w-0 flex-1">{children}</div>
         <span
           aria-hidden={!shown}
-          className={`ios-headline pointer-events-none absolute inset-x-28 truncate text-center capitalize transition-all duration-300 ease-[var(--spring)] ${
+          className={`ios-headline pointer-events-none absolute inset-x-28 truncate text-center capitalize transition-all duration-200 ease-[var(--spring)] ${
             shown ? "translate-y-0 opacity-100" : "translate-y-1.5 opacity-0"
           }`}
         >

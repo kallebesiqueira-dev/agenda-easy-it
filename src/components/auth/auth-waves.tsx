@@ -1,9 +1,23 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 const LineWaves = dynamic(() => import("./line-waves"), { ssr: false, loading: () => null });
+
+function useAfterIdle() {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const start = () => setReady(true);
+    if (typeof requestIdleCallback === "function") {
+      const id = requestIdleCallback(start, { timeout: 1200 });
+      return () => cancelIdleCallback(id);
+    }
+    const id = window.setTimeout(start, 200);
+    return () => window.clearTimeout(id);
+  }, []);
+  return ready;
+}
 
 type WavesEnv = { ok: boolean; mobile: boolean };
 
@@ -59,7 +73,8 @@ function tint(amount: number) {
  */
 export function AuthWaves({ variant = "auth" }: { variant?: "auth" | "panel" | "hero" }) {
   const env = useWavesEnv();
-  if (!env.ok) return null;
+  const idle = useAfterIdle();
+  if (!env.ok || !idle) return null;
   const panel = variant === "panel";
   const hero = variant === "hero";
   const className = hero ? "auth-waves is-hero" : panel ? "auth-waves is-panel" : "auth-waves";
@@ -70,7 +85,8 @@ export function AuthWaves({ variant = "auth" }: { variant?: "auth" | "panel" | "
         color2={tint(hero ? 0.42 : 0.3)}
         color3={tint(hero ? 0.9 : 0.75)}
         speed={panel ? 0.22 : 0.3}
-        lineCount={panel ? (env.mobile ? 28 : 48) : env.mobile ? 40 : 72}
+        lineCount={panel ? (env.mobile ? 16 : 48) : env.mobile ? 22 : 72}
+        maxDevicePixelRatio={1.5}
         lineWidth={1.3}
         highlight={1}
         warpIntensity={1}

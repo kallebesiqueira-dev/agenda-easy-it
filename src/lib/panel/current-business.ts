@@ -10,6 +10,9 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export interface PanelContext {
   userId: string;
+  email: string;
+  name: string;
+  avatarUrl: string | null;
   role: MemberRole;
   business: Business;
 }
@@ -32,8 +35,15 @@ export const getCurrentBusiness = cache(
       .maybeSingle();
     if (!data?.business) return null;
 
+    const meta = user.user_metadata as Record<string, unknown> | undefined;
+    const text = (key: string) => (typeof meta?.[key] === "string" ? (meta[key] as string) : "");
+    const avatar = text("avatar_url") || text("picture");
+
     return {
       userId: user.id,
+      email: user.email ?? "",
+      name: text("full_name") || text("name"),
+      avatarUrl: avatar || null,
       role: data.role as MemberRole,
       business: data.business as unknown as Business,
     };

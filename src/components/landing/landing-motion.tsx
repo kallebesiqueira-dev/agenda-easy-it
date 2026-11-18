@@ -18,7 +18,7 @@ export function LandingMotion() {
     let cancelled = false;
     let cleanup: (() => void) | undefined;
 
-    (async () => {
+    const start = async () => {
       const [{ default: gsap }, { ScrollTrigger }, { default: Lenis }] = await Promise.all([
         import("gsap"),
         import("gsap/ScrollTrigger"),
@@ -138,10 +138,16 @@ export function LandingMotion() {
       });
 
       cleanup = () => mm.revert();
-    })();
+    };
+    let idleId = 0;
+    let timer = 0;
+    if (typeof requestIdleCallback === "function") idleId = requestIdleCallback(() => void start(), { timeout: 1500 });
+    else timer = window.setTimeout(() => void start(), 200);
 
     return () => {
       cancelled = true;
+      if (idleId) cancelIdleCallback(idleId);
+      window.clearTimeout(timer);
       cleanup?.();
     };
   }, []);
