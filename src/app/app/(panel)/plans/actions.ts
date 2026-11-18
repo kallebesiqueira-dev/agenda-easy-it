@@ -6,7 +6,7 @@
  */
 
 import { revalidatePath } from "next/cache";
-import { actionMessages } from "@/lib/i18n/messages";
+import { actionMessages, zodError } from "@/lib/i18n/messages";
 import { getLang } from "@/lib/i18n/server";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -26,12 +26,13 @@ export interface SavePlanInput {
 export async function savePlan(
   input: SavePlanInput
 ): Promise<{ error?: string }> {
-  const t = actionMessages(await getLang());
+  const lang = await getLang();
+  const t = actionMessages(lang);
   const parsed = planInputSchema
     .extend({ id: uuidSchema.optional() })
     .safeParse(input);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? t.invalidData };
+    return { error: zodError(parsed.error.issues[0]?.message, lang, t.invalidData) };
   }
 
   const ctx = await getCurrentBusiness();
@@ -60,7 +61,8 @@ export async function savePlan(
 }
 
 export async function deletePlan(id: string): Promise<{ error?: string }> {
-  const t = actionMessages(await getLang());
+  const lang = await getLang();
+  const t = actionMessages(lang);
   const parsed = uuidSchema.safeParse(id);
   if (!parsed.success) return { error: t.invalidData };
 

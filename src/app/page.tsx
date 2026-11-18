@@ -25,9 +25,12 @@ import { type Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n/server";
 import { formatEUR } from "@/lib/money";
 
-export const metadata: Metadata = {
-  title: "Agenda Easy · La tua agenda. Finalmente semplice.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
+  return {
+    title: lang === "en" ? "Agenda Easy · Your calendar. Finally simple." : "Agenda Easy · La tua agenda. Finalmente semplice.",
+  };
+}
 
 const price = formatEUR(PLAN.priceMinor);
 
@@ -35,6 +38,7 @@ const COPY = {
   it: {
     video: { kicker: "Il video", t: "Agenda Easy in 48 secondi.", b: "Prenotazioni online, promemoria automatici e un'agenda sempre in ordine. Guarda come funziona.", label: "Video di presentazione di Agenda Easy", play: "Guarda il video" },
     nav: { story: "Come funziona", who: "Per chi è", price: "Prezzo", signIn: "Accedi", signUp: "Crea account" },
+    menu: ["Agenda", "Servizi", "Piani", "Team", "Orari", "Report"],
     hero: ["La tua agenda.", "Finalmente semplice."],
     heroSub: "Una pagina di prenotazione tutta tua, l'agenda che si riempie da sola e promemoria automatici per i clienti. Senza app da scaricare.",
     heroCta: `Inizia gratis per ${TRIAL_DAYS} giorni`,
@@ -101,6 +105,7 @@ const COPY = {
   en: {
     video: { kicker: "The video", t: "Agenda Easy in 48 seconds.", b: "Online bookings, automatic reminders and a calendar that stays in order. See how it works.", label: "Agenda Easy promo video", play: "Watch the video" },
     nav: { story: "How it works", who: "Who it's for", price: "Pricing", signIn: "Sign in", signUp: "Create account" },
+    menu: ["Agenda", "Services", "Plans", "Team", "Hours", "Reports"],
     hero: ["Your calendar.", "Finally simple."],
     heroSub: "A booking page of your own, a calendar that fills itself and automatic reminders for your clients. No app to download.",
     heroCta: `Start free for ${TRIAL_DAYS} days`,
@@ -359,7 +364,7 @@ export default async function LandingPage({
                     <span className="size-2 rounded-full bg-[#ff5f57]" /><span className="size-2 rounded-full bg-[#febc2e]" /><span className="size-2 rounded-full bg-[#28c840]" />
                   </div>
                   <div className="mb-3 flex items-center gap-2"><Monogram letter="S" size={28} /><span className="text-[12px] font-semibold">{t.studio}</span></div>
-                  {["Agenda", "Servizi", "Piani", "Team", "Orari", "Report"].map((n, i) => (
+                  {t.menu.map((n, i) => (
                     <span key={n} className={`relative rounded-[9px] px-2.5 py-1.5 text-[11px] font-medium ${i === 0 ? "glass" : "text-[var(--label-2)]"}`}>
                       {i === 0 && <span className="absolute top-1/2 left-0 h-3.5 w-[2px] -translate-y-1/2 rounded-full bg-[var(--accent)] shadow-[0_0_8px_var(--tint-glow)]" />}
                       {n}

@@ -3,11 +3,18 @@ import { LegalShell } from "@/components/legal/legal-shell";
 import { COMPANY, LEGAL_UPDATED } from "@/lib/legal";
 import { getLang } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "Termini e Condizioni — Agenda Easy",
-  description:
-    "Condizioni del servizio Agenda Easy, abbonamento, prova gratuita e responsabilità. Bozza da completare con i dati societari.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
+  return lang === "en"
+    ? {
+        title: "Terms and Conditions — Agenda Easy",
+        description: "Agenda Easy terms of service, subscription, free trial and liability.",
+      }
+    : {
+        title: "Termini e Condizioni — Agenda Easy",
+        description: "Condizioni del servizio Agenda Easy, abbonamento, prova gratuita e responsabilità.",
+      };
+}
 
 export default async function TermsPage() {
   const lang = await getLang();

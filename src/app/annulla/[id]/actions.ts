@@ -26,7 +26,8 @@ export async function cancelBookingPublic(
   id: string,
   token: string
 ): Promise<{ error?: string }> {
-  const t = actionMessages(await getLang());
+  const lang = await getLang();
+  const t = actionMessages(lang);
   const parsed = inputSchema.safeParse({ id, token });
   if (!parsed.success) return { error: t.linkInvalid };
 
@@ -65,14 +66,26 @@ export async function cancelBookingPublic(
     };
     const ownerEmail = rec.business ? await getOwnerEmail(rec.business.id) : null;
     if (ownerEmail && rec.business) {
-      const when = formatDateTimeInTz(rec.starts_at, rec.business.timezone);
+      const when = formatDateTimeInTz(rec.starts_at, rec.business.timezone, lang);
+      const en = lang === "en";
       await sendEmail({
         to: ownerEmail,
-        subject: `Prenotazione annullata dal cliente — ${when}`,
-        html: emailLayout(`Annullamento presso ${rec.business.name}`, [
-          { raw: `<strong>${escapeHtml(rec.customer?.name ?? "Cliente")}</strong> (${escapeHtml(rec.customer?.phone ?? "")}) ha annullato <strong>${escapeHtml(rec.service?.name ?? "")}</strong> del ${when}.` },
-          "L'orario è di nuovo disponibile sulla tua pagina.",
-        ]),
+        subject: en
+          ? `Booking cancelled by the client — ${when}`
+          : `Prenotazione annullata dal cliente — ${when}`,
+        html: emailLayout(
+          en ? `Cancellation at ${rec.business.name}` : `Annullamento presso ${rec.business.name}`,
+          en
+            ? [
+                { raw: `<strong>${escapeHtml(rec.customer?.name ?? "Client")}</strong> (${escapeHtml(rec.customer?.phone ?? "")}) cancelled <strong>${escapeHtml(rec.service?.name ?? "")}</strong> on ${when}.` },
+                "The slot is free again on your page.",
+              ]
+            : [
+                { raw: `<strong>${escapeHtml(rec.customer?.name ?? "Cliente")}</strong> (${escapeHtml(rec.customer?.phone ?? "")}) ha annullato <strong>${escapeHtml(rec.service?.name ?? "")}</strong> del ${when}.` },
+                "L'orario è di nuovo disponibile sulla tua pagina.",
+              ],
+          lang
+        ),
       });
     }
   } catch (err) {

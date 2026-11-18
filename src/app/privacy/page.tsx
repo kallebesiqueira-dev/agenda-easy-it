@@ -4,11 +4,18 @@ import { LegalShell } from "@/components/legal/legal-shell";
 import { COMPANY, LEGAL_UPDATED } from "@/lib/legal";
 import { getLang } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "Informativa sulla privacy — Agenda Easy",
-  description:
-    "Informativa privacy di Agenda Easy ai sensi del GDPR: ruoli, basi giuridiche, diritti e fornitori. Bozza da completare con i dati societari.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
+  return lang === "en"
+    ? {
+        title: "Privacy Policy — Agenda Easy",
+        description: "How Agenda Easy handles personal data under the GDPR: roles, legal bases, rights and providers.",
+      }
+    : {
+        title: "Informativa sulla privacy — Agenda Easy",
+        description: "Informativa privacy di Agenda Easy ai sensi del GDPR: ruoli, basi giuridiche, diritti e fornitori.",
+      };
+}
 
 export default async function PrivacyPage() {
   const lang = await getLang();
