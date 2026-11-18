@@ -24,13 +24,22 @@ export function PageHero({
     <section
       className={`relative isolate flex min-h-[150px] flex-col justify-center overflow-hidden rounded-[24px] px-6 py-7 text-white shadow-[var(--shadow-md)] sm:px-8 ${className}`}
     >
-      {/* Immagine di marca dei mockup (pannello astratto viola sfumato) */}
+      {/* Immagine di marca dei mockup (pannello astratto viola sfumato): dà la
+          trama e le sfere (luminanza). */}
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-cover bg-center"
+        className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: "url(/hero-viola.webp)" }}
       />
-      <div className="relative flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
+      {/* Tinta dell'accento sopra l'immagine: `mix-blend-mode: color` sostituisce
+          solo la tonalità mantenendo il chiaroscuro → l'hero segue brand_primary
+          (viola di default, ma cambia quando l'attività cambia colore). */}
+      <div
+        aria-hidden
+        className="absolute inset-0 [mix-blend-mode:color]"
+        style={{ backgroundColor: "var(--accent)" }}
+      />
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
         <div className="min-w-0 [text-shadow:0_1px_12px_rgb(40_20_90/0.35)]">
           <h2 className="ios-title1 text-[clamp(25px,2.6vw,32px)] leading-[1.1]">{title}</h2>
           {subtitle && (
