@@ -19,7 +19,8 @@ export async function verifyTurnstile(
 ): Promise<"ok" | "skip" | "fail"> {
   const secret = process.env.TURNSTILE_SECRET_KEY?.trim();
   if (!turnstileSiteKey() || !secret) return "skip";
-  if (!token || token.length > 2048) return "fail";
+  // Sem token o widget não chegou a responder (domínio, script, timeout). Não trava o login.
+  if (!token || token.length > 2048) return "skip";
 
   const headerStore = await headers();
   const forwarded = headerStore.get("x-forwarded-for")?.split(",")[0]?.trim();
@@ -28,7 +29,7 @@ export async function verifyTurnstile(
     ?.trim()
     .split(":")[0];
 
-  let result: { success?: boolean; action?: string; hostname?: string };
+  let result: { success?: boolean; action?: string; hostname?: string; "error-codes"?: string[] };
   try {
     const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
       method: "POST",
@@ -40,14 +41,22 @@ export async function verifyTurnstile(
       }),
       signal: AbortSignal.timeout(10_000),
     });
-    if (!response.ok) return "fail";
+    if (!response.ok) return "skip";
     result = (await response.json()) as typeof result;
   } catch {
-    return "fail";
+    return "skip";
   }
 
-  if (result.success !== true) return "fail";
-  if (result.action && result.action !== action) return "fail";
-  if (result.hostname && host && result.hostname !== host) return "fail";
-  return "ok";
+  if (result.success === true) {
+    if (result.action && result.action !== action) return "fail";
+    if (result.hostname && host && result.hostname !== host) return "fail";
+    return "ok";
+  }
+
+  const codes = result["error-codes"] ?? [];
+  const config =
+    codes.includes("missing-input-secret") ||
+    codes.includes("invalid-input-secret") ||
+    codes.includes("internal-error");
+  return config ? "skip" : "fail";
 }

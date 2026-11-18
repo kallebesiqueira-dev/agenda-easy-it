@@ -61,7 +61,8 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileReset, setTurnstileReset] = useState(0);
-  const needsTurnstile = turnstileRequired();
+  const [turnstileOpen, setTurnstileOpen] = useState(false);
+  const needsTurnstile = turnstileRequired() && !turnstileOpen;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -117,6 +118,7 @@ export default function ForgotPasswordPage() {
               lang={lang}
               resetKey={turnstileReset}
               onToken={setTurnstileToken}
+              onBypass={() => setTurnstileOpen(true)}
             />
             {error && (
               <p role="alert" className="auth-alert rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">

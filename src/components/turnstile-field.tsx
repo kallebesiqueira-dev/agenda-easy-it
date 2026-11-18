@@ -47,18 +47,23 @@ export function TurnstileField({
   lang,
   resetKey,
   onToken,
+  onBypass,
 }: {
   action: TurnstileAction;
   lang: Lang;
   resetKey: number;
   onToken: (token: string) => void;
+  /** Widget não carregou, expirou ou deu erro: o formulário segue sem token. */
+  onBypass: () => void;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const widgetId = useRef<WidgetId | null>(null);
   const onTokenRef = useRef(onToken);
+  const onBypassRef = useRef(onBypass);
   useEffect(() => {
     onTokenRef.current = onToken;
-  }, [onToken]);
+    onBypassRef.current = onBypass;
+  }, [onToken, onBypass]);
 
   function render() {
     const api = window.turnstile;
@@ -71,14 +76,22 @@ export function TurnstileField({
       size: "flexible",
       language: lang === "en" ? "en" : "it",
       callback: (token) => onTokenRef.current(token),
-      "expired-callback": () => onTokenRef.current(""),
-      "error-callback": () => onTokenRef.current(""),
+      "expired-callback": () => {
+        onTokenRef.current("");
+        onBypassRef.current();
+      },
+      "error-callback": () => {
+        onTokenRef.current("");
+        onBypassRef.current();
+      },
     });
   }
 
   useEffect(() => {
     render();
+    const timer = window.setTimeout(() => onBypassRef.current(), 4000);
     return () => {
+      window.clearTimeout(timer);
       if (widgetId.current && window.turnstile) {
         window.turnstile.remove(widgetId.current);
         widgetId.current = null;

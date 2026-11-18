@@ -11,7 +11,7 @@ import { TurnstileField, turnstileRequired } from "@/components/turnstile-field"
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { assertTurnstile, signInWithEmail, signUpWithEmail } from "@/app/login/auth-actions";
+import { signInWithEmail, signUpWithEmail } from "@/app/login/auth-actions";
 import type { Lang } from "@/lib/i18n";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { signInSchema } from "@/lib/validation";
@@ -101,7 +101,8 @@ export function AuthForm({
   const [loading, setLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileReset, setTurnstileReset] = useState(0);
-  const needsTurnstile = turnstileRequired();
+  const [turnstileOpen, setTurnstileOpen] = useState(false);
+  const needsTurnstile = turnstileRequired() && !turnstileOpen;
   const invalid = Boolean(error);
   const strength = passwordStrength(password);
   const strengthLabel =
@@ -111,18 +112,7 @@ export function AuthForm({
 
   async function signInWithGoogle() {
     setError(null);
-    if (needsTurnstile && !turnstileToken) {
-      setError(t.bot);
-      return;
-    }
     setLoading(true);
-    const gate = await assertTurnstile({ action: mode === "signup" ? "signup" : "login", turnstileToken });
-    if ("error" in gate) {
-      setError(t.bot);
-      setTurnstileReset((value) => value + 1);
-      setLoading(false);
-      return;
-    }
     let supabase: ReturnType<typeof createSupabaseBrowserClient>;
     try {
       supabase = createSupabaseBrowserClient();
@@ -131,10 +121,12 @@ export function AuthForm({
       setLoading(false);
       return;
     }
+    const next = new URLSearchParams(window.location.search).get("next");
+    const safeNext = next?.startsWith("/") && !next.startsWith("//") ? next : "/app";
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/app`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(safeNext)}`,
       },
     });
     if (error) {
@@ -218,7 +210,7 @@ export function AuthForm({
       <button
         type="button"
         onClick={signInWithGoogle}
-        disabled={loading || (needsTurnstile && !turnstileToken)}
+        disabled={loading}
         className="ui-press flex min-h-12 w-full items-center justify-center gap-2 glass rounded-full py-3 font-medium hover:bg-[var(--fill)] active:scale-[0.98] disabled:opacity-60"
       >
         <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden>
@@ -294,6 +286,7 @@ export function AuthForm({
         lang={lang}
         resetKey={turnstileReset}
         onToken={setTurnstileToken}
+        onBypass={() => setTurnstileOpen(true)}
       />
 
       {error && (
