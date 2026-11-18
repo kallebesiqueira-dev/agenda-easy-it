@@ -7,6 +7,7 @@ import type { BusinessSettingsInput } from "@/lib/validation";
 import type { BusinessType } from "@/types/database";
 import type { Lang } from "@/lib/i18n";
 import { businessTypeOptions } from "@/lib/labels";
+import { PageHero } from "@/components/page-hero";
 import { mediaUrl, uploadMedia } from "@/lib/storage";
 import { saveSettings } from "./actions";
 
@@ -14,6 +15,8 @@ const COPY: Record<
   Lang,
   {
     uploadError: string;
+    heading: string;
+    subtitle: string;
     business: string;
     logo: string;
     removePhoto: string;
@@ -43,6 +46,8 @@ const COPY: Record<
 > = {
   it: {
     uploadError: "Caricamento dell'immagine non riuscito. Riprova.",
+    heading: "Impostazioni",
+    subtitle: "Configura la tua attività e personalizza AgendaEasy.",
     business: "Attività",
     logo: "Foto profilo / logo",
     removePhoto: "Rimuovi foto",
@@ -75,6 +80,8 @@ const COPY: Record<
   },
   en: {
     uploadError: "Couldn't upload the image. Please try again.",
+    heading: "Settings",
+    subtitle: "Configure your business and customise AgendaEasy.",
     business: "Business",
     logo: "Profile photo / logo",
     removePhoto: "Remove photo",
@@ -184,8 +191,9 @@ export function SettingsForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
+      <PageHero title={t.heading} subtitle={t.subtitle} className="mb-5" />
       <section className="space-y-3 rounded-[18px] bg-card p-4">
-        <h2 className="font-semibold">{t.business}</h2>
+        <h3 className="font-semibold">{t.business}</h3>
 
         <div>
           <span className="mb-1 block text-sm font-medium">{t.logo}</span>

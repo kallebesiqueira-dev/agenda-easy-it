@@ -1,6 +1,7 @@
 "use client";
 
 import { IconX } from "@/components/icons";
+import { PageHero } from "@/components/page-hero";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { Weekday } from "@/types/database";
@@ -12,6 +13,7 @@ const COPY: Record<
   Lang,
   {
     heading: string;
+    subtitle: string;
     open: string;
     to: string;
     saving: string;
@@ -31,6 +33,7 @@ const COPY: Record<
 > = {
   it: {
     heading: "Orari di apertura",
+    subtitle: "Imposta gli orari di disponibilità del tuo studio per giorno della settimana.",
     open: "Aperto",
     to: "alle",
     saving: "Salvataggio…",
@@ -50,6 +53,7 @@ const COPY: Record<
   },
   en: {
     heading: "Opening hours",
+    subtitle: "Set your studio's availability for each day of the week.",
     open: "Open",
     to: "to",
     saving: "Saving…",
@@ -153,9 +157,9 @@ export function HoursManager({
   }
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-[18px] bg-card p-4">
-        <h2 className="mb-3 ios-large-title">{t.heading}</h2>
+    <div className="space-y-5">
+      <PageHero title={t.heading} subtitle={t.subtitle} />
+      <section className="rounded-[22px] bg-card p-5">
         <ul className="space-y-2">
           {week.map((row) => (
             <li

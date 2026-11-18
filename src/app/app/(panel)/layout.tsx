@@ -152,7 +152,7 @@ export default async function PanelLayout({
             <div className="lg:hidden">{brand}</div>
           </NavBar>
 
-          <div className="mx-auto w-full max-w-3xl space-y-2 px-4 pt-2 lg:px-10">
+          <div className="mx-auto w-full max-w-6xl space-y-2 px-4 pt-2 lg:px-10">
             <div className="lg:hidden">{pageLink}</div>
             {!ctx.business.published && (
               <p className={`${banner} glass text-[var(--label)]`}>
@@ -192,7 +192,7 @@ export default async function PanelLayout({
             )}
           </div>
 
-          <main className="mx-auto w-full max-w-3xl px-4 pt-4 pb-10 lg:px-10 lg:pb-16">
+          <main className="mx-auto w-full max-w-6xl px-4 pt-4 pb-10 lg:px-10 lg:pb-16">
             <div className="ui-reveal">{children}</div>
           </main>
         </div>

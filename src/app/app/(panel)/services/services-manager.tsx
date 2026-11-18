@@ -7,6 +7,7 @@
  */
 
 import { IconBag, IconScissors } from "@/components/icons";
+import { HeroButton, IconPlus, PageHero } from "@/components/page-hero";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { ItemType, Service } from "@/types/database";
@@ -19,6 +20,7 @@ const COPY: Record<
   Lang,
   {
     heading: string;
+    subtitle: string;
     tabServices: string;
     tabProducts: string;
     newService: string;
@@ -50,6 +52,7 @@ const COPY: Record<
 > = {
   it: {
     heading: "Servizi e prodotti",
+    subtitle: "Gestisci i tuoi servizi e prodotti, imposta prezzi e durate.",
     tabServices: "Servizi",
     tabProducts: "Prodotti",
     newService: "Nuovo servizio",
@@ -82,6 +85,7 @@ const COPY: Record<
   },
   en: {
     heading: "Services & products",
+    subtitle: "Manage your services and products, set prices and durations.",
     tabServices: "Services",
     tabProducts: "Products",
     newService: "New service",
@@ -150,16 +154,17 @@ export function ServicesManager({
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="ios-large-title">{t.heading}</h2>
-        <button
-          type="button"
-          onClick={() => setEditing("new")}
-          className="rounded-full bg-tint px-3 py-1.5 text-sm font-medium text-white ui-press hover:bg-emerald-700"
-        >
-          {tab === "service" ? t.newService : t.newProduct}
-        </button>
-      </div>
+      <PageHero
+        title={t.heading}
+        subtitle={t.subtitle}
+        className="mb-5"
+        action={
+          <HeroButton onClick={() => setEditing("new")}>
+            <IconPlus />
+            {tab === "service" ? t.newService : t.newProduct}
+          </HeroButton>
+        }
+      />
 
       <div role="tablist" className="relative grid grid-cols-2 rounded-[9px] bg-[var(--fill)] p-0.5 text-[13px] font-semibold">
         <span

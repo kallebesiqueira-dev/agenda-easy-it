@@ -1,5 +1,6 @@
 import { CountUp } from "@/components/count-up";
-import { IconAlert, IconCalendar, IconChart, IconCheck, IconCheckCircle, IconX } from "@/components/icons";
+import { IconAlert, IconCalendar, IconChart, IconCheck, IconCheckCircle, IconChevronLeft, IconChevronRight, IconX } from "@/components/icons";
+import { PageHero } from "@/components/page-hero";
 import Link from "next/link";
 import { todayInTz, zonedTimeToUtc } from "@/lib/dates";
 import { intlLocale, type Lang } from "@/lib/i18n";
@@ -16,6 +17,7 @@ const COPY: Record<
   Lang,
   {
     heading: string;
+    subtitle: string;
     prevMonth: string;
     currentMonth: string;
     nextMonth: string;
@@ -35,6 +37,7 @@ const COPY: Record<
 > = {
   it: {
     heading: "Report",
+    subtitle: "Analisi delle prenotazioni e performance del tuo studio.",
     prevMonth: "Mese precedente",
     currentMonth: "Mese corrente",
     nextMonth: "Mese successivo",
@@ -52,7 +55,8 @@ const COPY: Record<
     inactive: "non attivo",
   },
   en: {
-    heading: "Report",
+    heading: "Reports",
+    subtitle: "Booking analytics and your studio's performance.",
     prevMonth: "Previous month",
     currentMonth: "Current month",
     nextMonth: "Next month",
@@ -155,35 +159,33 @@ export default async function ReportsPage({ searchParams }: Props) {
     { label: t.totalBookings, icon: IconCalendar, value: String(rows.length) },
   ];
 
+  const heroArrow =
+    "grid size-11 place-items-center rounded-full bg-white/15 text-[var(--on-tint)] ui-press hover:bg-white/25";
+
   return (
-    <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="ios-large-title capitalize">{t.heading} · {monthLabel}</h2>
-        <div className="flex items-center gap-1 text-sm">
-          <Link
-            href={`/app/report?m=${prevM}`}
-            className="glass grid size-11 place-items-center rounded-full hover:bg-[var(--fill)]"
-            aria-label={t.prevMonth}
-          >
-            ←
-          </Link>
-          {month !== currentMonth && (
-            <Link
-              href="/app/report"
-              className="glass flex min-h-11 items-center rounded-full px-4 font-medium"
-            >
-              {t.currentMonth}
+    <div className="space-y-5">
+      <PageHero
+        title={`${t.heading} · ${monthLabel}`}
+        subtitle={t.subtitle}
+        action={
+          <div className="flex items-center gap-2">
+            {month !== currentMonth && (
+              <Link
+                href="/app/report"
+                className="flex min-h-11 items-center rounded-full bg-white/15 px-4 text-[14px] font-semibold text-[var(--on-tint)] ui-press hover:bg-white/25"
+              >
+                {t.currentMonth}
+              </Link>
+            )}
+            <Link href={`/app/report?m=${prevM}`} className={heroArrow} aria-label={t.prevMonth}>
+              <IconChevronLeft size={18} />
             </Link>
-          )}
-          <Link
-            href={`/app/report?m=${nextM}`}
-            className="glass grid size-11 place-items-center rounded-full hover:bg-[var(--fill)]"
-            aria-label={t.nextMonth}
-          >
-            →
-          </Link>
-        </div>
-      </div>
+            <Link href={`/app/report?m=${nextM}`} className={heroArrow} aria-label={t.nextMonth}>
+              <IconChevronRight size={18} />
+            </Link>
+          </div>
+        }
+      />
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {stats.map((s) => (

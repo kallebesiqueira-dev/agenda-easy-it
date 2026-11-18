@@ -1,6 +1,7 @@
 "use client";
 
 import { IconPencil, IconX } from "@/components/icons";
+import { HeroButton, IconPlus, PageHero } from "@/components/page-hero";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { Weekday } from "@/types/database";
@@ -13,6 +14,7 @@ const COPY: Record<
   Lang,
   {
     heading: string;
+    subtitle: string;
     add: string;
     namePh: (label: string) => string;
     save: string;
@@ -35,6 +37,7 @@ const COPY: Record<
 > = {
   it: {
     heading: "Team",
+    subtitle: "Gestisci i membri del tuo team, ruoli e turni.",
     add: "Aggiungi",
     namePh: (label) => `Nome del ${label.toLowerCase()}`,
     save: "Salva",
@@ -57,6 +60,7 @@ const COPY: Record<
   },
   en: {
     heading: "Team",
+    subtitle: "Manage your team members, roles and shifts.",
     add: "Add",
     namePh: (label) => `${label}'s name`,
     save: "Save",
@@ -137,16 +141,17 @@ export function ProfessionalsManager({
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="ios-large-title">{t.heading}</h2>
-        <button
-          type="button"
-          onClick={() => setAdding(true)}
-          className="rounded-full bg-tint px-3 py-1.5 text-sm font-medium text-white ui-press hover:bg-emerald-700"
-        >
-          {t.add}
-        </button>
-      </div>
+      <PageHero
+        title={t.heading}
+        subtitle={t.subtitle}
+        className="mb-5"
+        action={
+          <HeroButton onClick={() => setAdding(true)}>
+            <IconPlus />
+            {t.add}
+          </HeroButton>
+        }
+      />
 
       {adding && (
         <form

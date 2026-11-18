@@ -1,4 +1,5 @@
-import { IconChevronLeft, IconChevronRight } from "@/components/icons";
+import { IconCalendar, IconCheck, IconChevronLeft, IconChevronRight } from "@/components/icons";
+import { PageHero } from "@/components/page-hero";
 import Link from "next/link";
 import type { AppointmentStatus } from "@/types/database";
 import {
@@ -32,6 +33,8 @@ const COPY: Record<
     today: string;
     empty: string;
     metrics: { today: string; expected: string; open: string };
+    greeting: (name: string) => string;
+    greetingSub: string;
   }
 > = {
   it: {
@@ -45,6 +48,8 @@ const COPY: Record<
     today: "Oggi",
     empty: "Nessuna prenotazione in questo giorno. Condividi la pagina per riceverne.",
     metrics: { today: "Confermate oggi", expected: "Previsto oggi", open: "In agenda" },
+    greeting: (name) => `Ciao ${name},`,
+    greetingSub: "ecco la tua agenda di oggi",
   },
   en: {
     weekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
@@ -57,6 +62,8 @@ const COPY: Record<
     today: "Today",
     empty: "No bookings on this day. Share your page to start receiving them.",
     metrics: { today: "Confirmed today", expected: "Expected today", open: "On the agenda" },
+    greeting: (name) => `Hi ${name},`,
+    greetingSub: "here's today's agenda",
   },
 };
 
@@ -173,21 +180,55 @@ export default async function AgendaPage({ searchParams }: Props) {
     return sum;
   }, 0);
 
-  return (
-    <div className="space-y-8">
-      <section className="grid grid-cols-3 gap-2 sm:gap-3">
-        {[
-          [t.metrics.today, String(confirmedToday)],
-          [t.metrics.open, String(cards.length)],
-          [t.metrics.expected, formatEUR(expectedMinor)],
-        ].map(([label, value]) => (
-          <div key={label} className="rounded-[18px] bg-card px-3 py-3 sm:px-4 sm:py-4">
-            <p className="text-[20px] leading-none font-bold tracking-[-0.03em] tabular-nums sm:text-[26px]">{value}</p>
-            <p className="mt-1.5 text-[11px] leading-snug text-[var(--label-2)] sm:text-[13px]">{label}</p>
-          </div>
-        ))}
-      </section>
+  const metrics = [
+    { label: t.metrics.today, value: String(confirmedToday), Icon: IconCheck, highlight: false },
+    { label: t.metrics.open, value: String(cards.length), Icon: IconCalendar, highlight: false },
+    { label: t.metrics.expected, value: formatEUR(expectedMinor), Icon: null, highlight: true },
+  ];
 
+  return (
+    <div className="space-y-6">
+      {/* Riga 1 — saluto (hero) + metriche, come nel mockup */}
+      <div className="grid gap-4 lg:grid-cols-2">
+        <PageHero title={t.greeting(business.name)} subtitle={t.greetingSub} />
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
+          {metrics.map((m) => (
+            <div
+              key={m.label}
+              className={`flex min-h-[112px] flex-col justify-between rounded-[18px] p-3 sm:p-4 ${
+                m.highlight ? "bg-[var(--tint-soft)]" : "bg-card"
+              }`}
+            >
+              <span
+                className={`grid size-9 place-items-center rounded-[11px] text-[15px] font-bold ${
+                  m.highlight ? "bg-[var(--accent)] text-[var(--on-tint)]" : "bg-[var(--tint-soft)] text-[var(--tint)]"
+                }`}
+              >
+                {m.Icon ? <m.Icon size={18} /> : "€"}
+              </span>
+              <div>
+                <p
+                  className={`text-[20px] leading-none font-bold tracking-[-0.03em] tabular-nums sm:text-[26px] ${
+                    m.highlight ? "text-[var(--tint-deep)]" : ""
+                  }`}
+                >
+                  {m.value}
+                </p>
+                <p
+                  className={`mt-1.5 text-[11px] leading-snug sm:text-[13px] ${
+                    m.highlight ? "font-medium text-[var(--tint)]" : "text-[var(--label-2)]"
+                  }`}
+                >
+                  {m.label}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Riga 2 — calendario + agenda del giorno */}
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start">
       {/* Calendário mensal */}
       <section className="rounded-[22px] bg-card p-4 sm:p-6">
         <div className="mb-4 flex items-center justify-between">
@@ -269,9 +310,9 @@ export default async function AgendaPage({ searchParams }: Props) {
             <p className="ios-footnote text-[var(--label-2)] tabular-nums">
               {confirmedToday} · {t.confirmed}
             </p>
-            <h2 className="ios-large-title capitalize">
+            <h3 className="ios-title2 capitalize">
               {dateLabel}
-            </h2>
+            </h3>
           </div>
           <div className="flex items-center gap-1 rounded-full bg-[var(--fill-2)] p-0.5">
             <Link href={`/app?date=${shiftDateISO(dateISO, -1)}`} className="ui-press grid size-11 place-items-center rounded-full text-zinc-600 hover:bg-tint/5 hover:text-zinc-900 size-10" aria-label={t.prevDay}>
@@ -298,6 +339,7 @@ export default async function AgendaPage({ searchParams }: Props) {
           shareHref={business.published ? `/${business.slug}` : null}
         />
       </section>
+      </div>
     </div>
   );
 }

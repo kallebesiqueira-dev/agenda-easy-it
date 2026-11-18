@@ -9,6 +9,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { HeroButton, IconPlus, PageHero } from "@/components/page-hero";
 import type { Plan } from "@/types/database";
 import type { Lang } from "@/lib/i18n";
 import { formatEUR, parseEURToMinor } from "@/lib/money";
@@ -224,20 +225,22 @@ export function PlansManager({
 
   return (
     <div>
-      <div className="mb-2 flex items-center justify-between">
-        <h2 className="ios-large-title">{t.heading}</h2>
-        <button
-          type="button"
-          onClick={() => {
-            setTemplate(null);
-            setEditing("new");
-          }}
-          className="rounded-full bg-tint px-3 py-1.5 text-sm font-medium text-white ui-press hover:bg-emerald-700"
-        >
-          {t.newPlan}
-        </button>
-      </div>
-      <p className="mb-4 text-sm text-zinc-500">{t.intro}</p>
+      <PageHero
+        title={t.heading}
+        subtitle={t.intro}
+        className="mb-5"
+        action={
+          <HeroButton
+            onClick={() => {
+              setTemplate(null);
+              setEditing("new");
+            }}
+          >
+            <IconPlus />
+            {t.newPlan}
+          </HeroButton>
+        }
+      />
 
       {!editing && (
         <div className="mb-4 rounded-[18px] bg-card p-4">
