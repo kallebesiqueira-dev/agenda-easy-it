@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { DEFAULT_ACCENT, normalizeHex } from "@/components/accent";
 
 const LineWaves = dynamic(() => import("./line-waves"), { ssr: false, loading: () => null });
 
@@ -58,12 +59,27 @@ function useWavesEnv() {
   return useSyncExternalStore(subscribe, read, () => SERVER);
 }
 
-/** Mistura o violeta da marca com branco, igual a `tint()` do CTRL Quotes. */
-function tint(amount: number) {
-  const brand = 0x7c3aed;
+/** Mistura a cor da marca com branco, igual a `tint()` do CTRL Quotes. */
+function tint(hex: string, amount: number) {
+  const brand = Number.parseInt(normalizeHex(hex).slice(1), 16);
   const channel = (shift: number) =>
     Math.round(((brand >> shift) & 255) * amount + 255 * (1 - amount));
   return `#${[16, 8, 0].map((shift) => channel(shift).toString(16).padStart(2, "0")).join("")}`;
+}
+
+function useAccent() {
+  const [hex, setHex] = useState(DEFAULT_ACCENT);
+  useEffect(() => {
+    const read = () => {
+      const value = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
+      if (value) setHex(normalizeHex(value));
+    };
+    read();
+    const observer = new MutationObserver(read);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["style"] });
+    return () => observer.disconnect();
+  }, []);
+  return hex;
 }
 
 /**
@@ -71,38 +87,54 @@ function tint(amount: number) {
  * `panel` deixa o efeito mais baixo. `hero` usa os mesmos números no violeta
  * da landing, com linhas claras para o título continuar legível.
  */
-export function AuthWaves({ variant = "auth" }: { variant?: "auth" | "panel" | "hero" }) {
+export function AuthWaves({
+  variant = "auth",
+  color,
+}: {
+  variant?: "auth" | "panel" | "hero" | "public";
+  color?: string;
+}) {
   const env = useWavesEnv();
   const idle = useAfterIdle();
+  const accent = useAccent();
   if (!env.ok || !idle) return null;
   const panel = variant === "panel";
   const hero = variant === "hero";
-  const className = hero ? "auth-waves is-hero" : panel ? "auth-waves is-panel" : "auth-waves";
+  const pub = variant === "public";
+  const quiet = panel || pub;
+  const brand = color ?? (hero ? accent : DEFAULT_ACCENT);
+  const className = hero
+    ? "auth-waves is-hero"
+    : pub
+      ? "auth-waves is-public"
+      : panel
+        ? "auth-waves is-panel"
+        : "auth-waves";
   return (
     <div className={className} aria-hidden>
       <LineWaves
-        color1={tint(hero ? 0.72 : 0.55)}
-        color2={tint(hero ? 0.42 : 0.3)}
-        color3={tint(hero ? 0.9 : 0.75)}
-        speed={panel ? 0.22 : 0.3}
-        lineCount={panel ? (env.mobile ? 16 : 48) : env.mobile ? 22 : 72}
+        color1={tint(brand, hero ? 0.72 : 0.55)}
+        color2={tint(brand, hero ? 0.42 : 0.3)}
+        color3={tint(brand, hero ? 0.9 : 0.75)}
+        speed={quiet ? 0.22 : 0.3}
+        lineCount={quiet ? (env.mobile ? 16 : 48) : env.mobile ? 22 : 72}
         maxDevicePixelRatio={1.5}
         lineWidth={1.3}
         highlight={1}
         warpIntensity={1}
         rotation={-33}
-        enableMouseInteraction={!panel}
+        enableMouseInteraction={!quiet}
         colorCycleSpeed={1}
-        glow={hero ? 0.45 : 0.6}
+        glow={hero ? 0.45 : pub ? 0.35 : 0.6}
         brightness={hero ? 0.85 : 1}
         highlightWidth={1}
         warpScale={1}
         edgeFade={0}
-        mouseInfluence={panel ? 0 : 2}
-        clickRipple={!panel}
+        mouseInfluence={quiet ? 0 : 2}
+        clickRipple={!quiet}
         intro
         lightMode={!hero}
-        opacity={hero ? 0.62 : panel ? 0.22 : 0.45}
+        opacity={hero ? 0.62 : pub ? 0.2 : panel ? 0.22 : 0.45}
       />
     </div>
   );
