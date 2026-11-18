@@ -6,8 +6,6 @@ import { useRouter } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
-const YEAR_SECONDS = 60 * 60 * 24 * 365;
-
 function initials(name: string, email: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   const letters = parts.slice(0, 2).map((part) => part.charAt(0).toUpperCase()).join("");
@@ -33,8 +31,8 @@ export function UserMenu({
   const [photoOk, setPhotoOk] = useState(Boolean(avatarUrl));
   const t =
     lang === "en"
-      ? { menu: "Account menu", site: "Go to the site", out: "Sign out", it: "Italiano", en: "English" }
-      : { menu: "Menu account", site: "Vai al sito", out: "Esci", it: "Italiano", en: "English" };
+      ? { menu: "Account menu", site: "Go to the site", out: "Sign out" }
+      : { menu: "Menu account", site: "Vai al sito", out: "Esci" };
 
   useEffect(() => {
     if (!open) return;
@@ -66,12 +64,6 @@ export function UserMenu({
       document.removeEventListener("keydown", onKey);
     };
   }, [open]);
-
-  function chooseLang(next: Lang) {
-    document.cookie = `lang=${next}; path=/; max-age=${YEAR_SECONDS}; samesite=lax`;
-    setOpen(false);
-    router.refresh();
-  }
 
   async function signOut() {
     const supabase = createSupabaseBrowserClient();
@@ -122,24 +114,6 @@ export function UserMenu({
           <Link role="menuitem" href="/" className="block rounded-[10px] px-3 py-2.5 text-[15px] hover:bg-[var(--fill)] focus:bg-[var(--fill)] focus:outline-none">
             {t.site}
           </Link>
-          <button
-            type="button"
-            role="menuitem"
-            aria-current={lang === "it" ? "true" : undefined}
-            onClick={() => chooseLang("it")}
-            className="block w-full rounded-[10px] px-3 py-2.5 text-left text-[15px] hover:bg-[var(--fill)] focus:bg-[var(--fill)] focus:outline-none"
-          >
-            {t.it}
-          </button>
-          <button
-            type="button"
-            role="menuitem"
-            aria-current={lang === "en" ? "true" : undefined}
-            onClick={() => chooseLang("en")}
-            className="block w-full rounded-[10px] px-3 py-2.5 text-left text-[15px] hover:bg-[var(--fill)] focus:bg-[var(--fill)] focus:outline-none"
-          >
-            {t.en}
-          </button>
           <button
             type="button"
             role="menuitem"

@@ -3,6 +3,7 @@ import { AuthWaves } from "@/components/auth/auth-waves";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSubscriptionAccess } from "@/lib/billing";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import type { Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n/server";
 import { getCurrentBusiness } from "@/lib/panel/current-business";
@@ -142,7 +143,10 @@ export default async function PanelLayout({
         <div className="min-w-0 flex-1 pb-28 lg:pb-0">
           <NavBar
             actions={
-              <UserMenu name={ctx.name} email={ctx.email} avatarUrl={ctx.avatarUrl} lang={lang} />
+              <div className="flex items-center gap-1">
+                <LanguageSwitcher current={lang} variant="bare" />
+                <UserMenu name={ctx.name} email={ctx.email} avatarUrl={ctx.avatarUrl} lang={lang} />
+              </div>
             }
           >
             <div className="lg:hidden">{brand}</div>
