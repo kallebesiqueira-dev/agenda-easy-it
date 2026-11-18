@@ -225,6 +225,7 @@ npm run dev                   # http://localhost:7778
 | `CRON_SECRET` | protegge il cron dei promemoria |
 | `DEMO_EMAIL` / `DEMO_PASSWORD` | conta demo permanente, **solo server** |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | dominio Plausible; vuoto = nessuna analisi. Lo script parte solo col consenso |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | anti-bot su accesso, registrazione e recupero password. Senza una delle due, il flusso resta aperto. La demo non lo usa |
 
 Webhook Stripe in locale: `stripe listen --forward-to localhost:7778/api/webhooks/stripe`
 

@@ -639,6 +639,9 @@ input.auth-field.is-invalid,
   .auth-wash span, .auth-split, .auth-alert { animation: none; }
 }
 
+.turnstile-slot { display: flex; justify-content: center; min-height: 65px; }
+.turnstile-slot > div { width: min(100%, 300px); }
+
 /* Banner cookie: sopra la chat, senza coprire tutto lo schermo su desktop */
 .cookie-banner {
   position: fixed;

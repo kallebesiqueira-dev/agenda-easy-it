@@ -7,9 +7,11 @@
  */
 
 import { IconEye, IconEyeOff, IconLock, IconMail } from "@/components/icons";
+import { TurnstileField, turnstileRequired } from "@/components/turnstile-field";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { assertTurnstile, signInWithEmail, signUpWithEmail } from "@/app/login/auth-actions";
 import type { Lang } from "@/lib/i18n";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { signInSchema } from "@/lib/validation";
@@ -35,6 +37,7 @@ const COPY: Record<
     signIn: string;
     signUp: string;
     forgot: string;
+    bot: string;
   }
 > = {
   it: {
@@ -56,6 +59,7 @@ const COPY: Record<
     signIn: "Accedi",
     signUp: "Crea account",
     forgot: "Ho dimenticato la password",
+    bot: "Verifica anti-bot non superata. Riprova.",
   },
   en: {
     googleError: "Couldn't sign in with Google. Please try again.",
@@ -76,6 +80,7 @@ const COPY: Record<
     signIn: "Sign in",
     signUp: "Create account",
     forgot: "I forgot my password",
+    bot: "Bot check failed. Please try again.",
   },
 };
 
@@ -94,6 +99,9 @@ export function AuthForm({
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileReset, setTurnstileReset] = useState(0);
+  const needsTurnstile = turnstileRequired();
   const invalid = Boolean(error);
   const strength = passwordStrength(password);
   const strengthLabel =
@@ -103,7 +111,18 @@ export function AuthForm({
 
   async function signInWithGoogle() {
     setError(null);
+    if (needsTurnstile && !turnstileToken) {
+      setError(t.bot);
+      return;
+    }
     setLoading(true);
+    const gate = await assertTurnstile({ action: mode === "signup" ? "signup" : "login", turnstileToken });
+    if ("error" in gate) {
+      setError(t.bot);
+      setTurnstileReset((value) => value + 1);
+      setLoading(false);
+      return;
+    }
     let supabase: ReturnType<typeof createSupabaseBrowserClient>;
     try {
       supabase = createSupabaseBrowserClient();
@@ -120,6 +139,7 @@ export function AuthForm({
     });
     if (error) {
       setError(t.googleError);
+      setTurnstileReset((value) => value + 1);
       setLoading(false);
     }
     // successo: il browser naviga verso Google — nient'altro da fare qui
@@ -142,37 +162,45 @@ export function AuthForm({
       return;
     }
 
-    setLoading(true);
-    let supabase: ReturnType<typeof createSupabaseBrowserClient>;
-    try {
-      supabase = createSupabaseBrowserClient();
-    } catch {
-      setError(mode === "login" ? t.wrongCredentials : t.cannotCreate);
-      setLoading(false);
+    if (needsTurnstile && !turnstileToken) {
+      setError(t.bot);
       return;
     }
+
+    setLoading(true);
     try {
       if (mode === "login") {
-        const { error } = await supabase.auth.signInWithPassword(parsed.data);
-        if (error) {
-          setError(t.wrongCredentials);
+        const result = await signInWithEmail({
+          email: parsed.data.email,
+          password: parsed.data.password,
+          turnstileToken,
+        });
+        if ("error" in result) {
+          setError(result.error === "turnstile" ? t.bot : result.error === "invalid" ? t.invalid : t.wrongCredentials);
           return;
         }
         const next = new URLSearchParams(window.location.search).get("next");
         router.push(next?.startsWith("/") ? next : "/app");
-        router.refresh(); // ri-renderizza il server con la nuova sessione
+        router.refresh();
       } else {
-        const { data, error } = await supabase.auth.signUp(parsed.data);
-        if (error) {
+        const result = await signUpWithEmail({
+          email: parsed.data.email,
+          password: parsed.data.password,
+          turnstileToken,
+        });
+        if ("error" in result) {
           setError(
-            error.message.includes("already registered")
-              ? t.alreadyRegistered
-              : t.cannotCreate
+            result.error === "turnstile"
+              ? t.bot
+              : result.error === "exists"
+                ? t.alreadyRegistered
+                : result.error === "invalid"
+                  ? t.invalid
+                  : t.cannotCreate
           );
           return;
         }
-        if (!data.session) {
-          // Progetto con conferma e-mail attiva
+        if (result.confirm) {
           setInfo(t.confirmationSent);
           return;
         }
@@ -180,6 +208,7 @@ export function AuthForm({
         router.refresh();
       }
     } finally {
+      setTurnstileReset((value) => value + 1);
       setLoading(false);
     }
   }
@@ -189,7 +218,7 @@ export function AuthForm({
       <button
         type="button"
         onClick={signInWithGoogle}
-        disabled={loading}
+        disabled={loading || (needsTurnstile && !turnstileToken)}
         className="ui-press flex min-h-12 w-full items-center justify-center gap-2 glass rounded-full py-3 font-medium hover:bg-[var(--fill)] active:scale-[0.98] disabled:opacity-60"
       >
         <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden>
@@ -260,6 +289,13 @@ export function AuthForm({
         </div>
       )}
 
+      <TurnstileField
+        action={mode === "signup" ? "signup" : "login"}
+        lang={lang}
+        resetKey={turnstileReset}
+        onToken={setTurnstileToken}
+      />
+
       {error && (
         <p key={error} role="alert" className="auth-alert rounded-xl border border-red-700/15 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
       )}
@@ -271,7 +307,7 @@ export function AuthForm({
 
       <button
         type="submit"
-        disabled={loading}
+        disabled={loading || (needsTurnstile && !turnstileToken)}
         className="ui-press min-h-12 w-full rounded-full bg-tint py-3 font-semibold text-white disabled:opacity-60"
       >
         {loading ? t.wait : mode === "login" ? t.signIn : t.signUp}

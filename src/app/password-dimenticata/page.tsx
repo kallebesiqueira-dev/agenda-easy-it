@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { requestPasswordReset } from "@/app/login/auth-actions";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { TurnstileField, turnstileRequired } from "@/components/turnstile-field";
 import type { Lang } from "@/lib/i18n";
 import { useLang } from "@/lib/i18n/use-lang";
-import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 const COPY: Record<
   Lang,
@@ -20,6 +21,7 @@ const COPY: Record<
     sending: string;
     send: string;
     back: string;
+    bot: string;
   }
 > = {
   it: {
@@ -33,6 +35,7 @@ const COPY: Record<
     sending: "Invio in corso…",
     send: "Invia link",
     back: "Torna all'accesso",
+    bot: "Verifica anti-bot non superata. Riprova.",
   },
   en: {
     title: "Recover password",
@@ -45,6 +48,7 @@ const COPY: Record<
     sending: "Sending…",
     send: "Send link",
     back: "Back to sign in",
+    bot: "Bot check failed. Please try again.",
   },
 };
 
@@ -55,18 +59,27 @@ export default function ForgotPasswordPage() {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileReset, setTurnstileReset] = useState(0);
+  const needsTurnstile = turnstileRequired();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (needsTurnstile && !turnstileToken) {
+      setError(t.bot);
+      return;
+    }
     setLoading(true);
-    const supabase = createSupabaseBrowserClient();
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/callback?next=/reimposta-password`,
+    const result = await requestPasswordReset({
+      email,
+      turnstileToken,
+      redirectTo: "/auth/callback?next=/reimposta-password",
     });
+    setTurnstileReset((value) => value + 1);
     setLoading(false);
-    if (error) {
-      setError(t.sendError);
+    if ("error" in result) {
+      setError(result.error === "turnstile" ? t.bot : t.sendError);
       return;
     }
     setSent(true);
@@ -99,6 +112,12 @@ export default function ForgotPasswordPage() {
                 placeholder={t.emailPh}
               />
             </label>
+            <TurnstileField
+              action="recover"
+              lang={lang}
+              resetKey={turnstileReset}
+              onToken={setTurnstileToken}
+            />
             {error && (
               <p role="alert" className="auth-alert rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">
                 {error}
@@ -106,7 +125,7 @@ export default function ForgotPasswordPage() {
             )}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (needsTurnstile && !turnstileToken)}
               className="ui-press min-h-12 w-full rounded-full bg-tint py-3 font-semibold text-white disabled:opacity-60"
             >
               {loading ? t.sending : t.send}
