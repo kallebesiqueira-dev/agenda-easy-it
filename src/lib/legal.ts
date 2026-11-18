@@ -7,7 +7,7 @@
 export const COMPANY = {
   name: "CTRL Agency",
   address: "Valle d'Aosta, Italia",
-  email: "ctrlragency@gmail.com",
+  email: "hello@ctrlagency.dev",
   site: "https://ctrlagency.dev",
 } as const;
 
