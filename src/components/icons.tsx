@@ -54,7 +54,6 @@ export const IconSettings = (p: IconProps) => (
 );
 export const IconChevronLeft = (p: IconProps) => (<Base {...p}><path d="m14.5 6-6 6 6 6" /></Base>);
 export const IconChevronRight = (p: IconProps) => (<Base {...p}><path d="m9.5 6 6 6-6 6" /></Base>);
-export const IconChevronDown = (p: IconProps) => (<Base {...p}><path d="m6 9.5 6 6 6-6" /></Base>);
 export const IconCheck = (p: IconProps) => (<Base {...p}><path d="m5 12.5 4.5 4.5L19 7.5" /></Base>);
 export const IconCheckCircle = (p: IconProps) => (
   <Base {...p}><circle cx="12" cy="12" r="9" /><path d="m8 12.3 2.8 2.8L16.2 9.5" /></Base>
@@ -80,9 +79,6 @@ export const IconAlert = (p: IconProps) => (
 );
 export const IconSend = (p: IconProps) => (
   <Base {...p}><path d="M4.5 12 3.5 4.5 20.5 12 3.5 19.5Z" /><path d="M4.5 12h7" /></Base>
-);
-export const IconLogout = (p: IconProps) => (
-  <Base {...p}><path d="M14 4.5h3.5a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H14" /><path d="M10 8.5 6.5 12l3.5 3.5M6.5 12H15" /></Base>
 );
 export const IconExternal = (p: IconProps) => (
   <Base {...p}><path d="M13.5 4.5h6v6M19.5 4.5 11 13" /><path d="M17 14v3.5a2 2 0 0 1-2 2H6.5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2H10" /></Base>
