@@ -47,6 +47,8 @@ Il cliente sceglie servizio, professionista e orario da solo e la prenotazione a
 - **Abbonamento SaaS via Stripe**: Checkout (9,90 €/mese, 7 giorni di prova), webhook del ciclo di vita, Customer Portal
 - **Bilingue it/en** con selettore 🇮🇹/🇬🇧 persistente (cookie, 1 anno) su tutte le pagine — e-mail comprese
 - **Accesso con Google** o e-mail/password (Supabase Auth)
+- **Interfaccia mobile in stile app (iOS / Google Play)**: pannello responsive da 320 px in su — tab bar in basso, liste raggruppate, top bar fissa in vetro smerigliato — e installabile come PWA (manifest + icone)
+- **Notifiche push per dispositivo**: pagina dedicata nelle impostazioni (Web Notifications API), con preferenze per tipo di avviso e fascia oraria salvate sul dispositivo
 
 ## 🧱 Stack
 
@@ -191,6 +193,7 @@ src/
 │   ├── [slug]/               # pagina pubblica: prenotazione + piani + prodotti
 │   ├── annulla/[id]/         # annullamento via cancel_token
 │   ├── app/                  # pannello (agenda, servizi/prodotti, piani, team, orari, report, impostazioni)
+│   │   ├── settings/notifiche/ # notifiche push per dispositivo (Web Notifications API)
 │   │   └── billing/          # abbonamento Stripe (checkout + portal)
 │   └── api/
 │       ├── public/           # disponibilità + prenotazioni (server = autorità)
