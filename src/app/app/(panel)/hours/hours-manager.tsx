@@ -225,8 +225,8 @@ export function HoursManager({
         <>
           <section className="ios-group">
             {week.map((row) => (
-              <div key={row.weekday} className="flex items-center gap-2.5 px-4 py-2.5">
-                <span className="w-[4.5rem] shrink-0 text-[15px] font-medium">
+              <div key={row.weekday} className="flex items-center gap-1.5 px-3 py-2.5 sm:gap-2.5 sm:px-4">
+                <span className="w-[4.25rem] shrink-0 truncate text-[14px] font-medium sm:w-[4.75rem] sm:text-[15px]">
                   {WEEKDAY_NAMES[row.weekday as Weekday]}
                 </span>
                 <input
@@ -248,16 +248,16 @@ export function HoursManager({
                       onChange={(e) =>
                         updateDay(row.weekday, { opens_at: e.target.value })
                       }
-                      className="w-[5.5rem] min-w-0 px-2 py-1.5 text-center text-[14px]"
+                      className="w-[4.5rem] min-w-0 px-1 py-1.5 text-center text-[14px] tabular-nums [&::-webkit-calendar-picker-indicator]:hidden"
                     />
-                    <span className="text-[var(--label-3)]">–</span>
+                    <span className="shrink-0 text-[var(--label-3)]">–</span>
                     <input
                       type="time"
                       value={row.closes_at}
                       onChange={(e) =>
                         updateDay(row.weekday, { closes_at: e.target.value })
                       }
-                      className="w-[5.5rem] min-w-0 px-2 py-1.5 text-center text-[14px]"
+                      className="w-[4.5rem] min-w-0 px-1 py-1.5 text-center text-[14px] tabular-nums [&::-webkit-calendar-picker-indicator]:hidden"
                     />
                   </div>
                 )}
