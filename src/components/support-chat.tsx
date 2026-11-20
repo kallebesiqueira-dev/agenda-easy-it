@@ -387,11 +387,18 @@ export function SupportChat() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? t.closeSupport : t.openSupport}
-        className="glass glass-sheen ui-press flex min-h-11 items-center gap-2.5 rounded-full py-1.5 pr-4 pl-1.5 text-[15px] font-semibold tracking-[-0.01em] text-[var(--label)] active:scale-[0.97]"
+        className="ui-press flex items-center rounded-full text-[15px] font-semibold tracking-[-0.01em] text-[var(--label)] active:scale-[0.97] sm:glass sm:glass-sheen sm:min-h-11 sm:gap-2.5 sm:py-1.5 sm:pr-4 sm:pl-1.5"
       >
-        <SupportMascot size={32} />
-        {t.bubble}
-        <span aria-hidden className="text-[var(--label-2)]">›</span>
+        {/* Mobile: solo la mascotte (occhi che si muovono), senza pill, per non
+            disturbare il layout. Desktop: pill completa con etichetta. */}
+        <span className="flex drop-shadow-[0_6px_14px_rgb(16_15_20/0.18)] sm:hidden">
+          <SupportMascot size={46} />
+        </span>
+        <span className="hidden items-center gap-2.5 sm:flex">
+          <SupportMascot size={32} />
+          {t.bubble}
+          <span aria-hidden className="text-[var(--label-2)]">›</span>
+        </span>
       </button>
     </div>
   );
