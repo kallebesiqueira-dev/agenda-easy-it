@@ -190,7 +190,6 @@ const UI: Record<
     send: string;
     openSupport: string;
     closeSupport: string;
-    bubble: string;
     faq: { match: RegExp; reply: string; whatsapp?: boolean }[];
   }
 > = {
@@ -215,7 +214,6 @@ const UI: Record<
     send: "Invia",
     openSupport: "Apri supporto",
     closeSupport: "Chiudi supporto",
-    bubble: "Supporto",
     faq: FAQ_IT,
   },
   en: {
@@ -239,7 +237,6 @@ const UI: Record<
     send: "Send",
     openSupport: "Open support",
     closeSupport: "Close support",
-    bubble: "Support",
     faq: FAQ_EN,
   },
 };
@@ -383,22 +380,15 @@ export function SupportChat() {
         </div>
       )}
 
+      {/* Lanciatore: solo la mascotte (occhi animati) su tutte le viste, come
+          su telefono — nessuna pill "Supporto" che disturbi il layout. */}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? t.closeSupport : t.openSupport}
-        className="ui-press flex items-center rounded-full text-[15px] font-semibold tracking-[-0.01em] text-[var(--label)] active:scale-[0.97] sm:glass sm:glass-sheen sm:min-h-11 sm:gap-2.5 sm:py-1.5 sm:pr-4 sm:pl-1.5"
+        className="ui-press flex items-center rounded-full drop-shadow-[0_6px_14px_rgb(16_15_20/0.18)] active:scale-[0.97]"
       >
-        {/* Mobile: solo la mascotte (occhi che si muovono), senza pill, per non
-            disturbare il layout. Desktop: pill completa con etichetta. */}
-        <span className="flex drop-shadow-[0_6px_14px_rgb(16_15_20/0.18)] sm:hidden">
-          <SupportMascot size={46} />
-        </span>
-        <span className="hidden items-center gap-2.5 sm:flex">
-          <SupportMascot size={32} />
-          {t.bubble}
-          <span aria-hidden className="text-[var(--label-2)]">›</span>
-        </span>
+        <SupportMascot size={46} />
       </button>
     </div>
   );
