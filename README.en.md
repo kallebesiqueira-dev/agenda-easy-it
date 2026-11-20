@@ -32,6 +32,12 @@ The client picks service, professional and time on their own and the booking lan
 |---|---|
 | ![Login](docs/media/05-login.png) | ![Onboarding](docs/media/06-onboarding.png) |
 
+**Dashboard on a phone — app style (iOS / Google Play), installable as a PWA**
+
+| Agenda | Services | Hours | Push notifications |
+|---|---|---|---|
+| ![Agenda](docs/media/07-agenda.png) | ![Services](docs/media/08-servizi.png) | ![Hours](docs/media/09-orari.png) | ![Push notifications](docs/media/10-notifiche.png) |
+
 ---
 
 ## ✨ Features

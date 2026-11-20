@@ -7,7 +7,7 @@
  */
 
 import { IconBag, IconChevronRight, IconScissors } from "@/components/icons";
-import { IconPlus, PageHero } from "@/components/page-hero";
+import { HeroButton, IconPlus, PageHero } from "@/components/page-hero";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { ItemType, Service } from "@/types/database";
@@ -154,7 +154,17 @@ export function ServicesManager({
 
   return (
     <div>
-      <PageHero title={t.heading} subtitle={t.subtitle} className="mb-5" />
+      <PageHero
+        title={t.heading}
+        subtitle={t.subtitle}
+        className="mb-5"
+        action={
+          <HeroButton onClick={() => setEditing("new")}>
+            <IconPlus />
+            {tab === "service" ? t.newService : t.newProduct}
+          </HeroButton>
+        }
+      />
 
       <div role="tablist" className="relative grid grid-cols-2 rounded-[9px] bg-[var(--fill)] p-0.5 text-[13px] font-semibold">
         <span
@@ -245,18 +255,6 @@ export function ServicesManager({
             </li>
           ))}
         </ul>
-      )}
-
-      {/* FAB: "+" flottante per creare (come nel mockup telefono) */}
-      {!editing && (
-        <button
-          type="button"
-          onClick={() => setEditing("new")}
-          aria-label={tab === "service" ? t.newService : t.newProduct}
-          className="ui-press bg-tint fixed right-4 bottom-[calc(env(safe-area-inset-bottom)+140px)] z-40 grid size-14 place-items-center rounded-full text-white shadow-[0_12px_28px_color-mix(in_srgb,var(--accent)_45%,transparent)] lg:right-8 lg:bottom-24"
-        >
-          <IconPlus size={24} />
-        </button>
       )}
     </div>
   );
