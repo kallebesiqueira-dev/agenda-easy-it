@@ -32,6 +32,12 @@ Il cliente sceglie servizio, professionista e orario da solo e la prenotazione a
 |---|---|
 | ![Login](docs/media/05-login.png) | ![Onboarding](docs/media/06-onboarding.png) |
 
+**Pannello su telefono — stile app (iOS / Google Play), installabile come PWA**
+
+| Agenda | Servizi | Orari | Notifiche push |
+|---|---|---|---|
+| ![Agenda](docs/media/07-agenda.png) | ![Servizi](docs/media/08-servizi.png) | ![Orari](docs/media/09-orari.png) | ![Notifiche push](docs/media/10-notifiche.png) |
+
 ---
 
 ## ✨ Funzionalità
