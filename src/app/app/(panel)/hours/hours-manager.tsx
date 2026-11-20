@@ -14,11 +14,17 @@ const COPY: Record<
   {
     heading: string;
     subtitle: string;
+    tabHours: string;
+    tabBreaks: string;
     open: string;
+    closed: string;
     to: string;
     saving: string;
     saveHours: string;
     saved: string;
+    statDays: string;
+    statAvg: string;
+    statTotal: string;
     breaks: string;
     breaksSub: string;
     allTeam: string;
@@ -34,11 +40,17 @@ const COPY: Record<
   it: {
     heading: "Orari di apertura",
     subtitle: "Imposta gli orari di disponibilità del tuo studio per giorno della settimana.",
+    tabHours: "Orari",
+    tabBreaks: "Pause",
     open: "Aperto",
+    closed: "Chiuso",
     to: "alle",
     saving: "Salvataggio…",
-    saveHours: "Salva orari",
+    saveHours: "Salva modifiche",
     saved: "Salvato",
+    statDays: "Giorni aperti",
+    statAvg: "Media giornaliera",
+    statTotal: "Totale settimanale",
     breaks: "Pause",
     breaksSub:
       "Intervalli senza appuntamenti (es.: pranzo) — per tutto il team o per un professionista specifico.",
@@ -54,11 +66,17 @@ const COPY: Record<
   en: {
     heading: "Opening hours",
     subtitle: "Set your studio's availability for each day of the week.",
+    tabHours: "Hours",
+    tabBreaks: "Breaks",
     open: "Open",
+    closed: "Closed",
     to: "to",
     saving: "Saving…",
-    saveHours: "Save hours",
+    saveHours: "Save changes",
     saved: "Saved",
+    statDays: "Open days",
+    statAvg: "Daily average",
+    statTotal: "Weekly total",
     breaks: "Breaks",
     breaksSub:
       "Intervals with no appointments (e.g. lunch) — for the whole team or a specific professional.",
@@ -133,6 +151,22 @@ export function HoursManager({
   const [breakEnd, setBreakEnd] = useState("13:00");
   /** "" = tutto il team; altrimenti id del professionista */
   const [breakProfessional, setBreakProfessional] = useState("");
+  const [tab, setTab] = useState<"hours" | "breaks">("hours");
+
+  // Riepilogo settimanale (card statistiche, come nel mockup telefono).
+  const toMin = (s: string) => Number(s.slice(0, 2)) * 60 + Number(s.slice(3, 5));
+  const openDays = week.filter((d) => !d.is_closed);
+  const totalMin = openDays.reduce(
+    (sum, d) => sum + Math.max(0, toMin(d.closes_at) - toMin(d.opens_at)),
+    0
+  );
+  const totalHours = Math.round(totalMin / 60);
+  const avgHours = openDays.length ? Math.round(totalMin / 60 / openDays.length) : 0;
+  const stats: [string, string][] = [
+    [t.statDays, String(openDays.length)],
+    [t.statAvg, `${avgHours} h`],
+    [t.statTotal, `${totalHours} h`],
+  ];
 
   const proName = (id: string | null) =>
     id ? professionals.find((p) => p.id === id)?.display_name ?? "—" : null;
@@ -159,76 +193,115 @@ export function HoursManager({
   return (
     <div className="space-y-5">
       <PageHero title={t.heading} subtitle={t.subtitle} />
-      <section className="rounded-[22px] bg-card p-5">
-        <ul className="space-y-2">
-          {week.map((row) => (
-            <li
-              key={row.weekday}
-              className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm"
-            >
-              <span className="w-20 shrink-0">
-                {WEEKDAY_NAMES[row.weekday as Weekday]}
-              </span>
-              <label className="flex items-center gap-1.5">
+
+      {/* Tab: Orari | Pause (come nel mockup telefono) */}
+      <div role="tablist" className="relative grid grid-cols-2 rounded-[11px] bg-[var(--fill)] p-0.5 text-[14px] font-semibold">
+        <span
+          aria-hidden
+          className={`absolute inset-y-0.5 left-0.5 w-[calc(50%-2px)] rounded-[9px] bg-[var(--card)] shadow-[0_3px_8px_rgb(0_0_0/0.12)] transition-transform duration-500 ease-[var(--spring)] ${
+            tab === "breaks" ? "translate-x-full" : ""
+          }`}
+        />
+        {(
+          [
+            ["hours", t.tabHours],
+            ["breaks", t.tabBreaks],
+          ] as ["hours" | "breaks", string][]
+        ).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            role="tab"
+            aria-selected={tab === value}
+            onClick={() => setTab(value)}
+            className="relative z-10 min-h-10 rounded-[9px] px-3 active:scale-100"
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "hours" ? (
+        <>
+          <section className="ios-group">
+            {week.map((row) => (
+              <div key={row.weekday} className="flex items-center gap-2.5 px-4 py-2.5">
+                <span className="w-[4.5rem] shrink-0 text-[15px] font-medium">
+                  {WEEKDAY_NAMES[row.weekday as Weekday]}
+                </span>
                 <input
                   type="checkbox"
                   checked={!row.is_closed}
                   onChange={(e) =>
                     updateDay(row.weekday, { is_closed: !e.target.checked })
                   }
+                  aria-label={t.open}
+                  className="shrink-0"
                 />
-                {t.open}
-              </label>
-              {!row.is_closed && (
-                <>
-                  <input
-                    type="time"
-                    value={row.opens_at}
-                    onChange={(e) =>
-                      updateDay(row.weekday, { opens_at: e.target.value })
-                    }
-                    className="rounded-lg border border-zinc-200 px-2 py-1 hover:border-zinc-300"
-                  />
-                  <span className="text-zinc-400">{t.to}</span>
-                  <input
-                    type="time"
-                    value={row.closes_at}
-                    onChange={(e) =>
-                      updateDay(row.weekday, { closes_at: e.target.value })
-                    }
-                    className="rounded-lg border border-zinc-200 px-2 py-1 hover:border-zinc-300"
-                  />
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
+                {row.is_closed ? (
+                  <span className="ml-auto text-[14px] text-[var(--label-3)]">{t.closed}</span>
+                ) : (
+                  <div className="ml-auto flex min-w-0 items-center justify-end gap-1.5">
+                    <input
+                      type="time"
+                      value={row.opens_at}
+                      onChange={(e) =>
+                        updateDay(row.weekday, { opens_at: e.target.value })
+                      }
+                      className="w-[5.5rem] min-w-0 px-2 py-1.5 text-center text-[14px]"
+                    />
+                    <span className="text-[var(--label-3)]">–</span>
+                    <input
+                      type="time"
+                      value={row.closes_at}
+                      onChange={(e) =>
+                        updateDay(row.weekday, { closes_at: e.target.value })
+                      }
+                      className="w-[5.5rem] min-w-0 px-2 py-1.5 text-center text-[14px]"
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </section>
 
-        {error && (
-          <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-            {error}
-          </p>
-        )}
+          {/* Riepilogo settimanale */}
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            {stats.map(([label, value]) => (
+              <div key={label} className="rounded-[18px] bg-card p-3.5 text-center sm:p-4">
+                <p className="text-[22px] leading-none font-bold tracking-[-0.03em] tabular-nums sm:text-[26px]">
+                  {value}
+                </p>
+                <p className="mt-1.5 text-[11px] leading-snug text-[var(--label-2)] sm:text-[12px]">
+                  {label}
+                </p>
+              </div>
+            ))}
+          </div>
 
-        <div className="mt-4 flex items-center gap-3">
-          <button
-            type="button"
-            disabled={pending}
-            onClick={() =>
-              run(
-                () => saveBusinessHours(week),
-                () => setSaved(true)
-              )
-            }
-            className="rounded-full bg-tint px-4 py-2 text-sm font-medium text-white disabled:opacity-60 ui-press hover:bg-emerald-700"
-          >
-            {pending ? t.saving : t.saveHours}
-          </button>
-          {saved && <span className="text-sm text-[var(--green)]">{t.saved}</span>}
-        </div>
-      </section>
+          {error && (
+            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
+          )}
 
-      <section className="rounded-[18px] bg-card p-4">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              disabled={pending}
+              onClick={() =>
+                run(
+                  () => saveBusinessHours(week),
+                  () => setSaved(true)
+                )
+              }
+              className="bg-tint ui-press min-h-12 flex-1 rounded-full px-4 text-[15px] font-semibold text-white disabled:opacity-60"
+            >
+              {pending ? t.saving : t.saveHours}
+            </button>
+            {saved && <span className="text-sm text-[var(--green)]">{t.saved}</span>}
+          </div>
+        </>
+      ) : (
+      <section className="rounded-[22px] bg-card p-4 sm:p-5">
         <h2 className="mb-1 font-semibold">{t.breaks}</h2>
         <p className="mb-3 text-sm text-zinc-500">{t.breaksSub}</p>
 
@@ -330,6 +403,7 @@ export function HoursManager({
           </button>
         </form>
       </section>
+      )}
     </div>
   );
 }

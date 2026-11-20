@@ -189,7 +189,7 @@ export default async function AgendaPage({ searchParams }: Props) {
   return (
     <div className="space-y-6">
       {/* Riga 1 — saluto (hero) + metriche, come nel mockup */}
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <PageHero title={t.greeting(business.name)} subtitle={t.greetingSub} />
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {metrics.map((m) => (
@@ -200,16 +200,16 @@ export default async function AgendaPage({ searchParams }: Props) {
                 m.highlight ? "bg-[var(--tint-soft)]" : "bg-card"
               }`}
             >
-              <div className="flex items-start justify-between gap-2">
+              <div className="flex items-start justify-between gap-1.5">
                 <p
-                  className={`text-[21px] leading-none font-bold tracking-[-0.03em] tabular-nums sm:text-[28px] ${
+                  className={`min-w-0 truncate text-[19px] leading-none font-bold tracking-[-0.03em] tabular-nums sm:text-[28px] ${
                     m.highlight ? "text-[var(--tint-deep)]" : ""
                   }`}
                 >
                   {m.value}
                 </p>
                 <span
-                  className={`grid size-8 shrink-0 place-items-center rounded-[10px] text-[14px] font-bold ${
+                  className={`hidden size-8 shrink-0 place-items-center rounded-[10px] text-[14px] font-bold sm:grid ${
                     m.highlight ? "bg-[var(--accent)] text-[var(--on-tint)]" : "bg-[var(--tint-soft)] text-[var(--tint)]"
                   }`}
                 >
@@ -229,7 +229,7 @@ export default async function AgendaPage({ searchParams }: Props) {
       </div>
 
       {/* Riga 2 — calendario + agenda del giorno */}
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start">
       {/* Calendário mensal (data-still: niente tilt, è un'area interattiva) */}
       <section data-still className="rounded-[22px] bg-card p-4 sm:p-6">
         <div className="mb-4 flex items-center justify-between">

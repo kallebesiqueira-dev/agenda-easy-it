@@ -6,8 +6,8 @@
  * sulla pagina pubblica (niente durata, nessuna prenotazione).
  */
 
-import { IconBag, IconScissors } from "@/components/icons";
-import { HeroButton, IconPlus, PageHero } from "@/components/page-hero";
+import { IconBag, IconChevronRight, IconScissors } from "@/components/icons";
+import { IconPlus, PageHero } from "@/components/page-hero";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { ItemType, Service } from "@/types/database";
@@ -154,17 +154,7 @@ export function ServicesManager({
 
   return (
     <div>
-      <PageHero
-        title={t.heading}
-        subtitle={t.subtitle}
-        className="mb-5"
-        action={
-          <HeroButton onClick={() => setEditing("new")}>
-            <IconPlus />
-            {tab === "service" ? t.newService : t.newProduct}
-          </HeroButton>
-        }
-      />
+      <PageHero title={t.heading} subtitle={t.subtitle} className="mb-5" />
 
       <div role="tablist" className="relative grid grid-cols-2 rounded-[9px] bg-[var(--fill)] p-0.5 text-[13px] font-semibold">
         <span
@@ -215,48 +205,58 @@ export function ServicesManager({
           {tab === "service" ? t.emptyServices : t.emptyProducts}
         </p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="ios-group">
           {visible.map((s) => (
-            <li
-              key={s.id}
-              className={`flex items-center gap-3.5 rounded-[20px] bg-card p-4 sm:p-5 ${s.active ? "" : "opacity-60"}`}
-            >
-              {s.image_path ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={mediaUrl(s.image_path)!}
-                  alt=""
-                  className="size-12 shrink-0 rounded-[14px] object-cover"
-                />
-              ) : (
-                <div className="grid size-12 shrink-0 place-items-center rounded-[14px] bg-[var(--tint-soft)] text-[var(--tint)]">
-                  {s.item_type === "product" ? <IconBag size={22} /> : <IconScissors size={22} />}
-                </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <p className="text-base font-semibold text-zinc-900">
-                  {s.name}
-                  {!s.active && (
-                    <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
-                      {t.inactive}
-                    </span>
-                  )}
-                </p>
-                <p className="text-sm text-zinc-500 tabular-nums">
-                  {formatEUR(s.price_minor)}
-                  {s.item_type === "service" && ` · ${s.duration_minutes} min`}
-                </p>
-              </div>
+            <li key={s.id}>
               <button
                 type="button"
                 onClick={() => setEditing(s.id)}
-                className="ui-press shrink-0 rounded-full bg-[#16181a] px-4 py-2 text-sm font-semibold text-white hover:bg-[#26272b]"
+                aria-label={`${t.edit} ${s.name}`}
+                className={`ui-press flex w-full items-center gap-3.5 px-4 py-3 text-left active:bg-[var(--fill-2)] ${s.active ? "" : "opacity-60"}`}
               >
-                {t.edit}
+                {s.image_path ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={mediaUrl(s.image_path)!}
+                    alt=""
+                    className="size-11 shrink-0 rounded-[13px] object-cover"
+                  />
+                ) : (
+                  <div className="grid size-11 shrink-0 place-items-center rounded-[13px] bg-[var(--tint-soft)] text-[var(--tint)]">
+                    {s.item_type === "product" ? <IconBag size={20} /> : <IconScissors size={20} />}
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="ios-headline truncate text-[var(--label)]">
+                    {s.name}
+                    {!s.active && (
+                      <span className="ml-2 rounded-full bg-[var(--fill)] px-2 py-0.5 text-xs font-medium text-[var(--label-2)]">
+                        {t.inactive}
+                      </span>
+                    )}
+                  </p>
+                  <p className="ios-subhead text-[var(--label-2)] tabular-nums">
+                    {formatEUR(s.price_minor)}
+                    {s.item_type === "service" && ` · ${s.duration_minutes} min`}
+                  </p>
+                </div>
+                <IconChevronRight size={18} className="shrink-0 text-[var(--label-3)]" />
               </button>
             </li>
           ))}
         </ul>
+      )}
+
+      {/* FAB: "+" flottante per creare (come nel mockup telefono) */}
+      {!editing && (
+        <button
+          type="button"
+          onClick={() => setEditing("new")}
+          aria-label={tab === "service" ? t.newService : t.newProduct}
+          className="ui-press bg-tint fixed right-4 bottom-[calc(env(safe-area-inset-bottom)+140px)] z-40 grid size-14 place-items-center rounded-full text-white shadow-[0_12px_28px_color-mix(in_srgb,var(--accent)_45%,transparent)] lg:right-8 lg:bottom-24"
+        >
+          <IconPlus size={24} />
+        </button>
       )}
     </div>
   );
