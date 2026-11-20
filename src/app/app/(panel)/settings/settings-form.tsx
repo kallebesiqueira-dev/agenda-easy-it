@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import Link from "next/link";
 import { applyAccent } from "@/components/accent";
 import { useRouter } from "next/navigation";
 import type { BusinessSettingsInput } from "@/lib/validation";
 import type { BusinessType } from "@/types/database";
 import type { Lang } from "@/lib/i18n";
 import { businessTypeOptions } from "@/lib/labels";
+import { IconChevronRight } from "@/components/icons";
 import { PageHero } from "@/components/page-hero";
 import { mediaUrl, uploadMedia } from "@/lib/storage";
 import { saveSettings } from "./actions";
@@ -39,6 +41,8 @@ const COPY: Record<
     whatsappPh: string;
     published: string;
     publishedHint: (slug: string) => [string, string];
+    notifications: string;
+    notificationsHint: string;
     saving: string;
     save: string;
     saved: string;
@@ -74,6 +78,8 @@ const COPY: Record<
       "Quando attiva, la tua pagina è online su ",
       " e accetta prenotazioni. Inserisci prima servizi, team e orari.",
     ],
+    notifications: "Notifiche push",
+    notificationsHint: "Avvisi per prenotazioni, modifiche e promemoria",
     saving: "Salvataggio…",
     save: "Salva impostazioni",
     saved: "Salvato",
@@ -108,6 +114,8 @@ const COPY: Record<
       "When active, your page is live at ",
       " and accepts bookings. Add services, team and hours first.",
     ],
+    notifications: "Push notifications",
+    notificationsHint: "Alerts for bookings, changes and reminders",
     saving: "Saving…",
     save: "Save settings",
     saved: "Saved",
@@ -192,6 +200,25 @@ export function SettingsForm({
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <PageHero title={t.heading} subtitle={t.subtitle} className="mb-5" />
+
+      {/* Accesso alle notifiche push (pagina dedicata, stile app) */}
+      <Link
+        href="/app/settings/notifiche"
+        className="ui-press flex items-center gap-3.5 rounded-[18px] bg-card p-4 active:bg-[var(--fill-2)]"
+      >
+        <span className="grid size-10 shrink-0 place-items-center rounded-[12px] bg-[var(--tint-soft)] text-[var(--tint)]">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+          </svg>
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="ios-headline block">{t.notifications}</span>
+          <span className="ios-footnote block text-[var(--label-2)]">{t.notificationsHint}</span>
+        </span>
+        <IconChevronRight size={18} className="shrink-0 text-[var(--label-3)]" />
+      </Link>
+
       <section className="space-y-3 rounded-[18px] bg-card p-4">
         <h3 className="font-semibold">{t.business}</h3>
 

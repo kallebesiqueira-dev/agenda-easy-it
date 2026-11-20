@@ -47,6 +47,8 @@ The client picks service, professional and time on their own and the booking lan
 - **SaaS subscription via Stripe**: Checkout (€9.90/month, 7-day trial), lifecycle webhooks, Customer Portal
 - **Bilingual it/en** with a persistent 🇮🇹/🇬🇧 switcher (cookie, 1 year) on every page — e-mails included
 - **Sign in with Google** or e-mail/password (Supabase Auth)
+- **App-style mobile UI (iOS / Google Play)**: responsive panel from 320 px up — bottom tab bar, grouped iOS lists, fixed frosted top bar — installable as a PWA (manifest + icons)
+- **Per-device push notifications**: a dedicated settings page (Web Notifications API) with per-alert-type preferences and a quiet-hours window, saved on the device
 
 ## 🧱 Stack
 
@@ -191,6 +193,7 @@ src/
 │   ├── [slug]/               # public page: booking + plans + products
 │   ├── annulla/[id]/         # cancellation via cancel_token
 │   ├── app/                  # dashboard (agenda, services/products, plans, team, hours, report, settings)
+│   │   ├── settings/notifiche/ # per-device push notifications (Web Notifications API)
 │   │   └── billing/          # Stripe subscription (checkout + portal)
 │   └── api/
 │       ├── public/           # availability + bookings (server is the authority)
