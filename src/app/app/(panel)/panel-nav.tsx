@@ -240,16 +240,14 @@ export function NavBar({
   }, [pathname]);
 
   return (
-    <header
-      className={`safe-top sticky top-0 z-30 transition-[background-color,box-shadow] duration-200 ${
-        shown ? "ios-material ios-hairline-b" : "bg-transparent"
-      }`}
-    >
+    <header className="ios-material ios-hairline-b safe-top sticky top-0 z-30 transition-[box-shadow] duration-200">
       <div className="relative flex h-[52px] items-center gap-3 px-4 lg:px-10">
         <div className="min-w-0 flex-1">{children}</div>
+        {/* Titolo compatto centrato: solo su desktop (su mobile la barra mostra
+            il brand, e il titolo lo sovrapporrebbe). */}
         <span
           aria-hidden={!shown}
-          className={`ios-headline pointer-events-none absolute inset-x-28 truncate text-center capitalize transition-all duration-200 ease-[var(--spring)] ${
+          className={`ios-headline pointer-events-none absolute inset-x-28 hidden truncate text-center capitalize transition-all duration-200 ease-[var(--spring)] lg:block ${
             shown ? "translate-y-0 opacity-100" : "translate-y-1.5 opacity-0"
           }`}
         >
